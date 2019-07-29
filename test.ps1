@@ -13,7 +13,7 @@ function New-Logger{
 	New-Object Serilog.LoggerConfiguration
 }
 
-function Install-Extension{
+function Install-PoShLogExtension{
 	[Cmdletbinding()]
 	param(
 		[Parameter(Mandatory=$true)]
@@ -32,6 +32,7 @@ function Install-Extension{
 
 	if($Version -notmatch '(?<major>\d+|\*)(\.(?<minor>\d+|\*))?(\.(?<bugfix>\d+|\*))?'){
 		Write-Error 'Wrong version format!'
+		return
 	}
 	else{
 		$targetVersionMajor = $Matches.Major
@@ -55,6 +56,7 @@ function Install-Extension{
 		}
 		else{
 			Write-Warning "Package $Id is already installed with same or higher version."
+			return
 		}
 	}
 	else{
@@ -93,7 +95,29 @@ function Add-SinkFile{
 		[Parameter(Mandatory=$true)]
 		[string]$Path,
 		[Parameter(Mandatory=$false)]
-		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose
+		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose,
+		[Parameter(Mandatory=$false)]
+		[string]$OutputTemplate = '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}',
+		[Parameter(Mandatory=$false)]
+		[System.IFormatProvider]$FormatProvider = $null,
+		[Parameter(Mandatory=$false)]
+		[Nullable[int64]]$FileSizeLimitBytes = 1073741824L,
+		[Parameter(Mandatory=$false)]
+		[Serilog.Core.LoggingLevelSwitch]$LevelSwitch = $null,
+		[Parameter(Mandatory=$false)]
+		[switch]$Buffered,
+		[Parameter(Mandatory=$false)]
+		[switch]$Shared,
+		[Parameter(Mandatory=$false)]
+		[Nullable[timespan]]$FlushToDiskInterval = $null,
+		[Parameter(Mandatory=$false)]
+		[Serilog.RollingInterval]$RollingInterval = [Serilog.RollingInterval]::Infinite,
+		[Parameter(Mandatory=$false)]
+		[switch]$RollOnFileSizeLimit,
+		[Parameter(Mandatory=$false)]
+		[Nullable[int]]$RetainedFileCountLimit = 31,
+		[Parameter(Mandatory=$false)]
+		[System.Text.Encoding]$Encoding = $null
 	)
 
 	process{
@@ -102,17 +126,17 @@ function Add-SinkFile{
 		$LoggerConfig = [Serilog.FileLoggerConfigurationExtensions]::File($loggerSinkConfig, 
 			$Path, 
 			$RestrictedToMinimumLevel,
-			"{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
-			$null,
-			1073741824L,
-			$null,
-			$false,
-			$false,
-			$null,
-			[Serilog.RollingInterval]::Infinite,
-			$false,
-			31,
-			$null
+			$OutputTemplate,
+			$FormatProvider,
+			$FileSizeLimitBytes,
+			$LevelSwitch,
+			$Buffered,
+			$Shared,
+			$FlushToDiskInterval,
+			$RollingInterval,
+			$RollOnFileSizeLimit,
+			$RetainedFileCountLimit,
+			$Encoding
 		)
 
 		$LoggerConfig
@@ -123,19 +147,38 @@ function Add-SinkConsole{
 	[Cmdletbinding()]
 	param(
 		[Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-		[Serilog.LoggerConfiguration]$loggerConfig
+		[Serilog.LoggerConfiguration]$loggerConfig,
+		[Parameter(Mandatory=$false)]
+		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose,
+		[Parameter(Mandatory=$false)]
+		[string]$OutputTemplate = '[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}',
+		[Parameter(Mandatory=$false)]
+		[System.IFormatProvider]$FormatProvider = $null,
+		[Parameter(Mandatory=$false)]
+		[Serilog.Core.LoggingLevelSwitch]$LevelSwitch = $null,
+		[Parameter(Mandatory=$false)]
+		[Nullable[Serilog.Events.LogEventLevel]]$StandardErrorFromLevel = $null,
+		[Parameter(Mandatory=$false)]
+		[Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]$Theme
 	)
 
 	process{
 		[Serilog.Configuration.LoggerSinkConfiguration]$loggerSinkConfig = $loggerConfig.WriteTo
 	
-		$loggerConfig = [Serilog.ConsoleLoggerConfigurationExtensions]::Console($loggerSinkConfig)
+		$loggerConfig = [Serilog.ConsoleLoggerConfigurationExtensions]::Console($loggerSinkConfig,
+			$RestrictedToMinimumLevel,
+			$OutputTemplate,
+			$FormatProvider,
+			$LevelSwitch,
+			$StandardErrorFromLevel,
+			$Theme
+		)
 
 		$loggerConfig
 	}
 }
 
-function Add-EnrichWithEnvironment{
+function Add-EnrichWithMachineName{
 	[Cmdletbinding()]
 	param(
 		[Parameter(Mandatory=$true, ValueFromPipeline=$true)]
@@ -159,6 +202,24 @@ function Start-Logger{
 	)
 
 	[Serilog.Log]::Logger = $loggerConfig.CreateLogger()
+}
+
+function Write-VerboseLog {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Text
+	)
+
+	[Serilog.Log]::Logger.Verbose($Text)
+}
+
+function Write-DebugLog {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]$Text
+	)
+
+	[Serilog.Log]::Logger.Debug($Text)
 }
 
 function Write-InfoLog {
@@ -193,10 +254,14 @@ function Close-Logger{
 	[Serilog.Log]::CloseAndFlush()
 }
 
-Install-Extension -Id 'Serilog' -Version '2.8.0'
-Install-Extension -Id 'Serilog.Enrichers.Process' -Version '2.0.1' -Restore
+Install-PoShLogExtension -Id 'Serilog' -Version '2.8.0'
+Install-PoShLogExtension -Id 'Serilog.Enrichers.Process' -Version '2.0.1' -Restore
 
-New-Logger | Add-SinkFile -Path "C:\Logs\test.txt" | Add-SinkConsole | Add-EnrichWithEnvironment | Start-Logger
+New-Logger | 
+	Add-EnrichWithMachineName | 
+	Add-SinkFile -Path "C:\Logs\test.txt" | 
+	Add-SinkConsole -OutputTemplate "[{Timestamp:HH:mm:ss} {Level:u3}] {MachineName} {Message:lj}{NewLine}{Exception}" | 
+	Start-Logger
 
 Write-InfoLog "poshlog"
 Write-WarningLog "test warning"
