@@ -62,7 +62,7 @@ function Install-PoShLogExtension {
 		if ($changed) {
 			$xml.Save($Global:packagesConfigPath)
 	
-			Restore-AllExtensions -Silent $Silent
+			Restore-AllExtensions -Silent:$Silent
 
 			# Load package dlls
 			$assemblies = Get-ChildItem "$Global:packagesPath\$Id.$Version\lib\*" | Where-Object { $_.Name -match 'net\d+' } | ForEach-Object { Get-ChildItem "$($_.FullName)\*.dll" }
