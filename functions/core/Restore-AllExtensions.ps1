@@ -1,8 +1,9 @@
-function Restore-AllExtensions{
+function Restore-AllExtensions {
+	param(
+		[Parameter(Mandatory = $false)]
+		[switch]$Silent
+	)
 
-	# Clean packages directory
-	Remove-Item "$Global:packagesPath\*" -Recurse -Force
-
-	# Nuget restore
-	& "$PSScriptRoot\..\..\tools\Nuget-Restore.ps1"
+	# Restore nuget packages from packages.config
+	nuget install "$PSScriptRoot\..\..\packages.config" -ConfigFile "$PSScriptRoot\..\..\NuGet.config" -OutputDirectory "$PSScriptRoot\..\..\packages" | ? { -not $Silent } | Write-Host
 }

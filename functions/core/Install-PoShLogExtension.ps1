@@ -8,7 +8,7 @@ function Install-PoShLogExtension {
 		[Parameter(Mandatory = $false)]
 		[string]$TargetFramework = 'net461',
 		[Parameter(Mandatory = $false)]
-		[switch]$Restore
+		[switch]$Silent
 	)
 
 	[xml]$xml = Get-Content $Global:packagesConfigPath
@@ -24,7 +24,7 @@ function Install-PoShLogExtension {
 		$targetVersionBugfix = $Matches.Bugfix
 
 		if ($null -ne $package) {
-			$currentVersion = $package.Attributes | Where-Object { $_.Name -eq 'version' } | Select-Object -Property Value
+			$currentVersion = $package.Attributes | Where-Object { $_.Name -eq 'version' } | Select-Object -ExpandProperty Value
 			$currentVersion -match '(?<major>\d+|\*)(\.(?<minor>\d+|\*))?(\.(?<bugfix>\d+|\*))?' | Out-Null
 	
 			if ($Matches.Major -lt $targetVersionMajor -or 
@@ -35,7 +35,9 @@ function Install-PoShLogExtension {
 				$changed = $true
 			}
 			else {
-				Write-Warning "Package $Id is already installed with same or higher version."
+				if (-not $Silent) {
+					Write-Warning "Package $Id is already installed with same or higher version."
+				}
 			}
 		}
 		else {
@@ -60,9 +62,11 @@ function Install-PoShLogExtension {
 		if ($changed) {
 			$xml.Save($Global:packagesConfigPath)
 	
-			if ($Restore) {
-				Restore-AllExtensions
-			}
+			Restore-AllExtensions -Silent $Silent
+
+			# Load package dlls
+			$assemblies = Get-ChildItem "$Global:packagesPath\$Id.$Version\lib\*" | Where-Object { $_.Name -match 'net\d+' } | ForEach-Object { Get-ChildItem "$($_.FullName)\*.dll" }
+			Add-Type -Path $assemblies -ErrorAction 'Stop'
 		}
 	}	
 }
