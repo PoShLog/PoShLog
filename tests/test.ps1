@@ -11,7 +11,7 @@ New-Logger |
 	Add-SinkFile -Path "C:\Logs\test-.txt" -RollingInterval Hour | 
 	Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}" -RestrictedToMinimumLevel Verbose | 
 	Start-Logger
-# https://hooks.slack.com/services/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
+
 Write-VerboseLog "test verbose"
 Write-DebugLog "test debug"
 Write-InfoLog "test info"
