@@ -11,8 +11,13 @@ function Add-PackageTypes {
 				Where-Object { $_.Name -match 'net\d+' } | 
 				ForEach-Object { Get-ChildItem "$($_.FullName)\*.dll" } 
 
-			# Load package dlls
-			Add-Type -Path $assemblies -ErrorAction 'Stop'
+			try {
+				# Load package dlls
+				Add-Type -Path $assemblies -ErrorAction 'Stop'
+			}
+			catch {
+				Write-Error ($_.Exception.GetBaseException().LoaderExceptions | Format-Table | Out-String)
+			}
 		}
 	}
 }
