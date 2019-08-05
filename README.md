@@ -41,6 +41,29 @@ catch {
 Close-Logger
 ```
 
+**Code above results in:**
+
+Console:
+<img src="https://github.com/TomasBouda/PoShLog/blob/master/images/PoShLog_example.png">
+
+File *(C:\Logs\test-2019080511.txt)*:
+```log
+2019-08-05 11:03:29.256 +02:00 [VRB] test verbose
+ {"EnvironmentUserName":"DESKTOP-asd\\email"}
+2019-08-05 11:03:29.443 +02:00 [DBG] test debug
+ {"EnvironmentUserName":"DESKTOP-asd\\email"}
+2019-08-05 11:03:29.450 +02:00 [INF] test info
+ {"EnvironmentUserName":"DESKTOP-asd\\email"}
+2019-08-05 11:03:29.456 +02:00 [WRN] test warning
+ {"EnvironmentUserName":"DESKTOP-asd\\email"}
+2019-08-05 11:03:29.470 +02:00 [ERR] test fatal test1, 123, {"MinimumLevel":"Verbose","$type":"LoggingLevelSwitch"}
+ {"EnvironmentUserName":"DESKTOP-asd\\email"}
+2019-08-05 11:03:29.573 +02:00 [FTL] Chyba
+System.Exception: Some random exception
+ {"EnvironmentUserName":"DESKTOP-asd\\email","ExceptionDetail":{"Type":"System.Exception","HResult":-2146233088,"Message":"Some random exception","Source":null}}
+ ```
+*(it also logs into [exceptionless.io](https://be.exceptionless.io))*
+
 ## Commands
 
 `New-Logger` - Creates new instance of *[Serilog.LoggerConfiguration]*.
