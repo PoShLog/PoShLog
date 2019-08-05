@@ -11,7 +11,7 @@ PoShLog is powershell logging module. It is wrapper of great C# logging library 
 ## Usage
 
 ```ps1
-Import-Module "*Path to directory from installation step*\PoShLog.psm1"
+Import-Module "*Path to directory from installation step*\PoShLog.psm1" -Force
 
 # Level switch allows you to switch minimum logging level
 $levelSwitch = Get-LevelSwitch -MinimumLevel Verbose
@@ -19,16 +19,24 @@ $levelSwitch = Get-LevelSwitch -MinimumLevel Verbose
 New-Logger |
 	Set-MinimumLevel -ControlledBy $levelSwitch |
 	Add-EnrichWithEnvironment |
-	Add-SinkFile -Path "C:\Logs\test-.txt" -RollingInterval Hour | 
-	Add-SinkConsole -OutputTemplate "[{EnvironmentUserName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}" | 
+	Add-EnrichWithExceptionDetails |
+	Add-SinkExceptionless -ApiKey "YOUR API KEY" |
+	Add-SinkFile -Path "C:\Logs\test-.txt" -RollingInterval Hour -OutputTemplate '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception} {Properties:j}{NewLine}' |
+	Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}" -RestrictedToMinimumLevel Verbose | 
 	Start-Logger
 
 Write-VerboseLog "test verbose"
-Write-DebugLog "test debug"
+Write-DebugLog -MessageTemplate "test debug"
 Write-InfoLog "test info"
 Write-WarningLog "test warning"
-Write-ErrorLog "test error"
-Write-FatalLog "test fatal"
+Write-ErrorLog -MessageTemplate "test fatal {asd}, {num}, {@levelSwitch}" -PropertyValues "test1", 123, $levelSwitch
+
+try {
+	throw [System.Exception]::new('Some random exception')
+}
+catch {
+	Write-FatalLog -Exception $_.Exception -MessageTemplate 'Chyba'
+}
 
 Close-Logger
 ```
@@ -55,14 +63,16 @@ Sinks are used to record log events to some external representation. More info [
 
 ### Enrichment
 
-Log events can be enriched with various properties. These can be added trough nuget package(`Install-PoShLogExtension`). 
+Log events can be enriched with various properties. These enrichers can be added trough nuget package(`Install-PoShLogExtension`). More info [here](https://github.com/serilog/serilog/wiki/Enrichment)
 
-`Add-EnrichWithEnvironment` - Adds `MachineName` and `EnvironmentUserName` variables which can be used in **OutputTemplate** 
+`Add-EnrichWithEnvironment` - Adds `{MachineName}` and `{EnvironmentUserName}` variables which can be used in **OutputTemplate** 
 e.g. 
 ```
 Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
 ```
 
-`Add-EnrichWithProcessId` - Adds `ProcessId` variables which can be used in **OutputTemplate**
+`Add-EnrichWithProcessId` - Adds `{ProcessId}` variables which can be used in **OutputTemplate**
 
-`Add-EnrichWithProcessName` - Adds `ProcessName` variables which can be used in **OutputTemplate**
+`Add-EnrichWithProcessName` - Adds `{ProcessName}` variables which can be used in **OutputTemplate**
+
+`Add-EnrichWithExceptionDetails` - Adds exception details into log. Note that you must add {Properties:j} to **OutputTemplate**. More info [here](https://github.com/RehanSaeed/Serilog.Exceptions)
