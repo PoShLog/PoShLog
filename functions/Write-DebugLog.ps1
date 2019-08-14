@@ -19,19 +19,35 @@ function Write-DebugLog {
 	switch ($PsCmdlet.ParameterSetName){
 		'MessageTemplate'{
 			[Serilog.Log]::Logger.Debug($MessageTemplate)
+
+			if(-not (Test-Logger)){
+				Write-DebugEx -MessageTemplate $MessageTemplate
+			}
 		}
 		'MessageTemplateWithProperties'{
 			[Serilog.Log]::Logger.Debug($MessageTemplate, $PropertyValues)
+
+			if(-not (Test-Logger)){
+				Write-DebugEx -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+			}
 		}
 		'Excetion'{
 			[Serilog.Log]::Logger.Debug($Exception, $MessageTemplate)
+
+			if(-not (Test-Logger)){
+				Write-DebugEx -MessageTemplate "$MessageTemplate `n $Exception"
+			}
 		}
 		'ExcetionWithProperties'{
 			[Serilog.Log]::Logger.Debug($Exception, $MessageTemplate, $PropertyValues)
+
+			if(-not (Test-Logger)){
+				Write-DebugEx -MessageTemplate "$MessageTemplate `n $Exception" -PropertyValues $PropertyValues
+			}
 		}
 	}
 
 	if($PassThru){
-		$Text
+		Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }
