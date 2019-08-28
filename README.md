@@ -1,17 +1,17 @@
 # PoShLog
 
-**[Note that this ps module is still in early development stage]**
-
 PoShLog is powershell logging module. It is wrapper of great C# logging library Serilog - https://serilog.net/
 
 ## Installation
 
-* Clone this repository / Download this repo as zip and extract all files
+```ps1
+PS> Install-Module -Name PoShLog
+```
 
 ## Usage
 
 ```ps1
-Import-Module "*Path to directory from installation step*\PoShLog.psm1" -Force
+Import-Module PoShLog
 
 # Level switch allows you to switch minimum logging level
 $levelSwitch = Get-LevelSwitch -MinimumLevel Verbose
