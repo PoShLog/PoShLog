@@ -1,4 +1,4 @@
-# PoShLog
+# PoShLog [![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/)
 
 PoShLog is powershell logging module. It is wrapper of great C# logging library Serilog - https://serilog.net/
 
