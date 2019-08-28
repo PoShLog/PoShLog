@@ -1,4 +1,4 @@
-[string] $Global:packagesPath = "$PSScriptRoot\packages"
+[string] $Global:packagesPath = "$env:APPDATA\PoShLog\packages"
 [string] $Global:packagesConfigPath = "$PSScriptRoot\packages.config"
 
 # dot source all script files
