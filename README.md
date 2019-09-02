@@ -12,6 +12,24 @@ PS> Install-Module -Name PoShLog
 
 ## Usage
 
+Minimum setup to log into console and file:
+
+```ps1
+New-Logger |
+	Add-SinkFile -Path "C:\Logs\test-.txt" |
+	Add-SinkConsole | 
+	Start-Logger
+
+# Test all debug levels
+Write-VerboseLog "test verbose"
+Write-DebugLog -MessageTemplate "test debug"
+Write-InfoLog "test info"
+Write-WarningLog "test warning"
+Write-ErrorLog -MessageTemplate "test fatal {asd}, {num}" -PropertyValues "test1", 123
+```
+___
+Advanced settings, with level switch, environment and exception info, logging into exceptionless.io, file and console with custom output template:
+
 ```ps1
 Import-Module PoShLog
 
@@ -27,6 +45,7 @@ New-Logger |
 	Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}" -RestrictedToMinimumLevel Verbose | 
 	Start-Logger
 
+# Test all debug levels
 Write-VerboseLog "test verbose"
 Write-DebugLog -MessageTemplate "test debug"
 Write-InfoLog "test info"
