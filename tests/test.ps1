@@ -23,7 +23,7 @@ New-Logger |
 	Set-MinimumLevel -ControlledBy $levelSwitch |
 	Add-EnrichWithEnvironment |
 	Add-EnrichWithExceptionDetails |
-	Add-SinkExceptionless -ApiKey "" |
+	Add-SinkExceptionless -ApiKey "SPBcuAdNaGRz6SWfenzIKyzYCnvVCj1yXxLJE55p" |
 	Add-SinkFile -Path "C:\Logs\test-.txt" -RollingInterval Hour -OutputTemplate '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception} {Properties:j}{NewLine}' |
 	Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}" -RestrictedToMinimumLevel Verbose | 
 	Start-Logger
