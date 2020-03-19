@@ -1,11 +1,7 @@
 Import-Module "$PSScriptRoot\..\PoShLog.psm1" -Force
 
-# Install-PoShLogExtension -Id 'Serilog.Sinks.Exceptionless' -Version '3.1.0' -Silent
-# Install-PoShLogExtension -Id 'Exceptionless' -Version '4.3.2027'
-
 # Level switch allows you to switch minimum logging level
 $levelSwitch = Get-LevelSwitch -MinimumLevel Verbose
-
 
 $DebugPreference = "Continue"
 $VerbosePreference = "Continue"
@@ -21,9 +17,6 @@ Write-FatalLog "test fatal"
 # Setup new logger
 New-Logger |
 	Set-MinimumLevel -ControlledBy $levelSwitch |
-	Add-EnrichWithEnvironment |
-	Add-EnrichWithExceptionDetails |
-	Add-SinkExceptionless -ApiKey "SPBcuAdNaGRz6SWfenzIKyzYCnvVCj1yXxLJE55p" |
 	Add-SinkFile -Path "C:\Logs\test-.txt" -RollingInterval Hour -OutputTemplate '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception} {Properties:j}{NewLine}' |
 	Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}" -RestrictedToMinimumLevel Verbose | 
 	Start-Logger

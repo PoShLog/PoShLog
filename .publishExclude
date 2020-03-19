@@ -1,0 +1,10 @@
+.vs
+.vscode
+bin
+images
+obj
+tests
+PoShLogLibs
+PoShLog.pssproj
+PoShLog.sln
+PoShLog.tests.ps1

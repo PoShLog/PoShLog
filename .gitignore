@@ -332,5 +332,5 @@ ASALocalRun/
 # VS Code folder
 .vscode/
 
-# Module tools
-tools/*
+# Module libraries
+src/lib/

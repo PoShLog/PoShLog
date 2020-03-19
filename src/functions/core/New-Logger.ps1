@@ -1,4 +1,4 @@
-function New-Logger{
+function New-Logger {
 
 	try {
 		# Just in case close and flush any previous logger
