@@ -15,6 +15,8 @@ PS> Install-Module -Name PoShLog
 Minimum setup to log into console and file:
 
 ```ps1
+Import-Module PoShLog
+
 New-Logger |
 	Add-SinkFile -Path "C:\Logs\test-.txt" |
 	Add-SinkConsole | 
