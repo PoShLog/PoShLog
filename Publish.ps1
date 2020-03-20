@@ -24,12 +24,14 @@ if (Test-Path $publishFolder) {
 New-Item -Path $publishFolder -ItemType Directory -Force | Out-Null
 
 # Filter module files and move them to publish folder
-Get-ChildItem $srcfolder | Where-Object { $excludedItems -notcontains $_.Name } | Select-Object -ExpandProperty FullName | Copy-Item -Destination $publishFolder -Recurse
+Get-ChildItem $srcfolder | Where-Object { $excludedItems -notcontains $_.Name } | Select-Object -ExpandProperty FullName | Copy-Item -Destination $publishFolder -Recurse -Force
 
 # Test module
 Import-Module $publishFolder
 Get-Module -Name PoShLog
 
-Start-Logger -FilePath "$PSScriptRoot\published.log"
+Start-Logger -FilePath "$PSScriptRoot\published.log" -Console
 
 Write-InfoLog 'SuccessFully published!'
+
+Close-Logger
