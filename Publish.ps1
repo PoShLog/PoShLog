@@ -6,6 +6,7 @@ param(
 
 $srcFolder = "$PSScriptRoot\src"
 $libFolder = "$PSScriptRoot\src\lib"
+$publishFolder = "$PSScriptRoot\publish\PoShLog\"
 $excludedItems = Get-Content "$PSScriptRoot\.publishExclude"
 
 & "$PSScriptRoot\Build.ps1"
@@ -13,18 +14,20 @@ $excludedItems = Get-Content "$PSScriptRoot\.publishExclude"
 # Update module version
 Update-ModuleManifest "$srcFolder\PoShLog.psd1" -ModuleVersion $TargetVersion
 
-# Remove unecessary files
-Get-ChildItem $libFolder | Where-Object { $_.Name -like '*PoShLogLibs*' } | Remove-Item -Force
-
-$publishFolder = "$PSScriptRoot\publish\PoShLog\"
+# Create clean publish folder
 if (Test-Path $publishFolder) {
 	Remove-Item $publishFolder -Recurse -Force
 }
-
 New-Item -Path $publishFolder -ItemType Directory -Force | Out-Null
+
+# Remove unecessary files
+Get-ChildItem $libFolder | Where-Object { $_.Name -like '*PoShLogLibs*' } | Remove-Item -Force
 
 # Filter module files and move them to publish folder
 Get-ChildItem $srcfolder | Where-Object { $excludedItems -notcontains $_.Name } | Select-Object -ExpandProperty FullName | Copy-Item -Destination $publishFolder -Recurse -Force
+
+# Add readme to published modules
+Copy-Item "$PSScriptRoot\README.md" -Destination $publishFolder
 
 # Test module
 Import-Module $publishFolder

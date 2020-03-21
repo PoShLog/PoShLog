@@ -1,5 +1,5 @@
 [string] $Global:packagesPath = "$PSScriptRoot\lib"
-[string] $obsoletePackagesPath = "$env:APPDATA\PoShLog\packages"
+[bool] $Global:loggerNotInitWarned = $false	# Indicates wether warning about logger is not initialized was shown
 
 # dot source all script files
 Get-ChildItem -Path "$PSScriptRoot\functions" -Recurse -File -Filter '*.ps1' | ForEach-Object {
@@ -15,6 +15,7 @@ Get-ChildItem -Path "$PSScriptRoot\functions" -Recurse -File -Filter '*.ps1' | F
 Add-PackageTypes
 
 # Remove package directory from previous version
+[string] $obsoletePackagesPath = "$env:APPDATA\PoShLog\packages"
 if (Test-Path $obsoletePackagesPath ) {
 	Remove-Item $obsoletePackagesPath -Recurse -Force -ErrorAction SilentlyContinue
 }
