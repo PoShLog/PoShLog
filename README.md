@@ -1,9 +1,9 @@
-# PoShLog [![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) ![platform](https://img.shields.io/powershellgallery/p/poshlog.svg) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Gitter](https://badges.gitter.im/TomLabsX/PoShLog.svg)](https://gitter.im/TomLabsX/PoShLog?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+# PoShLog [![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg?include_prereleases)](https://www.powershellgallery.com/packages/PoShLog/) ![platform](https://img.shields.io/powershellgallery/p/poshlog.svg) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Gitter](https://badges.gitter.im/TomLabsX/PoShLog.svg)](https://gitter.im/TomLabsX/PoShLog?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 >Serilog for powershell
 
-PoShLog is powershell logging module. It is wrapper of great C# logging library [Serilog](https://serilog.net/).
-PoShLog allows you to log structured event data into **console**, **file** and even more places easily.
+PoShLog is powershell logging module. PoShLog allows you to log structured event data into **console**, **file** and even more places easily.
+It is wrapper of great C# logging library [Serilog](https://serilog.net/).
 
 ## Getting started
 
@@ -61,6 +61,8 @@ Write-VerboseLog 'Test verbose message'
 Write-DebugLog 'Test debug message'
 Write-InfoLog 'Test info message'
 Write-WarningLog 'Test warning message'
+Write-ErrorLog 'Test error message'
+Write-FatalLog 'Test fatal message'
 
 # Example of formatted output
 $position = @{

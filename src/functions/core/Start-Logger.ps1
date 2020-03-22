@@ -32,7 +32,7 @@ function Start-Logger {
 		[Serilog.LoggerConfiguration]$LoggerConfig,
 
 		[Parameter(Mandatory = $false, ParameterSetName = 'Short')]
-		[Serilog.Events.LogEventLevel]$MinimumLevel = [Serilog.Events.LogEventLevel]::Debug,
+		[Serilog.Events.LogEventLevel]$MinimumLevel = [Serilog.Events.LogEventLevel]::Information,
 
 		[Parameter(Mandatory = $false, ParameterSetName = 'Short')]
 		[switch]$Console,

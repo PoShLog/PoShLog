@@ -15,7 +15,7 @@ RootModule = 'PoShLog.psm1'
 ModuleVersion = '2.0.1'
 
 # Supported PSEditions
-# CompatiblePSEditions = @()
+CompatiblePSEditions = 'Desktop', 'Core'
 
 # ID used to uniquely identify this module
 GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'
