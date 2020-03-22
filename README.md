@@ -39,7 +39,7 @@ Close-Logger
 
 ![poshlog_example_simplest_file](https://github.com/TomasBouda/PoShLog/blob/dev/images/poshlog_example_simplest_file.png?raw=true)
 
-*Image 1: `C:\Data\my_awesome.log` in VS Code*
+*Image 2: `C:\Data\my_awesome.log` in VS Code*
 
 Setup using pipeline fluent API:
 
