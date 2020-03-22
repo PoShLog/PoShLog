@@ -1,9 +1,13 @@
-# PoShLog [![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![PowerShell Gallery](https://img.shields.io/powershellgallery/p/poshlog?color=blue)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Gitter](https://img.shields.io/gitter/room/TomLabsX/PoShLog?color=orange)](https://gitter.im/TomLabsX/PoShLog?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+# PoShLog 
+
+[![icon](https://github.com/TomasBouda/PoShLog/blob/dev/images/icons/poshlog-icon-64.png?raw=true)](https://github.com/TomasBouda/PoShLog)
+
+[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![PowerShell Gallery](https://img.shields.io/powershellgallery/p/poshlog?color=blue)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Gitter](https://img.shields.io/gitter/room/TomLabsX/PoShLog?color=orange)](https://gitter.im/TomLabsX/PoShLog?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 >Serilog for powershell
 
 PoShLog is powershell multiplatform logging module. PoShLog allows you to log structured event data into **console**, **file** and much more places easily.
-It is wrapper of great C# logging library [Serilog](https://serilog.net/).
+It's built upon great C# logging library [Serilog](https://serilog.net/).
 
 ## Getting started
 
@@ -92,6 +96,6 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/TomasBouda/PoShLog/blob/master/LICENSE) file for details.
 
-## Acknowledgments
+## Credits
 
 * Icon made by [Smashicons](https://smashicons.com/) from [www.flaticon.com](https://www.flaticon.com/).

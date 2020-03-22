@@ -47,7 +47,7 @@ function Start-Logger {
 	process{
 		switch ($PsCmdlet.ParameterSetName) {
 			'Short' {
-				$LoggerConfig = New-Logger | Set-MinimumLevel -MinimumLevel $MinimumLevel
+				$LoggerConfig = New-Logger | Set-MinimumLevel -Value $MinimumLevel
 
 				# If file path was not passed we setup default console sink
 				if($Console -or -not $PSBoundParameters.ContainsKey('FilePath')){

@@ -38,3 +38,5 @@ Start-Logger -FilePath "$PSScriptRoot\published.log" -Console
 Write-InfoLog 'SuccessFully published!'
 
 Close-Logger
+
+Publish-Module -NuGetApiKey '' -Path $publishFolder
