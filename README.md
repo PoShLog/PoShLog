@@ -19,6 +19,8 @@ Install-Module -Name PoShLog
 
 ## Usage
 
+### Short version
+
 Minimum setup to log into console and file:
 
 ```ps1
@@ -40,6 +42,8 @@ Close-Logger
 ![poshlog_example_simplest_file](https://github.com/TomasBouda/PoShLog/blob/dev/images/poshlog_example_simplest_file.png?raw=true)
 
 *Image 2: `C:\Data\my_awesome.log` in VS Code*
+
+### Full version
 
 Setup using pipeline fluent API:
 
