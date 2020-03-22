@@ -12,7 +12,7 @@
 RootModule = 'PoShLog.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.1'
+ModuleVersion = '2.0.0'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Desktop', 'Core'
@@ -30,7 +30,11 @@ CompanyName = 'Tomas Bouda'
 Copyright = '(c) 2019 Tomas Bouda. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'PoShLog is powershell logging module. It is wrapper of great C# logging library Serilog - https://serilog.net/'
+Description = 'PoShLog is powershell logging module. 
+PoShLog allows you to log structured event data into **console**, **file** and even more places easily.
+It is wrapper of great C# logging library [Serilog](https://serilog.net/).
+
+For documentation check PoShLog [wiki](https://github.com/TomasBouda/PoShLog/wiki)'
 
 # Minimum version of the PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -95,7 +99,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Log','Logging','Serilog','File','filelog','logfile','Error-Log','Serilog-Sink','serilog-for-powershell','wrapper','sinks','PSEdition_Desktop','PSEdition_Core','Windows'
+        Tags = 'Log','Logging','Serilog','File','filelog','logfile','error-log','console','event','serilog-sink','serilog-for-powershell','wrapper','sinks','PSEdition_Desktop','PSEdition_Core','Windows','Linux','MacOS'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/TomasBouda/PoShLog/blob/master/LICENSE'
@@ -110,7 +114,7 @@ PrivateData = @{
         ReleaseNotes = 'Refactored / ps core support - removed nuget initialization, all packages(.net standard) are now included'
 
         # Prerelease string of this module
-        Prerelease = 'preview1'
+        Prerelease = 'preview2'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         # RequireLicenseAcceptance = $false
