@@ -1,7 +1,6 @@
 .vs
 .vscode
 bin
-images
 obj
 tests
 PoShLogLibs

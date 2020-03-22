@@ -3,21 +3,11 @@
 >Serilog for powershell
 
 PoShLog is powershell logging module. It is wrapper of great C# logging library [Serilog](https://serilog.net/).
-It allows you to log structured event data into **console**, **file** and even more places easily.
+PoShLog allows you to log structured event data into **console**, **file** and even more places easily.
 
 ## Getting started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-
-## Prerequisites
-
-Altough PoShLog runs on TODO version of powershell I recommend you to install latest version.
-You can do that simply by running(Assuming you have [.NET Core SDK](https://dotnet.microsoft.com/download) installed):
-
-```ps1
-dotnet tool install --global powershell
-pwsh
-```
+If you are familiar with PowerShell, skip to [Installation](#installation) section. For more detailed installation instructions check out [Getting started](https://github.com/TomasBouda/PoShLog/wiki/Getting-started) wiki.
 
 ### Installation
 
@@ -43,6 +33,8 @@ Write-InfoLog 'Hurrray, my first log message!'
 Close-Logger
 ```
 
+![poshlog_example_simplest_console](https://github.com/TomasBouda/PoShLog/blob/dev/images/poshlog_example_simplest_console.png?raw=true)
+
 Setup using pipeline fluent API:
 
 ```ps1
@@ -61,14 +53,20 @@ Write-InfoLog 'Test info message'
 Write-WarningLog 'Test warning message'
 
 # Example of formatted output
-Write-ErrorLog -MessageTemplate 'Test Error message with properties {first}, {second}' -PropertyValues 'test1', 123
+$position = @{
+    Latitude = 25
+    Longitude = 134
+}
+$elapsedMs = 34
+
+Write-InfoLog 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
 
 Close-Logger
 ```
 
 ### Documentation
 
-These examples are just the top of iceberg. For more detailed documentation please check [wiki](https://github.com/TomasBouda/PoShLog/wiki).
+These examples are just to get you started fast. For more detailed documentation please check [wiki](https://github.com/TomasBouda/PoShLog/wiki).
 
 ## Contributing
 
@@ -80,4 +78,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/TomasBouda/PoShLog/blob/master/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/TomasBouda/PoShLog/blob/master/LICENSE) file for details.
