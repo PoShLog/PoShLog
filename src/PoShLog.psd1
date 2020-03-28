@@ -37,7 +37,7 @@ It is wrapper of great C# logging library Serilog - https://serilog.net/.
 For documentation check PoShLog wiki - https://github.com/TomasBouda/PoShLog/wiki'
 
 # Minimum version of the PowerShell engine required by this module
-PowerShellVersion = '3.0'
+PowerShellVersion = '5.1'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
