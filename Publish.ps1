@@ -1,42 +1,20 @@
-# Simple script for publishing PoShlog Module
-param(
-	[Parameter(Mandatory = $true)]
-	[Version]$TargetVersion
-)
+$ModuleName = 'PoShLog'
+$publishFolder = "$PSScriptRoot\publish\$ModuleName\"
 
-$srcFolder = "$PSScriptRoot\src"
-$libFolder = "$PSScriptRoot\src\lib"
-$publishFolder = "$PSScriptRoot\publish\PoShLog\"
-$excludedItems = Get-Content "$PSScriptRoot\.publishExclude"
+#region PoShLog Core
 
-& "$PSScriptRoot\Build.ps1"
+& "$PSScriptRoot\Publish-PoShLogModule.ps1" -ModuleDirectory "$PSScriptRoot\src" -ModuleName $ModuleName -TargetVersion 2.0.0
 
-# Update module version
-Update-ModuleManifest "$srcFolder\PoShLog.psd1" -ModuleVersion $TargetVersion
-
-# Create clean publish folder
-if (Test-Path $publishFolder) {
-	Remove-Item $publishFolder -Recurse -Force
-}
-New-Item -Path $publishFolder -ItemType Directory -Force | Out-Null
-
-# Remove unecessary files
-Get-ChildItem $libFolder | Where-Object { $_.Name -like '*PoShLogLibs*' } | Remove-Item -Force
-
-# Filter module files and move them to publish folder
-Get-ChildItem $srcfolder | Where-Object { $excludedItems -notcontains $_.Name } | Select-Object -ExpandProperty FullName | Copy-Item -Destination $publishFolder -Recurse -Force
-
-# Add readme to published modules
+# Add readme for published module
 Copy-Item "$PSScriptRoot\README.md" -Destination $publishFolder
 
-# Test module
-Import-Module $publishFolder
-Get-Module -Name PoShLog
+#endregion PoShLog Core
 
-Start-Logger -FilePath "$PSScriptRoot\published.log" -Console
+#region Extensions
 
-Write-InfoLog 'SuccessFully published!'
+& "$PSScriptRoot\Publish-PoShLogModule.ps1" -ModuleDirectory "$PSScriptRoot\..\PoShLog.Enrichers" -TargetVersion 1.0.0 -IsExtensionModule
+& "$PSScriptRoot\Publish-PoShLogModule.ps1" -ModuleDirectory "$PSScriptRoot\..\PoShLog.Sinks.Exceptionless" -TargetVersion 1.0.0 -IsExtensionModule
 
-Close-Logger
+#endregion Extensions
 
-Publish-Module -NuGetApiKey '' -Path $publishFolder
+## TODO Run tests

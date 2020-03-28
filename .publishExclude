@@ -1,9 +1,9 @@
 .vs
 .vscode
+.git
+.gitignore
+.gitattributes
 bin
 obj
 tests
-PoShLogLibs
-PoShLog.pssproj
-PoShLog.sln
-PoShLog.tests.ps1
+Dependencies.csproj
