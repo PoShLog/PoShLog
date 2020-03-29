@@ -114,7 +114,7 @@ PrivateData = @{
         ReleaseNotes = 'Refactored / ps core support - removed nuget initialization, all packages(.net standard) are now included'
 
         # Prerelease string of this module
-        Prerelease = 'preview2'
+        # Prerelease = 'preview2'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         # RequireLicenseAcceptance = $false
