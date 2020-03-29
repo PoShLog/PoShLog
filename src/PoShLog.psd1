@@ -108,10 +108,10 @@ PrivateData = @{
         ProjectUri = 'https://github.com/TomasBouda/PoShLog'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://raw.githubusercontent.com/TomasBouda/PoShLog/dev/images/icons/poshlog-icon-256.png'
+        IconUri = 'https://raw.githubusercontent.com/TomasBouda/PoShLog/master/images/icons/poshlog-icon-256.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Refactored / ps core support - removed nuget initialization, all packages(.net standard) are now included'
+        ReleaseNotes = 'Refactored / PS Core support - removed nuget initialization, all packages(.net standard) are now included'
 
         # Prerelease string of this module
         # Prerelease = ''
