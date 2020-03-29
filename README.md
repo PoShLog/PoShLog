@@ -1,124 +1,101 @@
-# PoShLog [![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/)
+# PoShLog 
+
+[![icon](https://github.com/PoShLog/PoShLog/blob/dev/images/icons/poshlog-icon-64.png?raw=true)](https://github.com/PoShLog/PoShLog)
+
+[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![PowerShell Gallery](https://img.shields.io/powershellgallery/p/poshlog?color=blue)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/T7EAXS)
 
 >Serilog for powershell
 
-PoShLog is powershell logging module. It is wrapper of great C# logging library Serilog - https://serilog.net/
+PoShLog is powershell multiplatform logging module. PoShLog allows you to log structured event data into **console**, **file** and much more [places](https://github.com/PoShLog/PoShLog/wiki/Sinks) easily.
+It's built upon great C# logging library [Serilog](https://serilog.net/).
 
-## Installation
+## Getting started
+
+If you are familiar with PowerShell, skip to [Installation](#installation) section. For more detailed installation instructions check out [Getting started](https://github.com/PoShLog/PoShLog/wiki/Getting-started) wiki.
+
+### Installation
+
+To install PoShLog, run following snippet from powershell:
 
 ```ps1
-PS> Install-Module -Name PoShLog
+Install-Module -Name PoShLog
 ```
 
 ## Usage
+
+### Short version
 
 Minimum setup to log into console and file:
 
 ```ps1
 Import-Module PoShLog
 
-New-Logger |
-	Add-SinkFile -Path "C:\Logs\test-.txt" |
-	Add-SinkConsole | 
-	Start-Logger
+# Create and start new logger
+Start-Logger -FilePath 'C:\Data\my_awesome.log' -Console
 
-# Test all debug levels
-Write-VerboseLog "test verbose"
-Write-DebugLog -MessageTemplate "test debug"
-Write-InfoLog "test info"
-Write-WarningLog "test warning"
-Write-ErrorLog -MessageTemplate "test fatal {asd}, {num}" -PropertyValues "test1", 123
+Write-InfoLog 'Hurrray, my first log message!'
+
+# Don't forget to close the logger
+Close-Logger
 ```
-___
-Advanced settings, with level switch, environment and exception info, logging into exceptionless.io, file and console with custom output template:
+
+![poshlog_example_simplest_console](images/poshlog_example_simplest_console.png)
+
+*Image 1: Windows Terminal*
+
+![poshlog_example_simplest_file](images/poshlog_example_simplest_file.png)
+
+*Image 2: `C:\Data\my_awesome.log` in VS Code*
+
+### Full version
+
+Setup using pipeline fluent API:
 
 ```ps1
 Import-Module PoShLog
 
-# Level switch allows you to switch minimum logging level
-$levelSwitch = Get-LevelSwitch -MinimumLevel Verbose
-
+# Create new logger
 New-Logger |
-	Set-MinimumLevel -ControlledBy $levelSwitch |
-	Add-EnrichWithEnvironment |
-	Add-EnrichWithExceptionDetails |
-	Add-SinkExceptionless -ApiKey "YOUR API KEY" |
-	Add-SinkFile -Path "C:\Logs\test-.txt" -RollingInterval Hour -OutputTemplate '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception} {Properties:j}{NewLine}' |
-	Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}" -RestrictedToMinimumLevel Verbose | 
-	Start-Logger
+    Add-SinkFile -Path 'C:\Data\my_awesome.log' |
+    Add-SinkConsole |
+    Start-Logger
 
-# Test all debug levels
-Write-VerboseLog "test verbose"
-Write-DebugLog -MessageTemplate "test debug"
-Write-InfoLog "test info"
-Write-WarningLog "test warning"
-Write-ErrorLog -MessageTemplate "test fatal {asd}, {num}, {@levelSwitch}" -PropertyValues "test1", 123, $levelSwitch
+# Test all log levels
+Write-VerboseLog 'Test verbose message'
+Write-DebugLog 'Test debug message'
+Write-InfoLog 'Test info message'
+Write-WarningLog 'Test warning message'
+Write-ErrorLog 'Test error message'
+Write-FatalLog 'Test fatal message'
 
-try {
-	throw [System.Exception]::new('Some random exception')
+# Example of formatted output
+$position = @{
+    Latitude = 25
+    Longitude = 134
 }
-catch {
-	Write-FatalLog -Exception $_.Exception -MessageTemplate 'Chyba'
-}
+$elapsedMs = 34
+
+Write-InfoLog 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
 
 Close-Logger
 ```
 
-**Code above results in:**
+### Documentation
 
-Console:
-<img src="https://github.com/TomasBouda/PoShLog/blob/master/images/PoShLog_example.png">
+These examples are just to get you started fast. For more detailed documentation please check [wiki](https://github.com/PoShLog/PoShLog/wiki).
 
-File *(C:\Logs\test-2019080511.txt)*:
-```log
-2019-08-05 11:03:29.256 +02:00 [VRB] test verbose
- {"EnvironmentUserName":"DESKTOP-asd\\email"}
-2019-08-05 11:03:29.443 +02:00 [DBG] test debug
- {"EnvironmentUserName":"DESKTOP-asd\\email"}
-2019-08-05 11:03:29.450 +02:00 [INF] test info
- {"EnvironmentUserName":"DESKTOP-asd\\email"}
-2019-08-05 11:03:29.456 +02:00 [WRN] test warning
- {"EnvironmentUserName":"DESKTOP-asd\\email"}
-2019-08-05 11:03:29.470 +02:00 [ERR] test fatal test1, 123, {"MinimumLevel":"Verbose","$type":"LoggingLevelSwitch"}
- {"EnvironmentUserName":"DESKTOP-asd\\email"}
-2019-08-05 11:03:29.573 +02:00 [FTL] Chyba
-System.Exception: Some random exception
- {"EnvironmentUserName":"DESKTOP-asd\\email","ExceptionDetail":{"Type":"System.Exception","HResult":-2146233088,"Message":"Some random exception","Source":null}}
- ```
-*(it also logs into [exceptionless.io](https://be.exceptionless.io))*
+## Contributing
 
-## Commands
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-`New-Logger` - Creates new instance of *[Serilog.LoggerConfiguration]*.
+## Authors
 
-`Set-MinimumLevel` - Sets minimum log level which will be logged. More info [here](https://github.com/serilog/serilog/wiki/Writing-Log-Events)
+* [**Tomáš Bouda**](http://tomasbouda.cz/)
 
-`Start-Logger` - Creates a logger using the configured sinks, enrichers and minimum level.
+## License
 
-`Close-Logger` - Resets Logger to the default and disposes the original if possible.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Skinks
+## Credits
 
-Sinks are used to record log events to some external representation. More info [here](https://github.com/serilog/serilog/wiki/Configuration-Basics). All available sinks - https://github.com/serilog/serilog/wiki/Provided-Sinks
-
-`Add-SinkConsole` - Adds logging sink to log into console host. More info [here](https://github.com/serilog/serilog-sinks-console)
-
-`Add-SinkFile` - Adds logging sink to log into file. More info [here](https://github.com/serilog/serilog-sinks-file)
-
-`Add-SinkExceptionless` - Adds logging sink to log into exceptionless cloud. More info [here](https://github.com/serilog/serilog-sinks-exceptionless) and [here](https://exceptionless.com/)
-
-### Enrichment
-
-Log events can be enriched with various properties. These enrichers can be added trough nuget package(`Install-PoShLogExtension`). More info [here](https://github.com/serilog/serilog/wiki/Enrichment)
-
-`Add-EnrichWithEnvironment` - Adds `{MachineName}` and `{EnvironmentUserName}` variables which can be used in **OutputTemplate** 
-e.g. 
-```
-Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
-```
-
-`Add-EnrichWithProcessId` - Adds `{ProcessId}` variables which can be used in **OutputTemplate**
-
-`Add-EnrichWithProcessName` - Adds `{ProcessName}` variables which can be used in **OutputTemplate**
-
-`Add-EnrichWithExceptionDetails` - Adds exception details into log. Note that you must add {Properties:j} to **OutputTemplate**. More info [here](https://github.com/RehanSaeed/Serilog.Exceptions)
+* Icon made by [Smashicons](https://smashicons.com/) from [www.flaticon.com](https://www.flaticon.com/).

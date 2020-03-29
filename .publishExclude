@@ -1,0 +1,9 @@
+.vs
+.vscode
+.git
+.gitignore
+.gitattributes
+bin
+obj
+tests
+Dependencies.csproj
