@@ -82,7 +82,7 @@ Close-Logger
 
 ### Documentation
 
-These examples are just to get you started fast. For more detailed documentation please check [wiki](wiki).
+These examples are just to get you started fast. For more detailed documentation please check [wiki](https://github.com/TomasBouda/PoShLog/wiki).
 
 ## Contributing
 
