@@ -43,31 +43,35 @@ function Write-WarningLog {
 
 	switch ($PsCmdlet.ParameterSetName) {
 		'MessageTemplate' {
-			[Serilog.Log]::Logger.Warning($MessageTemplate)
-
 			if (-not (Test-Logger)) {
 				Write-WarningEx -MessageTemplate $MessageTemplate
 			}
+			else{
+				[Serilog.Log]::Logger.Warning($MessageTemplate)
+			}
 		}
 		'MessageTemplateWithProperties' {
-			[Serilog.Log]::Logger.Warning($MessageTemplate, $PropertyValues)
-
 			if (-not (Test-Logger)) {
 				Write-WarningEx -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 			}
+			else{
+				[Serilog.Log]::Logger.Warning($MessageTemplate, $PropertyValues)
+			}
 		}
 		'Exception' {
-			[Serilog.Log]::Logger.Warning($Exception, $MessageTemplate)
-
 			if (-not (Test-Logger)) {
 				Write-WarningEx -MessageTemplate "$MessageTemplate `n $Exception"
 			}
+			else{
+				[Serilog.Log]::Logger.Warning($Exception, $MessageTemplate)
+			}
 		}
 		'ExceptionWithProperties' {
-			[Serilog.Log]::Logger.Warning($Exception, $MessageTemplate, $PropertyValues)
-
 			if (-not (Test-Logger)) {
 				Write-WarningEx -MessageTemplate "$MessageTemplate `n $Exception" -PropertyValues $PropertyValues
+			}
+			else{
+				[Serilog.Log]::Logger.Warning($Exception, $MessageTemplate, $PropertyValues)
 			}
 		}
 	}

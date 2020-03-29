@@ -1,4 +1,3 @@
-[string] $Global:packagesPath = "$PSScriptRoot\lib"
 [bool] $Global:loggerNotInitWarned = $false	# Indicates wether warning about logger is not initialized was shown
 
 # dot source all script files
@@ -6,13 +5,13 @@ Get-ChildItem -Path "$PSScriptRoot\functions" -Recurse -File -Filter '*.ps1' | F
 	. $_.FullName
 
 	# Export all functions except internal
-	if ($_.FullName -notcontains 'internal') {
+	if ($_.FullName -notlike '*\internal\*') {
 		Export-ModuleMember $_.BaseName
 	}
 }
 
 # Load all package dlls
-Add-PackageTypes
+Add-PackageTypes -LibsDirectory "$PSScriptRoot\lib"
 
 # Remove package directory from previous version
 [string] $obsoletePackagesPath = "$env:APPDATA\PoShLog\packages"

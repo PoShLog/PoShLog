@@ -43,31 +43,35 @@ function Write-VerboseLog {
 
 	switch ($PsCmdlet.ParameterSetName) {
 		'MessageTemplate' {
-			[Serilog.Log]::Logger.Verbose($MessageTemplate)
-
 			if (-not (Test-Logger)) {
 				Write-VerboseEx -MessageTemplate $MessageTemplate
 			}
+			else{
+				[Serilog.Log]::Logger.Verbose($MessageTemplate)
+			}
 		}
 		'MessageTemplateWithProperties' {
-			[Serilog.Log]::Logger.Verbose($MessageTemplate, $PropertyValues)
-
 			if (-not (Test-Logger)) {
 				Write-VerboseEx -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 			}
+			else {
+				[Serilog.Log]::Logger.Verbose($MessageTemplate, $PropertyValues)
+			}
 		}
 		'Exception' {
-			[Serilog.Log]::Logger.Verbose($Exception, $MessageTemplate)
-
 			if (-not (Test-Logger)) {
 				Write-VerboseEx -MessageTemplate "$MessageTemplate `n $Exception"
 			}
+			else{
+				[Serilog.Log]::Logger.Verbose($Exception, $MessageTemplate)
+			}
 		}
 		'ExceptionWithProperties' {
-			[Serilog.Log]::Logger.Verbose($Exception, $MessageTemplate, $PropertyValues)
-
 			if (-not (Test-Logger)) {
 				Write-VerboseEx -MessageTemplate "$MessageTemplate `n $Exception" -PropertyValues $PropertyValues
+			}
+			else{
+				[Serilog.Log]::Logger.Verbose($Exception, $MessageTemplate, $PropertyValues)
 			}
 		}
 	}

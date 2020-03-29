@@ -43,31 +43,35 @@ function Write-FatalLog {
 
 	switch ($PsCmdlet.ParameterSetName){
 		'MessageTemplate'{
-			[Serilog.Log]::Logger.Fatal($MessageTemplate)
-
 			if(-not (Test-Logger)){
 				Write-Error -Message $MessageTemplate
 			}
+			else{
+				[Serilog.Log]::Logger.Fatal($MessageTemplate)
+			}
 		}
 		'MessageTemplateWithProperties'{
-			[Serilog.Log]::Logger.Fatal($MessageTemplate, $PropertyValues)
-
 			if(-not (Test-Logger)){
 				Write-Error -Message (Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues)
 			}
+			else{
+				[Serilog.Log]::Logger.Fatal($MessageTemplate, $PropertyValues)
+			}
 		}
 		'Exception'{
-			[Serilog.Log]::Logger.Fatal($Exception, $MessageTemplate)
-
 			if(-not (Test-Logger)){
 				Write-Error -Exception $Exception -Message $MessageTemplate
 			}
+			else{
+				[Serilog.Log]::Logger.Fatal($Exception, $MessageTemplate)
+			}
 		}
 		'ExceptionWithProperties'{
-			[Serilog.Log]::Logger.Fatal($Exception, $MessageTemplate, $PropertyValues)
-
 			if(-not (Test-Logger)){
 				Write-Error -Exception $Exception -Message (Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues)
+			}
+			else{
+				[Serilog.Log]::Logger.Fatal($Exception, $MessageTemplate, $PropertyValues)
 			}
 		}
 	}

@@ -43,31 +43,35 @@ function Write-ErrorLog {
 
 	switch ($PsCmdlet.ParameterSetName) {
 		'MessageTemplate' {
-			[Serilog.Log]::Logger.Error($MessageTemplate)
-
 			if (-not (Test-Logger)) {
 				Write-Error -Message $MessageTemplate
 			}
+			else{
+				[Serilog.Log]::Logger.Error($MessageTemplate)
+			}
 		}
 		'MessageTemplateWithProperties' {
-			[Serilog.Log]::Logger.Error($MessageTemplate, $PropertyValues)
-
 			if (-not (Test-Logger)) {
 				Write-Error -Message (Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues)
 			}
+			else{
+				[Serilog.Log]::Logger.Error($MessageTemplate, $PropertyValues)
+			}
 		}
 		'Exception' {
-			[Serilog.Log]::Logger.Error($Exception, $MessageTemplate)
-
 			if (-not (Test-Logger)) {
 				Write-Error -Exception $Exception -Message $MessageTemplate
 			}
+			else{
+				[Serilog.Log]::Logger.Error($Exception, $MessageTemplate)
+			}
 		}
 		'ExceptionWithProperties' {
-			[Serilog.Log]::Logger.Error($Exception, $MessageTemplate, $PropertyValues)
-
 			if (-not (Test-Logger)) {
 				Write-Error -Exception $Exception -Message (Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues)
+			}
+			else{
+				[Serilog.Log]::Logger.Error($Exception, $MessageTemplate, $PropertyValues)
 			}
 		}
 	}
