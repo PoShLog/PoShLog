@@ -6,6 +6,8 @@ function Add-SinkFile {
 		Write log events to the specified file
 	.PARAMETER LoggerConfig
 		Instance of LoggerConfiguration
+	.PARAMETER Path
+		Path to the file.
 	.PARAMETER RestrictedToMinimumLevel
 		The minimum level for events passed through the sink. Ignored when LevelSwitch is specified.
 	.PARAMETER OutputTemplate

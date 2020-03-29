@@ -34,7 +34,7 @@ Description = 'PoShLog is powershell logging module.
 PoShLog allows you to log structured event data into console, file and much more places easily.
 It is wrapper of great C# logging library Serilog - https://serilog.net/.
 
-For documentation check PoShLog wiki - https://github.com/TomasBouda/PoShLog/wiki'
+For documentation check PoShLog wiki - https://github.com/PoShLog/PoShLog/wiki'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '5.1'
