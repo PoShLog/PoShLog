@@ -80,6 +80,10 @@ Write-InfoLog 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $posi
 Close-Logger
 ```
 
+### Extendability
+
+PoShLog is extensible just like Serilog. All available extensions can be found [here](https://github.com/PoShLog/PoShLog/wiki/Extension-modules).
+
 ### Documentation
 
 These examples are just to get you started fast. For more detailed documentation please check [wiki](https://github.com/PoShLog/PoShLog/wiki).
