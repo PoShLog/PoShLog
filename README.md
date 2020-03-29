@@ -2,7 +2,7 @@
 
 [![icon](https://github.com/TomasBouda/PoShLog/blob/dev/images/icons/poshlog-icon-64.png?raw=true)](https://github.com/TomasBouda/PoShLog)
 
-[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![PowerShell Gallery](https://img.shields.io/powershellgallery/p/poshlog?color=blue)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Gitter](https://img.shields.io/gitter/room/TomLabsX/PoShLog?color=orange)](https://gitter.im/TomLabsX/PoShLog?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![PowerShell Gallery](https://img.shields.io/powershellgallery/p/poshlog?color=blue)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/T7EAXS)
 
 >Serilog for powershell
 
@@ -82,7 +82,7 @@ Close-Logger
 
 ### Documentation
 
-These examples are just to get you started fast. For more detailed documentation please check [wiki](https://github.com/TomasBouda/PoShLog/wiki).
+These examples are just to get you started fast. For more detailed documentation please check [wiki](wiki).
 
 ## Contributing
 
