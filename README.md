@@ -1,21 +1,21 @@
 # PoShLog 
 
-[![icon](https://github.com/TomasBouda/PoShLog/blob/dev/images/icons/poshlog-icon-64.png?raw=true)](https://github.com/TomasBouda/PoShLog)
+[![icon](https://github.com/PoShLog/PoShLog/blob/dev/images/icons/poshlog-icon-64.png?raw=true)](https://github.com/PoShLog/PoShLog)
 
 [![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![PowerShell Gallery](https://img.shields.io/powershellgallery/p/poshlog?color=blue)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/T7EAXS)
 
 >Serilog for powershell
 
-PoShLog is powershell multiplatform logging module. PoShLog allows you to log structured event data into **console**, **file** and much more places easily.
+PoShLog is powershell multiplatform logging module. PoShLog allows you to log structured event data into **console**, **file** and much more [places](https://github.com/PoShLog/PoShLog/wiki/Sinks) easily.
 It's built upon great C# logging library [Serilog](https://serilog.net/).
 
 ## Getting started
 
-If you are familiar with PowerShell, skip to [Installation](#installation) section. For more detailed installation instructions check out [Getting started](https://github.com/TomasBouda/PoShLog/wiki/Getting-started) wiki.
+If you are familiar with PowerShell, skip to [Installation](#installation) section. For more detailed installation instructions check out [Getting started](https://github.com/PoShLog/PoShLog/wiki/Getting-started) wiki.
 
 ### Installation
 
-To install PoShLog, run following snippet from powershel:
+To install PoShLog, run following snippet from powershell:
 
 ```ps1
 Install-Module -Name PoShLog
@@ -39,11 +39,11 @@ Write-InfoLog 'Hurrray, my first log message!'
 Close-Logger
 ```
 
-![poshlog_example_simplest_console](https://github.com/TomasBouda/PoShLog/blob/dev/images/poshlog_example_simplest_console.png?raw=true)
+![poshlog_example_simplest_console](images/poshlog_example_simplest_console.png)
 
 *Image 1: Windows Terminal*
 
-![poshlog_example_simplest_file](https://github.com/TomasBouda/PoShLog/blob/dev/images/poshlog_example_simplest_file.png?raw=true)
+![poshlog_example_simplest_file](https://github.com/PoShLog/PoShLog/blob/dev/images/poshlog_example_simplest_file.png?raw=true)
 
 *Image 2: `C:\Data\my_awesome.log` in VS Code*
 
@@ -82,7 +82,7 @@ Close-Logger
 
 ### Documentation
 
-These examples are just to get you started fast. For more detailed documentation please check [wiki](https://github.com/TomasBouda/PoShLog/wiki).
+These examples are just to get you started fast. For more detailed documentation please check [wiki](https://github.com/PoShLog/PoShLog/wiki).
 
 ## Contributing
 
@@ -94,7 +94,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/TomasBouda/PoShLog/blob/master/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/PoShLog/PoShLog/blob/master/LICENSE) file for details.
 
 ## Credits
 
