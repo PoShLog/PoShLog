@@ -43,7 +43,7 @@ Close-Logger
 
 *Image 1: Windows Terminal*
 
-![poshlog_example_simplest_file](https://github.com/PoShLog/PoShLog/blob/dev/images/poshlog_example_simplest_file.png?raw=true)
+![poshlog_example_simplest_file](images/poshlog_example_simplest_file.png)
 
 *Image 2: `C:\Data\my_awesome.log` in VS Code*
 
@@ -94,7 +94,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/PoShLog/PoShLog/blob/master/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
