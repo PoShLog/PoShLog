@@ -92,6 +92,11 @@ These examples are just to get you started fast. For more detailed documentation
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
+### Show your support
+
+* :star: [Star the PoShLog repository](https://github.com/PoShLog/PoShLog)
+* :thumbsup: Give me some feedback on [discord](https://discord.gg/T7EAXS)
+
 ## Authors
 
 * [**Tomáš Bouda**](http://tomasbouda.cz/)
@@ -102,4 +107,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Credits
 
+* Serilog - [serilog.net](https://serilog.net/)
 * Icon made by [Smashicons](https://smashicons.com/) from [www.flaticon.com](https://www.flaticon.com/).
