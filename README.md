@@ -2,7 +2,7 @@
 
 [![icon](https://github.com/PoShLog/PoShLog/blob/master/images/icons/poshlog-icon-64.png?raw=true)](https://github.com/PoShLog/PoShLog)
 
-[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![PowerShell Gallery](https://img.shields.io/powershellgallery/p/poshlog?color=blue)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/T7EAXS)
+[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![PowerShell Gallery](https://img.shields.io/powershellgallery/p/poshlog?color=blue)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/FVdVxuw)
 
 >Serilog for powershell
 
@@ -95,7 +95,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ### Show your support
 
 * :star: [Star the PoShLog repository](https://github.com/PoShLog/PoShLog)
-* :thumbsup: Give me some feedback on [discord](https://discord.gg/T7EAXS)
+* :thumbsup: Give me some feedback on [discord](https://discord.gg/FVdVxuw)
 
 ## Authors
 
