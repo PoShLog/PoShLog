@@ -3,7 +3,7 @@ $publishFolder = "$PSScriptRoot\publish\$ModuleName\"
 
 #region PoShLog Core
 
-& "$PSScriptRoot\Publish-PoShLogModule.ps1" -ModuleDirectory "$PSScriptRoot\src" -ModuleName $ModuleName -TargetVersion 2.0.0
+& "$PSScriptRoot\Publish-PoShLogModule.ps1" -ModuleDirectory "$PSScriptRoot\src" -ModuleName $ModuleName -TargetVersion 2.1.0
 
 # Add readme for published module
 Copy-Item "$PSScriptRoot\README.md" -Destination $publishFolder

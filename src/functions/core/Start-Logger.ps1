@@ -14,6 +14,8 @@ function Start-Logger {
 		Setups File sink at given path. All messages will be written to given file path.
 	.PARAMETER FileRollingInterval
 		The interval at which logging will roll over to a new file.
+	.PARAMETER PassThru
+		Outputs instance of Serilog.Logger into pipeline
 	.INPUTS
 		Instance of LoggerConfiguration
 	.OUTPUTS
@@ -41,7 +43,10 @@ function Start-Logger {
 		[string]$FilePath,
 		
 		[Parameter(Mandatory = $false, ParameterSetName = 'Short')]
-		[Serilog.RollingInterval]$FileRollingInterval = [Serilog.RollingInterval]::Infinite
+		[Serilog.RollingInterval]$FileRollingInterval = [Serilog.RollingInterval]::Infinite,
+
+		[Parameter(Mandatory = $false)]
+		[switch]$PassThru
 	)
 
 	process{
@@ -60,6 +65,11 @@ function Start-Logger {
 			}
 		}
 	
-		[Serilog.Log]::Logger = $LoggerConfig.CreateLogger()
+		if($PassThru){
+			$LoggerConfig.CreateLogger()
+		}
+		else{
+			[Serilog.Log]::Logger = $LoggerConfig.CreateLogger()
+		}
 	}
 }

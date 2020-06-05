@@ -6,6 +6,8 @@ function Write-WarningLog {
 		Write a log event with the Warning level.
 	.PARAMETER MessageTemplate
 		Message template describing the event.
+	.PARAMETER Logger
+		Instance of Serilog.Logger. By default static property [Serilog.Log]::Logger is used.
 	.PARAMETER Exception
 		Exception related to the event.
 	.PARAMETER PropertyValues
@@ -30,48 +32,57 @@ function Write-WarningLog {
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'MessageTemplateWithProperties')]
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'Exception')]
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'ExceptionWithProperties')]
+		[AllowEmptyString()]
 		[string]$MessageTemplate,
+
+		[Parameter(Mandatory = $false)]
+		[Serilog.ILogger]$Logger = [Serilog.Log]::Logger,
+
 		[Parameter(Mandatory = $true, ParameterSetName = 'Exception')]
 		[Parameter(Mandatory = $true, ParameterSetName = 'ExceptionWithProperties')]
+		[AllowNull()]
 		[System.Exception]$Exception,
+
 		[Parameter(Mandatory = $true, ParameterSetName = 'ExceptionWithProperties')]
 		[Parameter(Mandatory = $true, ParameterSetName = 'MessageTemplateWithProperties')]
+		[AllowNull()]
 		[object[]]$PropertyValues,
+
 		[Parameter(Mandatory = $false)]
 		[switch]$PassThru
 	)
 
 	switch ($PsCmdlet.ParameterSetName) {
 		'MessageTemplate' {
-			if (-not (Test-Logger)) {
+			if (-not (Test-Logger $Logger)) {
 				Write-WarningEx -MessageTemplate $MessageTemplate
 			}
 			else{
-				[Serilog.Log]::Logger.Warning($MessageTemplate)
+				$Logger.Warning($MessageTemplate)
 			}
 		}
 		'MessageTemplateWithProperties' {
-			if (-not (Test-Logger)) {
+			if (-not (Test-Logger $Logger)) {
 				Write-WarningEx -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 			}
 			else{
-				[Serilog.Log]::Logger.Warning($MessageTemplate, $PropertyValues)
+				$Logger.Warning($MessageTemplate, $PropertyValues)
 			}
 		}
 		'Exception' {
-			if (-not (Test-Logger)) {
+			if (-not (Test-Logger $Logger)) {
 				Write-WarningEx -MessageTemplate "$MessageTemplate `n $Exception"
 			}
 			else{
-				[Serilog.Log]::Logger.Warning($Exception, $MessageTemplate)
+				$Logger.Warning($Exception, $MessageTemplate)
 			}
 		}
 		'ExceptionWithProperties' {
-			if (-not (Test-Logger)) {
+			if (-not (Test-Logger $Logger)) {
 				Write-WarningEx -MessageTemplate "$MessageTemplate `n $Exception" -PropertyValues $PropertyValues
 			}
 			else{
-				[Serilog.Log]::Logger.Warning($Exception, $MessageTemplate, $PropertyValues)
+				$Logger.Warning($Exception, $MessageTemplate, $PropertyValues)
 			}
 		}
 	}

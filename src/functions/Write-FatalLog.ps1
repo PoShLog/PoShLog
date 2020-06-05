@@ -6,6 +6,8 @@ function Write-FatalLog {
 		Write a log event with the Fatal level.
 	.PARAMETER MessageTemplate
 		Message template describing the event.
+	.PARAMETER Logger
+		Instance of Serilog.Logger. By default static property [Serilog.Log]::Logger is used.
 	.PARAMETER Exception
 		Exception related to the event.
 	.PARAMETER PropertyValues
@@ -30,48 +32,57 @@ function Write-FatalLog {
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'MessageTemplateWithProperties')]
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'Exception')]
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'ExceptionWithProperties')]
+		[AllowEmptyString()]
 		[string]$MessageTemplate,
+
+		[Parameter(Mandatory = $false)]
+		[Serilog.ILogger]$Logger = [Serilog.Log]::Logger,
+
 		[Parameter(Mandatory = $true, ParameterSetName = 'Exception')]
 		[Parameter(Mandatory = $true, ParameterSetName = 'ExceptionWithProperties')]
+		[AllowNull()]
 		[System.Exception]$Exception,
+
 		[Parameter(Mandatory = $true, ParameterSetName = 'ExceptionWithProperties')]
 		[Parameter(Mandatory = $true, ParameterSetName = 'MessageTemplateWithProperties')]
+		[AllowNull()]
 		[object[]]$PropertyValues,
+
 		[Parameter(Mandatory = $false)]
 		[switch]$PassThru
 	)
 
 	switch ($PsCmdlet.ParameterSetName){
 		'MessageTemplate'{
-			if(-not (Test-Logger)){
+			if(-not (Test-Logger $Logger)){
 				Write-Error -Message $MessageTemplate
 			}
 			else{
-				[Serilog.Log]::Logger.Fatal($MessageTemplate)
+				$Logger.Fatal($MessageTemplate)
 			}
 		}
 		'MessageTemplateWithProperties'{
-			if(-not (Test-Logger)){
+			if(-not (Test-Logger $Logger)){
 				Write-Error -Message (Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues)
 			}
 			else{
-				[Serilog.Log]::Logger.Fatal($MessageTemplate, $PropertyValues)
+				$Logger.Fatal($MessageTemplate, $PropertyValues)
 			}
 		}
 		'Exception'{
-			if(-not (Test-Logger)){
+			if(-not (Test-Logger $Logger)){
 				Write-Error -Exception $Exception -Message $MessageTemplate
 			}
 			else{
-				[Serilog.Log]::Logger.Fatal($Exception, $MessageTemplate)
+				$Logger.Fatal($Exception, $MessageTemplate)
 			}
 		}
 		'ExceptionWithProperties'{
-			if(-not (Test-Logger)){
+			if(-not (Test-Logger $Logger)){
 				Write-Error -Exception $Exception -Message (Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues)
 			}
 			else{
-				[Serilog.Log]::Logger.Fatal($Exception, $MessageTemplate, $PropertyValues)
+				$Logger.Fatal($Exception, $MessageTemplate, $PropertyValues)
 			}
 		}
 	}
