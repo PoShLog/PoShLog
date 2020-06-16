@@ -54,40 +54,23 @@ function Write-VerboseLog {
 
 	switch ($PsCmdlet.ParameterSetName) {
 		'MessageTemplate' {
-			if (-not (Test-Logger $Logger)) {
-				Write-VerboseEx -MessageTemplate $MessageTemplate
-			}
-			else{
-				$Logger.Verbose($MessageTemplate)
-			}
+			$Logger.Verbose($MessageTemplate)
 		}
 		'MessageTemplateWithProperties' {
-			if (-not (Test-Logger $Logger)) {
-				Write-VerboseEx -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
-			}
-			else {
-				$Logger.Verbose($MessageTemplate, $PropertyValues)
-			}
+			$Logger.Verbose($MessageTemplate, $PropertyValues)
 		}
 		'Exception' {
-			if (-not (Test-Logger $Logger)) {
-				Write-VerboseEx -MessageTemplate "$MessageTemplate `n $Exception"
-			}
-			else{
-				$Logger.Verbose($Exception, $MessageTemplate)
-			}
+			$Logger.Verbose($Exception, $MessageTemplate)
 		}
 		'ExceptionWithProperties' {
-			if (-not (Test-Logger $Logger)) {
-				Write-VerboseEx -MessageTemplate "$MessageTemplate `n $Exception" -PropertyValues $PropertyValues
-			}
-			else{
-				$Logger.Verbose($Exception, $MessageTemplate, $PropertyValues)
-			}
+			$Logger.Verbose($Exception, $MessageTemplate, $PropertyValues)
 		}
 	}
 
+	# Write log event into powershell sink if registered
+	Write-PowerShellSink -LogLevel Verbose -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
+
 	if ($PassThru) {
-		Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }

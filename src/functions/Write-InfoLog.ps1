@@ -54,40 +54,23 @@ function Write-InfoLog {
 
 	switch ($PsCmdlet.ParameterSetName) {
 		'MessageTemplate' {
-			if (-not (Test-Logger $Logger)) {
-				Write-HostEx -MessageTemplate $MessageTemplate
-			}
-			else{
-				$Logger.Information($MessageTemplate)
-			}
+			$Logger.Information($MessageTemplate)
 		}
 		'MessageTemplateWithProperties' {
-			if (-not (Test-Logger $Logger)) {
-				Write-HostEx -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
-			}
-			else{
-				$Logger.Information($MessageTemplate, $PropertyValues)
-			}
+			$Logger.Information($MessageTemplate, $PropertyValues)
 		}
 		'Exception' {
-			if (-not (Test-Logger $Logger)) {
-				Write-HostEx -MessageTemplate "$MessageTemplate `n $Exception"
-			}
-			else{
-				$Logger.Information($Exception, $MessageTemplate)
-			}
+			$Logger.Information($Exception, $MessageTemplate)
 		}
 		'ExceptionWithProperties' {
-			if (-not (Test-Logger $Logger)) {
-				Write-HostEx -MessageTemplate "$MessageTemplate `n $Exception" -PropertyValues $PropertyValues
-			}
-			else{
-				$Logger.Information($Exception, $MessageTemplate, $PropertyValues)
-			}
+			$Logger.Information($Exception, $MessageTemplate, $PropertyValues)
 		}
 	}
 
+	# Write log event into powershell sink if registered
+	Write-PowerShellSink -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
+
 	if ($PassThru) {
-		Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }

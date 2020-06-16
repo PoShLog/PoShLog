@@ -12,5 +12,9 @@ function New-Logger {
 		PS> New-Logger
 	#>
 
+	if(Get-Variable PowerShellSink -Scope Global -ErrorAction SilentlyContinue){
+		Clear-Variable PowerShellSink -Scope Global
+	}
+
 	New-Object Serilog.LoggerConfiguration
 }

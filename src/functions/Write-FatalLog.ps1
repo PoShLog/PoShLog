@@ -54,40 +54,23 @@ function Write-FatalLog {
 
 	switch ($PsCmdlet.ParameterSetName){
 		'MessageTemplate'{
-			if(-not (Test-Logger $Logger)){
-				Write-Error -Message $MessageTemplate
-			}
-			else{
-				$Logger.Fatal($MessageTemplate)
-			}
+			$Logger.Fatal($MessageTemplate)
 		}
 		'MessageTemplateWithProperties'{
-			if(-not (Test-Logger $Logger)){
-				Write-Error -Message (Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues)
-			}
-			else{
-				$Logger.Fatal($MessageTemplate, $PropertyValues)
-			}
+			$Logger.Fatal($MessageTemplate, $PropertyValues)
 		}
 		'Exception'{
-			if(-not (Test-Logger $Logger)){
-				Write-Error -Exception $Exception -Message $MessageTemplate
-			}
-			else{
-				$Logger.Fatal($Exception, $MessageTemplate)
-			}
+			$Logger.Fatal($Exception, $MessageTemplate)
 		}
 		'ExceptionWithProperties'{
-			if(-not (Test-Logger $Logger)){
-				Write-Error -Exception $Exception -Message (Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues)
-			}
-			else{
-				$Logger.Fatal($Exception, $MessageTemplate, $PropertyValues)
-			}
+			$Logger.Fatal($Exception, $MessageTemplate, $PropertyValues)
 		}
 	}
 
+	# Write log event into powershell sink if registered
+	Write-PowerShellSink -LogLevel Fatal -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
+
 	if($PassThru){
-		Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }

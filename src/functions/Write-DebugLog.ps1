@@ -54,40 +54,23 @@ function Write-DebugLog {
 
 	switch ($PsCmdlet.ParameterSetName) {
 		'MessageTemplate' {
-			if (-not (Test-Logger $Logger)) {
-				Write-DebugEx -MessageTemplate $MessageTemplate
-			}
-			else{
-				$Logger.Debug($MessageTemplate)
-			}
+			$Logger.Debug($MessageTemplate)
 		}
 		'MessageTemplateWithProperties' {
-			if (-not (Test-Logger $Logger)) {
-				Write-DebugEx -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
-			}
-			else{
-				$Logger.Debug($MessageTemplate, $PropertyValues)
-			}
+			$Logger.Debug($MessageTemplate, $PropertyValues)
 		}
 		'Exception' {
-			if (-not (Test-Logger $Logger)) {
-				Write-DebugEx -MessageTemplate "$MessageTemplate `n $Exception"
-			}
-			else{
-				$Logger.Debug($Exception, $MessageTemplate)
-			}
+			$Logger.Debug($Exception, $MessageTemplate)
 		}
 		'ExceptionWithProperties' {
-			if (-not (Test-Logger $Logger)) {
-				Write-DebugEx -MessageTemplate "$MessageTemplate `n $Exception" -PropertyValues $PropertyValues
-			}
-			else{
-				$Logger.Debug($Exception, $MessageTemplate, $PropertyValues)
-			}
+			$Logger.Debug($Exception, $MessageTemplate, $PropertyValues)
 		}
 	}
 
+	# Write log event into powershell sink if registered
+	Write-PowerShellSink -LogLevel Debug -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
+
 	if ($PassThru) {
-		Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }
