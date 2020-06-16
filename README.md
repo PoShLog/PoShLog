@@ -56,6 +56,7 @@ Import-Module PoShLog
 
 # Create new logger
 New-Logger |
+    Set-MinimumLevel -Value Verbose |
     Add-SinkFile -Path 'C:\Data\my_awesome.log' |
     Add-SinkConsole |
     Start-Logger
