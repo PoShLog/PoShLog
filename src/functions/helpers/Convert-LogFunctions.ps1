@@ -25,17 +25,17 @@ function Convert-LogFunctions {
 	$script = Get-Content $FilePath
 	$script | Foreach-Object {
 		$_ -replace 'Write-Verbose -Message', 'Write-VerboseLog -MessageTemplate' `
-		   -replace 'Write-Verbose', 'Write-VerboseLog' `
+		   -replace 'Write-Verbose ', 'Write-VerboseLog ' `
 		   -replace 'Write-Debug -Message', 'Write-DebugLog -MessageTemplate' `
-		   -replace 'Write-Debug', 'Write-Debug' `
+		   -replace 'Write-Debug ', 'Write-DebugLog ' `
 		   -replace 'Write-Information -Message', 'Write-InfoLog -MessageTemplate' `
-		   -replace 'Write-Information', 'Write-InfoLog' `
+		   -replace 'Write-Information ', 'Write-InfoLog ' `
 		   -replace 'Write-Host -Object', 'Write-InfoLog -MessageTemplate' `
-		   -replace 'Write-Host', 'Write-InfoLog' `
+		   -replace 'Write-Host ', 'Write-InfoLog ' `
 		   -replace 'Write-Warning -Message', 'Write-WarningLog -MessageTemplate' `
-		   -replace 'Write-Warning', 'Write-Warning' `
+		   -replace 'Write-Warning ', 'Write-WarningLog ' `
 		   -replace 'Write-Error -Message', 'Write-ErrorLog -MessageTemplate' `
-		   -replace 'Write-Error', 'Write-ErrorLog' `
+		   -replace 'Write-Error ', 'Write-ErrorLog ' `
 		} | Set-Content $FilePath
 
 	Write-Debug "$FilePath successfully converted"

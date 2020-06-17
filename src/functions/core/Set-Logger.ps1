@@ -5,7 +5,7 @@ function Set-Logger {
 	.DESCRIPTION
 		Sets given logger as static property that is globally available
 	.PARAMETER Logger
-		Instance of Serilog.Logger that will be availabel as static property
+		Instance of Serilog.Logger that will be available as static property
 	.INPUTS
 		Instance of Serilog.Logger
 	.OUTPUTS

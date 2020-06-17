@@ -48,47 +48,23 @@ function Set-MinimumLevel {
 				switch ($Value) {
 					Verbose { 
 						$LoggerConfig.MinimumLevel.Verbose()
-
-						if ($ToPreference) {
-							Set-Variable VerbosePreference -Value 'Continue' -Scope Global
-							Set-Variable DebugPreference -Value 'Continue' -Scope Global
-							Set-Variable InformationPreference -Value 'Continue' -Scope Global
-							Set-Variable WarningPreference -Value 'Continue' -Scope Global
-						}
 					}
 					Debug { 
 						$LoggerConfig.MinimumLevel.Debug()
-
-						if ($ToPreference) {
-							Set-Variable VerbosePreference -Value 'SilentlyContinue' -Scope Global
-							Set-Variable DebugPreference -Value 'Continue' -Scope Global
-							Set-Variable InformationPreference -Value 'Continue' -Scope Global
-							Set-Variable WarningPreference -Value 'Continue' -Scope Global
-						}
 					}
 					Information { 
 						$LoggerConfig.MinimumLevel.Information()
-
-						if ($ToPreference) {
-							Set-Variable VerbosePreference -Value 'SilentlyContinue' -Scope Global
-							Set-Variable DebugPreference -Value 'SilentlyContinue' -Scope Global
-							Set-Variable InformationPreference -Value 'Continue' -Scope Global
-							Set-Variable WarningPreference -Value 'Continue' -Scope Global
-						}
 					}
 					Warning { 
-						$LoggerConfig.MinimumLevel.Warning() 
-						
-						if ($ToPreference) {
-							Set-Variable VerbosePreference -Value 'SilentlyContinue' -Scope Global
-							Set-Variable DebugPreference -Value 'SilentlyContinue' -Scope Global
-							Set-Variable InformationPreference -Value 'SilentlyContinue' -Scope Global
-							Set-Variable WarningPreference -Value 'Continue' -Scope Global
-						}
+						$LoggerConfig.MinimumLevel.Warning()
 					}
 					Error { $LoggerConfig.MinimumLevel.Error() }
 					Fatal { $LoggerConfig.MinimumLevel.Fatal() }
 					Default { $LoggerConfig.MinimumLevel.Information() }
+				}
+
+				if($ToPreference){
+					Set-LogLevelToPreference -LogLevel $Value
 				}
 			}
 			'Switch' {
