@@ -71,6 +71,6 @@ function Write-InfoLog {
 	Write-PowerShellSink -Logger $Logger -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
 
 	if ($PassThru) {
-		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+		Get-FormattedMessage -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }

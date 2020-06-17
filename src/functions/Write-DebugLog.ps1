@@ -71,6 +71,6 @@ function Write-DebugLog {
 	Write-PowerShellSink -Logger $Logger -LogLevel Debug -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
 
 	if ($PassThru) {
-		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+		Get-FormattedMessage -LogLevel Debug -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }

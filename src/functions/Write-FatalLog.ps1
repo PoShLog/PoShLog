@@ -71,6 +71,6 @@ function Write-FatalLog {
 	Write-PowerShellSink -Logger $Logger -LogLevel Fatal -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
 
 	if($PassThru){
-		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+		Get-FormattedMessage -LogLevel Fatal -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }

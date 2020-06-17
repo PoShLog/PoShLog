@@ -71,6 +71,6 @@ function Write-ErrorLog {
 	Write-PowerShellSink -Logger $Logger -LogLevel Error -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
 
 	if ($PassThru) {
-		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+		Get-FormattedMessage -LogLevel Error -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }

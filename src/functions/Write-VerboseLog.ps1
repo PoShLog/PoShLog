@@ -71,6 +71,6 @@ function Write-VerboseLog {
 	Write-PowerShellSink -Logger $Logger -LogLevel Verbose -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
 
 	if ($PassThru) {
-		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+		Get-FormattedMessage -LogLevel Verbose -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }
