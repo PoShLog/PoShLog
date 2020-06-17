@@ -68,7 +68,7 @@ function Write-VerboseLog {
 	}
 
 	# Write log event into powershell sink if registered
-	Write-PowerShellSink -LogLevel Verbose -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
+	Write-PowerShellSink -Logger $Logger -LogLevel Verbose -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
 
 	if ($PassThru) {
 		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues

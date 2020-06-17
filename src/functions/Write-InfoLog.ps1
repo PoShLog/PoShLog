@@ -68,7 +68,7 @@ function Write-InfoLog {
 	}
 
 	# Write log event into powershell sink if registered
-	Write-PowerShellSink -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
+	Write-PowerShellSink -Logger $Logger -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
 
 	if ($PassThru) {
 		Get-FormattedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues

@@ -1,11 +1,11 @@
-function Add-EnrichFromLogContext{
+function Add-EnrichFromLogContext {
 	[Cmdletbinding()]
 	param(
-		[Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Serilog.LoggerConfiguration]$loggerConfig
 	)
 
-	process{
+	process {
 		$loggerConfig = [Serilog.Configuration.LoggerEnrichmentConfiguration]::FromLogContext($loggerConfig.Enrich)
 
 		$loggerConfig

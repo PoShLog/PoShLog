@@ -1,12 +1,19 @@
 class PowerShellSink {
+
 	[Serilog.Formatting.ITextFormatter]$TextFormatter
+
 	[ValidateNotNullOrEmpty()][string]$OutputTemplate
+
 	[Serilog.Core.Logger]$DefaultLoggerImpl = [Serilog.LoggerConfiguration]::new().CreateLogger()
 
+	[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose
+
 	PowerShellSink(
-		[string]$outputTemplate
+		[string]$outputTemplate,
+		[Serilog.Events.LogEventLevel]$restrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose
 	) {
 		$this.OutputTemplate = $outputTemplate
+		$this.RestrictedToMinimumLevel = $restrictedToMinimumLevel
 		$this.TextFormatter = [Serilog.Formatting.Display.MessageTemplateTextFormatter]::new($outputTemplate)
 	}
 }
@@ -36,11 +43,13 @@ function Add-SinkPowerShell {
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Serilog.LoggerConfiguration]$LoggerConfig,
 		[Parameter(Mandatory = $false)]
-		[string]$OutputTemplate = '{Message:lj}'
+		[string]$OutputTemplate = '{Message:lj}',
+		[Parameter(Mandatory = $false)]
+		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose
 	)
 
 	process {	
-		$global:PowerShellSink = [PowerShellSink]::new($OutputTemplate)
+		$global:PowerShellSink = [PowerShellSink]::new($OutputTemplate, $RestrictedToMinimumLevel)
 
 		$LoggerConfig
 	}
