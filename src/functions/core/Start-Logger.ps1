@@ -9,7 +9,7 @@ function Start-Logger {
 	.PARAMETER MinimumLevel
 		Configures the minimum level at which events will be passed to sinks. All messages with levels beneath this level will be ignored.
 	.PARAMETER Console
-		Setups console sink. All messages will be writen to console host.
+		Setups PowerShell console sink. All messages will be writen to powershell host.
 	.PARAMETER FilePath
 		Setups File sink at given path. All messages will be written to given file path.
 	.PARAMETER FileRollingInterval
@@ -61,7 +61,7 @@ function Start-Logger {
 
 				# If file path was not passed we setup default console sink
 				if($Console -or -not $PSBoundParameters.ContainsKey('FilePath')){
-					$LoggerConfig = $LoggerConfig | Add-SinkConsole
+					$LoggerConfig = $LoggerConfig | Add-SinkPowerShell
 				}
 
 				if($PSBoundParameters.ContainsKey('FilePath')){
