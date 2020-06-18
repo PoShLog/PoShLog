@@ -1,9 +1,9 @@
-function Write-DebugLog {
+function Write-InformationLog {
 	<#
 	.SYNOPSIS
-		Writes Debug log message
+		Writes Information log message
 	.DESCRIPTION
-		Write a log event with the Debug level.
+		Write a log event with the Information level.
 	.PARAMETER MessageTemplate
 		Message template describing the event.
 	.PARAMETER Logger
@@ -19,11 +19,11 @@ function Write-DebugLog {
 	.OUTPUTS
 		None or MessageTemplate populated with PropertyValues into pipeline if PassThru specified
 	.EXAMPLE
-		PS> Write-DebugLog 'Debug log message'
+		PS> Write-InfoLog 'Info log message'
 	.EXAMPLE
-		PS> Write-DebugLog -MessageTemplate 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
+		PS> Write-InfoLog -MessageTemplate 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
 	.EXAMPLE
-		PS> Write-DebugLog 'Error occured' -Exception ([System.Exception]::new('Some exception'))
+		PS> Write-InfoLog 'Error occured' -Exception ([System.Exception]::new('Some exception'))
 	#>
 
 	[Cmdletbinding(DefaultParameterSetName = 'MessageTemplate')]
@@ -54,23 +54,23 @@ function Write-DebugLog {
 
 	switch ($PsCmdlet.ParameterSetName) {
 		'MessageTemplate' {
-			$Logger.Debug($MessageTemplate)
+			$Logger.Information($MessageTemplate)
 		}
 		'MessageTemplateWithProperties' {
-			$Logger.Debug($MessageTemplate, $PropertyValues)
+			$Logger.Information($MessageTemplate, $PropertyValues)
 		}
 		'Exception' {
-			$Logger.Debug($Exception, $MessageTemplate)
+			$Logger.Information($Exception, $MessageTemplate)
 		}
 		'ExceptionWithProperties' {
-			$Logger.Debug($Exception, $MessageTemplate, $PropertyValues)
+			$Logger.Information($Exception, $MessageTemplate, $PropertyValues)
 		}
 	}
 
 	# Write log event into powershell sink if registered
-	Write-SinkPowerShell -Logger $Logger -LogLevel Debug -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
+	Write-SinkPowerShell -Logger $Logger -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
 
 	if ($PassThru) {
-		Get-FormattedMessage -LogLevel Debug -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
+		Get-FormattedMessage -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
 	}
 }

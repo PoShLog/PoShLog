@@ -57,8 +57,8 @@ Import-Module PoShLog
 # Create new logger
 New-Logger |
     Set-MinimumLevel -Value Verbose |
+    Add-SinkPowerShell |
     Add-SinkFile -Path 'C:\Data\my_awesome.log' |
-    Add-SinkConsole |
     Start-Logger
 
 # Test all log levels
@@ -97,6 +97,12 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 * :star: [Star the PoShLog repository](https://github.com/PoShLog/PoShLog)
 * :thumbsup: Give me some feedback on [discord](https://discord.gg/FVdVxuw)
+* Test PoShLog and raise [issues](https://github.com/PoShLog/PoShLog/issues)
+* Contribute :rocket:
+
+### Contributors
+
+* [gitbute](https://github.com/gitbute)
 
 ## Authors
 

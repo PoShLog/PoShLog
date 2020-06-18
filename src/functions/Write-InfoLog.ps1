@@ -1,3 +1,5 @@
+# For backwards compatibility and also shortand for Write-InformationLog
+
 function Write-InfoLog {
 	<#
 	.SYNOPSIS
@@ -52,25 +54,5 @@ function Write-InfoLog {
 		[switch]$PassThru
 	)
 
-	switch ($PsCmdlet.ParameterSetName) {
-		'MessageTemplate' {
-			$Logger.Information($MessageTemplate)
-		}
-		'MessageTemplateWithProperties' {
-			$Logger.Information($MessageTemplate, $PropertyValues)
-		}
-		'Exception' {
-			$Logger.Information($Exception, $MessageTemplate)
-		}
-		'ExceptionWithProperties' {
-			$Logger.Information($Exception, $MessageTemplate, $PropertyValues)
-		}
-	}
-
-	# Write log event into powershell sink if registered
-	Write-PowerShellSink -Logger $Logger -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
-
-	if ($PassThru) {
-		Get-FormattedMessage -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
-	}
+	Write-InformationLog -MessageTemplate $MessageTemplate -Exception $Exception -PropertyValues $PropertyValues -PassThru:$PassThru
 }

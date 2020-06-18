@@ -15,7 +15,7 @@ Describe "PoShLog-main" {
 # Checks for correct style in the module-functions (commentBasedHelp etc)
 Describe "PoShLog-styleChecks" {
     BeforeAll {
-        $functions = @( Get-ChildItem -Path $PSScriptRoot\..\src\functions\*.ps1 -Recurse )
+        $functions = @( Get-ChildItem -Path "$PSScriptRoot\..\src\functions\*.ps1" -Recurse )
     }
 
     # Get-Content all functions/classes from module and check for commentbased-help

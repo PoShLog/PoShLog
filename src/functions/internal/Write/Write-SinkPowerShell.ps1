@@ -1,4 +1,4 @@
-function Write-PowerShellSink {
+function Write-SinkPowerShell {
 	param(
 		[Parameter(Mandatory = $true)]
 		[Serilog.ILogger]$Logger,
