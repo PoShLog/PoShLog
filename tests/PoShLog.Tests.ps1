@@ -2,7 +2,7 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $beforeChangeLocation = Get-Location
 
 Describe "PoShLog-main" {
-    It "loads Module" {
+    It "(re)-imports the module" {
         {
             # set location should not be needed, check PSScriptRoot in .psm1
             Set-Location "$here\..\src\"
@@ -35,8 +35,8 @@ Describe "PoShLog-styleChecks" {
 
 
 Describe "PoShLog-extended" {
-    Context "Test all functions for errors" {
-        It "should create a new logger without errors" {
+    Context "Test all functions for throws" {
+        It "should create a new logger without throwing" {
             { 
                 New-Logger |
                 Set-MinimumLevel -Value Verbose |
