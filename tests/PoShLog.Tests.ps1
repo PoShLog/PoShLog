@@ -89,11 +89,21 @@ Describe "PoShLog-extended" {
             Add-SinkPowerShell -OutputTemplate '[{Timestamp:HH:mm:ss}] {Message:lj}' |
             Start-Logger
         }
-        It "should write a verbose log" {
-            Write-VerboseLog 'Test verbose message'
+        It "should write a verbose log when VerbosePreference is Continue" {
+            $global:VerbosePreference = 'Continue'
+            (Write-VerboseLog 'Test verbose message') 4>&1 | Should -BeLike "* Test verbose message"
         }
-        It "should write a debug log" {
-            Write-DebugLog 'Test Debug message'
+        It "should NOT write a verbose log when VerbosePreference is SilentlyContinue" {
+            $global:VerbosePreference = 'SilentlyContinue'
+            (Write-VerboseLog 'Test verbose message') 4>&1 | Should -Be $null
+        }
+        It "should write a debug log when DebugPreference is Continue" {
+            $global:DebugPreference = 'Continue'
+            (Write-DebugLog 'Test Debug message') 5>&1 | Should -BeLike "* Test Debug message"
+        }
+        It "should NOT write a debug log when DebugPreference is SilentlyContinue" {
+            $global:DebugPreference = 'SilentlyContinue'
+            (Write-DebugLog 'Test Debug message') 5>&1 | Should -Be $null
         }
         It "should write a info log" {
             Write-InfoLog 'Test info message'
@@ -113,4 +123,5 @@ Describe "PoShLog-extended" {
     }
 }
 
+Remove-Module PoShLog
 Set-Location $beforeChangeLocation
