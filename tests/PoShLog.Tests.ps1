@@ -118,7 +118,7 @@ Describe "PoShLog-extended" {
             $global:WarningPreference = 'SilentlyContinue'
             (Write-WarningLog 'Test warning message') 3>&1 | Should -Be $null
         }
-        It "should write a warning log when WarningPreference is SilentlyContinue" {
+        It "should write a warning log when WarningPreference is Continue" {
             $global:WarningPreference = 'Continue'
             (Write-WarningLog 'Test warning message') 3>&1 | Should -BeLike "* Test warning message"
         }
