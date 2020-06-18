@@ -111,6 +111,7 @@ Describe "PoShLog-extended" {
         }
         It "should NOT write an information log when InformationPreference is SilentlyContinue" {
             $global:InformationPreference = 'SilentlyContinue'
+            # kinda hacky here, cause InformationPreference still lets itself redirect to success stream even if SilentlyContinue
             (Write-InfoLog 'Test Information message') 6>$null | Should -Be $null
         }
         It "should NOT write a warning log when WarningPreference is SilentlyContinue" {
