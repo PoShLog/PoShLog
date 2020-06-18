@@ -2,7 +2,7 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $beforeChangeLocation = Get-Location
 
 Describe "PoShLog-main" {
-    It "(re)-imports the module" {
+    It "imports the module" {
         {
             # set location should not be needed, check PSScriptRoot in .psm1
             Set-Location "$here\..\src\"
