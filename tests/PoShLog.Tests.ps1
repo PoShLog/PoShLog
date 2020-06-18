@@ -82,7 +82,7 @@ Describe "PoShLog-extended" {
         }
     }
 
-    Context "Test console output functionality" {
+    Context "Test console output functionality, including correct streams" {
         BeforeAll { 
             New-Logger |
             Set-MinimumLevel -Value Verbose |
@@ -105,17 +105,27 @@ Describe "PoShLog-extended" {
             $global:DebugPreference = 'SilentlyContinue'
             (Write-DebugLog 'Test Debug message') 5>&1 | Should -Be $null
         }
-        It "should write a info log" {
-            Write-InfoLog 'Test info message'
+        It "should write an information log when InformationPreference is Continue" {
+            $global:InformationPreference = 'Continue'
+            (Write-InfoLog 'Test Information message') 6>&1 | Should -BeLike "* Test Information message"
         }
-        It "should write a warning log" {
-            Write-WarningLog 'Test warning message'
+        It "should NOT write an information log when InformationPreference is SilentlyContinue" {
+            $global:InformationPreference = 'SilentlyContinue'
+            (Write-InfoLog 'Test Information message') 6>$null | Should -Be $null
+        }
+        It "should NOT write a warning log when WarningPreference is SilentlyContinue" {
+            $global:WarningPreference = 'SilentlyContinue'
+            (Write-WarningLog 'Test warning message') 3>&1 | Should -Be $null
+        }
+        It "should write a warning log when WarningPreference is SilentlyContinue" {
+            $global:WarningPreference = 'Continue'
+            (Write-WarningLog 'Test warning message') 3>&1 | Should -BeLike "* Test warning message"
         }
         It "should write a error log" {
-            Write-ErrorLog 'Test error message'
+            (Write-ErrorLog 'Test error message') 2>&1  | Should -BeLike "* Test error message"
         }
         It "should write a fatal log" {
-            Write-FatalLog 'Test fatal message'
+            (Write-FatalLog 'Test fatal message') 2>&1  | Should -BeLike "* Test fatal message"
         }
         AfterAll {
             Close-Logger
