@@ -4,8 +4,9 @@ function Write-SinkPowerShell {
 		[Serilog.ILogger]$Logger,
 		[Parameter(Mandatory = $true)]
 		[Serilog.Events.LogEventLevel]$LogLevel,
-		[parameter(Mandatory = $true)]
+		[Parameter(Mandatory = $true)]
 		[AllowEmptyString()]
+		[AllowNull()]
 		[string]$MessageTemplate,
 		[Parameter(Mandatory = $false)]
 		[AllowNull()]
@@ -15,12 +16,13 @@ function Write-SinkPowerShell {
 		[System.Exception]$Exception
 	)
 
-	if ($null -ne $global:PowerShellSink) {
+	$powerShellSink = $global:PowerShellSinks[$Logger]
+	if ($null -ne $powerShellSink) {
 
 		# Make sure log level is enabled and is higher than RestrictedToMinimumLevel
-		if([int]($LogLevel) -ge [int]($global:PowerShellSink.RestrictedToMinimumLevel) -and $Logger.IsEnabled($LogLevel)){
+		if([int]($LogLevel) -ge [int]($powerShellSink.RestrictedToMinimumLevel) -and $Logger.IsEnabled($LogLevel)){
 			
-			$message = Get-FormattedMessage -LogLevel $LogLevel -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
+			$message = Get-FormattedMessage -PowerShellSink $powerShellSink -LogLevel $LogLevel -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
 
 			switch ($LogLevel) {
 				Verbose { 
@@ -36,12 +38,7 @@ function Write-SinkPowerShell {
 					Write-Warning -Message $message
 				}
 				{($_ -eq 'Error') -or ($_ -eq 'Fatal')} { 
-					if($null -ne $Exception){
-						Write-Error -Message $message -Exception $Exception
-					}
-					else{
-						Write-Error -Message $message
-					}
+					Write-Output -InputObject $message
 				}
 				Default { 
 					Write-Information -MessageData $message

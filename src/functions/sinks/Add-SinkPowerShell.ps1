@@ -4,8 +4,6 @@ class PowerShellSink {
 
 	[ValidateNotNullOrEmpty()][string]$OutputTemplate
 
-	[Serilog.Core.Logger]$DefaultLoggerImpl = [Serilog.LoggerConfiguration]::new().CreateLogger()
-
 	[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose
 
 	PowerShellSink(
@@ -49,7 +47,7 @@ function Add-SinkPowerShell {
 	)
 
 	process {	
-		$global:PowerShellSink = [PowerShellSink]::new($OutputTemplate, $RestrictedToMinimumLevel)
+		$global:PowerShellSinks.Add($LoggerConfig, [PowerShellSink]::new($OutputTemplate, $RestrictedToMinimumLevel))
 
 		$LoggerConfig
 	}

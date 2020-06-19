@@ -42,6 +42,9 @@ function Start-Logger {
 		[switch]$Console,
 
 		[Parameter(Mandatory = $false, ParameterSetName = 'Short')]
+		[switch]$PowerShell,
+
+		[Parameter(Mandatory = $false, ParameterSetName = 'Short')]
 		[string]$FilePath,
 		
 		[Parameter(Mandatory = $false, ParameterSetName = 'Short')]
@@ -60,8 +63,12 @@ function Start-Logger {
 				$LoggerConfig = New-Logger | Set-MinimumLevel -Value $MinimumLevel
 
 				# If file path was not passed we setup default console sink
-				if($Console -or -not $PSBoundParameters.ContainsKey('FilePath')){
+				if($PowerShell -or -not $PSBoundParameters.ContainsKey('FilePath')){
 					$LoggerConfig = $LoggerConfig | Add-SinkPowerShell
+				}
+
+				if($PSBoundParameters.ContainsKey('Console')){
+					$LoggerConfig = $LoggerConfig | Add-SinkConsole
 				}
 
 				if($PSBoundParameters.ContainsKey('FilePath')){
@@ -71,6 +78,13 @@ function Start-Logger {
 		}
 
 		$logger = $LoggerConfig.CreateLogger()
+
+		# Workaround for registering powershell sinks
+		$psSink = $global:PowerShellSinks[$LoggerConfig]
+		if($null -ne $psSink){
+			$global:PowerShellSinks.Add($logger, $psSink)
+			$global:PowerShellSinks.Remove($LoggerConfig)
+		}
 		
 		if($PassThru){
 			if($SetAsDefault){

@@ -12,10 +12,5 @@ function New-Logger {
 		PS> New-Logger
 	#>
 
-	# Clear powershell sink global variable if it exists
-	if(Get-Variable PowerShellSink -Scope Global -ErrorAction SilentlyContinue){
-		Clear-Variable PowerShellSink -Scope Global
-	}
-
 	New-Object Serilog.LoggerConfiguration
 }

@@ -19,9 +19,13 @@ function Close-Logger {
 	)
 
 	if($PSBoundParameters.ContainsKey('Logger')){
+		$global:PowerShellSinks.Remove($Logger)
+
 		$Logger.Dispose()
 	}
 	else{
 		[Serilog.Log]::CloseAndFlush()
+
+		$global:PowerShellSinks = @{}
 	}
 }
