@@ -26,51 +26,30 @@ function Write-WarningLog {
 		PS> Write-WarningLog 'Error occured' -Exception ([System.Exception]::new('Some exception'))
 	#>
 
-	[Cmdletbinding(DefaultParameterSetName = 'MessageTemplate')]
+	[Cmdletbinding()]
 	param(
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'MessageTemplate')]
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'MessageTemplateWithProperties')]
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'Exception')]
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'ExceptionWithProperties')]
+		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[AllowEmptyString()]
 		[string]$MessageTemplate,
 
 		[Parameter(Mandatory = $false)]
 		[Serilog.ILogger]$Logger = [Serilog.Log]::Logger,
 
-		[Parameter(Mandatory = $true, ParameterSetName = 'Exception')]
-		[Parameter(Mandatory = $true, ParameterSetName = 'ExceptionWithProperties')]
+		[Parameter(Mandatory = $false)]
 		[AllowNull()]
 		[System.Exception]$Exception,
 
-		[Parameter(Mandatory = $true, ParameterSetName = 'ExceptionWithProperties')]
-		[Parameter(Mandatory = $true, ParameterSetName = 'MessageTemplateWithProperties')]
+		[Parameter(Mandatory = $false)]
+		[AllowNull()]
+		[System.Management.Automation.ErrorRecord]$ErrorRecord,
+
+		[Parameter(Mandatory = $false)]
 		[AllowNull()]
 		[object[]]$PropertyValues,
-
+		
 		[Parameter(Mandatory = $false)]
 		[switch]$PassThru
 	)
 
-	switch ($PsCmdlet.ParameterSetName) {
-		'MessageTemplate' {
-			$Logger.Warning($MessageTemplate)
-		}
-		'MessageTemplateWithProperties' {
-			$Logger.Warning($MessageTemplate, $PropertyValues)
-		}
-		'Exception' {
-			$Logger.Warning($Exception, $MessageTemplate)
-		}
-		'ExceptionWithProperties' {
-			$Logger.Warning($Exception, $MessageTemplate, $PropertyValues)
-		}
-	}
-
-	# Write log event into powershell sink if registered
-	Write-SinkPowerShell -Logger $Logger -LogLevel Warning -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
-
-	if ($PassThru) {
-		Get-FormattedMessage -LogLevel Warning -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
-	}
+	Write-Log -LogLevel Warning -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
 }

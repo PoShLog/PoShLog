@@ -47,7 +47,10 @@ function Add-SinkPowerShell {
 	)
 
 	process {	
-		$global:PowerShellSinks.Add($LoggerConfig, [PowerShellSink]::new($OutputTemplate, $RestrictedToMinimumLevel))
+		$LoggerConfig = [PoShLog.Sinks.PSConsole.PowerShellSinkExtensions]::PSConsole($LoggerConfig.WriteTo, 
+			{ param([Serilog.Events.LogEvent]$logEvent, [string]$renderedMessage) Write-SinkPowerShell -LogEvent $logEvent -RenderedMessage $renderedMessage },
+			$OutputTemplate
+		)
 
 		$LoggerConfig
 	}

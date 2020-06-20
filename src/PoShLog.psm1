@@ -1,5 +1,4 @@
 [bool] $Global:loggerNotInitWarned = $false	# Indicates wether warning about logger is not initialized was shown
-$global:PowerShellSinks = @{}
 
 # Load all package dlls
 . "$PSScriptRoot\functions\internal\Add-PackageTypes.ps1"
@@ -22,4 +21,5 @@ if (Test-Path $obsoletePackagesPath ) {
 }
 
 $global:TextFormatter = [Serilog.Formatting.Display.MessageTemplateTextFormatter]::new('{Message:lj}')
-[Serilog.Core.Logger]$global:DefaultLoggerImpl = [Serilog.LoggerConfiguration]::new().CreateLogger()
+
+Add-Type -Path "C:\Data\GIT\PoShLog\PoShLog.Sinks.PSConsole_Test\PoShLog.Sinks.PSConsole\bin\Debug\netstandard2.0\PoShLog.Sinks.PSConsole.dll"

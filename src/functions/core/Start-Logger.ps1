@@ -78,13 +78,6 @@ function Start-Logger {
 		}
 
 		$logger = $LoggerConfig.CreateLogger()
-
-		# Workaround for registering powershell sinks
-		$psSink = $global:PowerShellSinks[$LoggerConfig]
-		if($null -ne $psSink){
-			$global:PowerShellSinks.Add($logger, $psSink)
-			$global:PowerShellSinks.Remove($LoggerConfig)
-		}
 		
 		if($PassThru){
 			if($SetAsDefault){

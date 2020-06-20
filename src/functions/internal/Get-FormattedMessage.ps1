@@ -1,6 +1,9 @@
 function Get-FormattedMessage{
 	param(
 		[Parameter(Mandatory = $true)]
+		[Serilog.ILogger]$Logger,
+
+		[Parameter(Mandatory = $true)]
 		[Serilog.Events.LogEventLevel]$LogLevel,
 
 		[parameter(Mandatory = $true)]
@@ -29,7 +32,7 @@ function Get-FormattedMessage{
 
 	$parsedTemplate = $null
 	$boundProperties = $null
-	if ($global:DefaultLoggerImpl.BindMessageTemplate($MessageTemplate, $PropertyValues, [ref]$parsedTemplate, [ref]$boundProperties))
+	if ($Logger.BindMessageTemplate($MessageTemplate, $PropertyValues, [ref]$parsedTemplate, [ref]$boundProperties))
 	{
 		$logEvent = [Serilog.Events.LogEvent]::new([System.DateTimeOffset]::Now, $LogLevel, $Exception, $parsedTemplate, $boundProperties)
 		$strWriter = [System.IO.StringWriter]::new()

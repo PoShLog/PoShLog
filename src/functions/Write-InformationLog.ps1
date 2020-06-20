@@ -26,25 +26,24 @@ function Write-InformationLog {
 		PS> Write-InfoLog 'Error occured' -Exception ([System.Exception]::new('Some exception'))
 	#>
 
-	[Cmdletbinding(DefaultParameterSetName = 'MessageTemplate')]
+	[Cmdletbinding()]
 	param(
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'MessageTemplate')]
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'MessageTemplateWithProperties')]
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'Exception')]
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'ExceptionWithProperties')]
+		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[AllowEmptyString()]
 		[string]$MessageTemplate,
 
 		[Parameter(Mandatory = $false)]
 		[Serilog.ILogger]$Logger = [Serilog.Log]::Logger,
 
-		[Parameter(Mandatory = $true, ParameterSetName = 'Exception')]
-		[Parameter(Mandatory = $true, ParameterSetName = 'ExceptionWithProperties')]
+		[Parameter(Mandatory = $false)]
 		[AllowNull()]
 		[System.Exception]$Exception,
 
-		[Parameter(Mandatory = $true, ParameterSetName = 'ExceptionWithProperties')]
-		[Parameter(Mandatory = $true, ParameterSetName = 'MessageTemplateWithProperties')]
+		[Parameter(Mandatory = $false)]
+		[AllowNull()]
+		[System.Management.Automation.ErrorRecord]$ErrorRecord,
+
+		[Parameter(Mandatory = $false)]
 		[AllowNull()]
 		[object[]]$PropertyValues,
 		
@@ -52,25 +51,5 @@ function Write-InformationLog {
 		[switch]$PassThru
 	)
 
-	switch ($PsCmdlet.ParameterSetName) {
-		'MessageTemplate' {
-			$Logger.Information($MessageTemplate)
-		}
-		'MessageTemplateWithProperties' {
-			$Logger.Information($MessageTemplate, $PropertyValues)
-		}
-		'Exception' {
-			$Logger.Information($Exception, $MessageTemplate)
-		}
-		'ExceptionWithProperties' {
-			$Logger.Information($Exception, $MessageTemplate, $PropertyValues)
-		}
-	}
-
-	# Write log event into powershell sink if registered
-	Write-SinkPowerShell -Logger $Logger -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues -Exception $Exception
-
-	if ($PassThru) {
-		Get-FormattedMessage -LogLevel Information -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
-	}
+	Write-Log -LogLevel Information -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
 }
