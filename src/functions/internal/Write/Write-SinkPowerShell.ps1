@@ -19,11 +19,8 @@ function Write-SinkPowerShell {
 		Warning { 
 			Write-Warning -Message $RenderedMessage
 		}
-		{($_ -eq 'Error') -or ($_ -eq 'Fatal')} { 
-			Write-Output -InputObject $RenderedMessage
-		}
 		Default { 
-			Write-Information -MessageData $RenderedMessage
+			Write-Information -MessageData $RenderedMessage -InformationAction 'Continue'
 		}
 	}
 }

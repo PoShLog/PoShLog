@@ -6,4 +6,4 @@
 bin
 obj
 tests
-Dependencies.csproj
+dotnet

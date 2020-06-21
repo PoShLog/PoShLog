@@ -20,6 +20,5 @@ if (Test-Path $obsoletePackagesPath ) {
 	Remove-Item $obsoletePackagesPath -Recurse -Force -ErrorAction SilentlyContinue
 }
 
+# Default text formatter for Get-FormattedMessage cmdlet
 $global:TextFormatter = [Serilog.Formatting.Display.MessageTemplateTextFormatter]::new('{Message:lj}')
-
-Add-Type -Path "C:\Data\GIT\PoShLog\PoShLog.Sinks.PSConsole_Test\PoShLog.Sinks.PSConsole\bin\Debug\netstandard2.0\PoShLog.Sinks.PSConsole.dll"

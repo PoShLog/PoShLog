@@ -40,16 +40,23 @@ function Add-SinkPowerShell {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Serilog.LoggerConfiguration]$LoggerConfig,
+
+		[Parameter(Mandatory = $false)]
+		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose,
+
 		[Parameter(Mandatory = $false)]
 		[string]$OutputTemplate = '{Message:lj}',
+		
 		[Parameter(Mandatory = $false)]
-		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose
+		[Serilog.Core.LoggingLevelSwitch]$LevelSwitch = $null
 	)
 
 	process {	
-		$LoggerConfig = [PoShLog.Sinks.PSConsole.PowerShellSinkExtensions]::PSConsole($LoggerConfig.WriteTo, 
+		$LoggerConfig = [PoShLog.Core.Sinks.Extensions.PowerShellSinkExtensions]::PowerShell($LoggerConfig.WriteTo, 
 			{ param([Serilog.Events.LogEvent]$logEvent, [string]$renderedMessage) Write-SinkPowerShell -LogEvent $logEvent -RenderedMessage $renderedMessage },
-			$OutputTemplate
+			$RestrictedToMinimumLevel,
+			$OutputTemplate,
+			$LevelSwitch
 		)
 
 		$LoggerConfig
