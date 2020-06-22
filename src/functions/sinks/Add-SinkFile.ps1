@@ -35,7 +35,7 @@ function Add-SinkFile {
 	.INPUTS
 		Instance of LoggerConfiguration
 	.OUTPUTS
-		Configuration object allowing method chaining
+		LoggerConfiguration object allowing method chaining
 	.EXAMPLE
 		PS> New-Logger | Add-SinkFile -Path "C:\Logs\test.log" | Start-Logger
 	.EXAMPLE

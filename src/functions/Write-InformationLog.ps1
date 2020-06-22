@@ -1,9 +1,9 @@
-function Write-VerboseLog {
+function Write-InformationLog {
 	<#
 	.SYNOPSIS
-		Writes Verbose log message
+		Writes Information log message
 	.DESCRIPTION
-		Write a log event with the Verbose level.
+		Write a log event with the Information level.
 	.PARAMETER MessageTemplate
 		Message template describing the event.
 	.PARAMETER Logger
@@ -19,11 +19,11 @@ function Write-VerboseLog {
 	.OUTPUTS
 		None or MessageTemplate populated with PropertyValues into pipeline if PassThru specified
 	.EXAMPLE
-		PS> Write-VerboseLog 'Verbose log message'
+		PS> Write-InfoLog 'Info log message'
 	.EXAMPLE
-		PS> Write-VerboseLog -MessageTemplate 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
+		PS> Write-InfoLog -MessageTemplate 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
 	.EXAMPLE
-		PS> Write-VerboseLog 'Error occured' -Exception ([System.Exception]::new('Some exception'))
+		PS> Write-InfoLog 'Error occured' -Exception ([System.Exception]::new('Some exception'))
 	#>
 
 	[Cmdletbinding()]
@@ -51,5 +51,5 @@ function Write-VerboseLog {
 		[switch]$PassThru
 	)
 
-	Write-Log -LogLevel Verbose -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
+	Write-Log -LogLevel Information -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
 }

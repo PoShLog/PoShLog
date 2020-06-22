@@ -8,6 +8,10 @@ function Set-LevelSwitch {
 		Instance of LoggingLevelSwitch to change
 	.PARAMETER MinimumLevel
 		Sets current minimum level, below which no events should be generated
+	.PARAMETER ToPreference
+		Set to propagate desired minimum level to preference variables.
+	.PARAMETER PassThru
+		Outputs Serilog.Core.LoggingLevelSwitch with updated MinimumLevel into pipeline
 	.INPUTS
 		Instance of LoggingLevelSwitch
 	.OUTPUTS
@@ -23,10 +27,20 @@ function Set-LevelSwitch {
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Serilog.Core.LoggingLevelSwitch]$LevelSwitch,
 		[Parameter(Mandatory = $true)]
-		[Serilog.Events.LogEventLevel]$MinimumLevel
+		[Serilog.Events.LogEventLevel]$MinimumLevel,
+		[Parameter(Mandatory = $false)]
+		[switch]$ToPreference,
+		[Parameter(Mandatory = $false)]
+		[switch]$PassThru
 	)
 
 	$LevelSwitch.MinimumLevel = $MinimumLevel
 
-	$LevelSwitch
+	if($ToPreference){
+		Set-LogLevelToPreference -LogLevel $MinimumLevel
+	}
+
+	if($PassThru){
+		$LevelSwitch
+	}
 }

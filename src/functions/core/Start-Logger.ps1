@@ -9,11 +9,13 @@ function Start-Logger {
 	.PARAMETER MinimumLevel
 		Configures the minimum level at which events will be passed to sinks. All messages with levels beneath this level will be ignored.
 	.PARAMETER Console
-		Setups console sink. All messages will be writen to console host.
+		Setups PowerShell console sink. All messages will be writen to powershell host.
 	.PARAMETER FilePath
 		Setups File sink at given path. All messages will be written to given file path.
 	.PARAMETER FileRollingInterval
 		The interval at which logging will roll over to a new file.
+	.PARAMETER SetAsDefault
+		Assigns created logger into static static property [Serilog.Log]::Logger that can be used globally. Works only together with PassThru parameter.
 	.PARAMETER PassThru
 		Outputs instance of Serilog.Logger into pipeline
 	.INPUTS
@@ -40,10 +42,16 @@ function Start-Logger {
 		[switch]$Console,
 
 		[Parameter(Mandatory = $false, ParameterSetName = 'Short')]
+		[switch]$PowerShell,
+
+		[Parameter(Mandatory = $false, ParameterSetName = 'Short')]
 		[string]$FilePath,
 		
 		[Parameter(Mandatory = $false, ParameterSetName = 'Short')]
 		[Serilog.RollingInterval]$FileRollingInterval = [Serilog.RollingInterval]::Infinite,
+
+		[Parameter(Mandatory = $false)]
+		[switch]$SetAsDefault,
 
 		[Parameter(Mandatory = $false)]
 		[switch]$PassThru
@@ -55,7 +63,11 @@ function Start-Logger {
 				$LoggerConfig = New-Logger | Set-MinimumLevel -Value $MinimumLevel
 
 				# If file path was not passed we setup default console sink
-				if($Console -or -not $PSBoundParameters.ContainsKey('FilePath')){
+				if($PowerShell -or -not $PSBoundParameters.ContainsKey('FilePath')){
+					$LoggerConfig = $LoggerConfig | Add-SinkPowerShell
+				}
+
+				if($PSBoundParameters.ContainsKey('Console')){
 					$LoggerConfig = $LoggerConfig | Add-SinkConsole
 				}
 
@@ -64,12 +76,17 @@ function Start-Logger {
 				}
 			}
 		}
-	
+
+		$logger = $LoggerConfig.CreateLogger()
+		
 		if($PassThru){
-			$LoggerConfig.CreateLogger()
+			if($SetAsDefault){
+				[Serilog.Log]::Logger = $logger
+			}
+			$logger
 		}
 		else{
-			[Serilog.Log]::Logger = $LoggerConfig.CreateLogger()
+			[Serilog.Log]::Logger = $logger
 		}
 	}
 }

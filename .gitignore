@@ -333,4 +333,4 @@ ASALocalRun/
 .vscode/
 
 # Module libraries
-src/lib/
+lib/

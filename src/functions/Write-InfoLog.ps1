@@ -1,3 +1,5 @@
+# For backwards compatibility and also shortand for Write-InformationLog
+
 function Write-InfoLog {
 	<#
 	.SYNOPSIS
@@ -26,25 +28,24 @@ function Write-InfoLog {
 		PS> Write-InfoLog 'Error occured' -Exception ([System.Exception]::new('Some exception'))
 	#>
 
-	[Cmdletbinding(DefaultParameterSetName = 'MessageTemplate')]
+	[Cmdletbinding()]
 	param(
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'MessageTemplate')]
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'MessageTemplateWithProperties')]
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'Exception')]
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ParameterSetName = 'ExceptionWithProperties')]
+		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[AllowEmptyString()]
 		[string]$MessageTemplate,
 
 		[Parameter(Mandatory = $false)]
 		[Serilog.ILogger]$Logger = [Serilog.Log]::Logger,
 
-		[Parameter(Mandatory = $true, ParameterSetName = 'Exception')]
-		[Parameter(Mandatory = $true, ParameterSetName = 'ExceptionWithProperties')]
+		[Parameter(Mandatory = $false)]
 		[AllowNull()]
 		[System.Exception]$Exception,
 
-		[Parameter(Mandatory = $true, ParameterSetName = 'ExceptionWithProperties')]
-		[Parameter(Mandatory = $true, ParameterSetName = 'MessageTemplateWithProperties')]
+		[Parameter(Mandatory = $false)]
+		[AllowNull()]
+		[System.Management.Automation.ErrorRecord]$ErrorRecord,
+
+		[Parameter(Mandatory = $false)]
 		[AllowNull()]
 		[object[]]$PropertyValues,
 		
@@ -52,42 +53,5 @@ function Write-InfoLog {
 		[switch]$PassThru
 	)
 
-	switch ($PsCmdlet.ParameterSetName) {
-		'MessageTemplate' {
-			if (-not (Test-Logger $Logger)) {
-				Write-HostEx -MessageTemplate $MessageTemplate
-			}
-			else{
-				$Logger.Information($MessageTemplate)
-			}
-		}
-		'MessageTemplateWithProperties' {
-			if (-not (Test-Logger $Logger)) {
-				Write-HostEx -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
-			}
-			else{
-				$Logger.Information($MessageTemplate, $PropertyValues)
-			}
-		}
-		'Exception' {
-			if (-not (Test-Logger $Logger)) {
-				Write-HostEx -MessageTemplate "$MessageTemplate `n $Exception"
-			}
-			else{
-				$Logger.Information($Exception, $MessageTemplate)
-			}
-		}
-		'ExceptionWithProperties' {
-			if (-not (Test-Logger $Logger)) {
-				Write-HostEx -MessageTemplate "$MessageTemplate `n $Exception" -PropertyValues $PropertyValues
-			}
-			else{
-				$Logger.Information($Exception, $MessageTemplate, $PropertyValues)
-			}
-		}
-	}
-
-	if ($PassThru) {
-		Get-CollapsedMessage -MessageTemplate $MessageTemplate -PropertyValues $PropertyValues
-	}
+	Write-InformationLog -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
 }

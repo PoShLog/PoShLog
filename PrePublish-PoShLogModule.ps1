@@ -12,15 +12,31 @@ param(
 	[Parameter(Mandatory = $false)]
 	[string]$PublishFolder = "$PSScriptRoot\publish\$ModuleName\",
 	[Parameter(Mandatory = $false)]
+	[string]$ProjectPath = "$ModuleDirectory\Dependencies.csproj",
+	[Parameter(Mandatory = $false)]
 	[switch]$IsExtensionModule
 )
 
 $excludedItems = Get-Content "$PSScriptRoot\.publishExclude"
 
-& "$PSScriptRoot\Build-Dependencies.ps1" -ProjectPath "$ModuleDirectory\Dependencies.csproj" -IsExtensionModule:$IsExtensionModule
+& "$PSScriptRoot\Build-Dependencies.ps1" -ProjectPath $ProjectPath -ModuleDirectory $ModuleDirectory -IsExtensionModule:$IsExtensionModule
+
+# Remove unecessary files from lib folder
+Remove-Item "$ModuleDirectory\lib\*.json" -Force
+Remove-Item "$ModuleDirectory\lib\*.pdb" -Force
+Remove-Item "$ModuleDirectory\lib\System.Management.Automation.dll" -Force
+
+$functions = @()
+
+Get-ChildItem -Path "$ModuleDirectory\functions" -Recurse -File -Filter '*.ps1' | ForEach-Object {
+	# Export all functions except internal
+	if ($_.FullName -notlike '*\internal\*') {
+		$functions += $_.BaseName
+	}
+}
 
 # Update module version
-Update-ModuleManifest "$ModuleDirectory\$ModuleName.psd1" -ModuleVersion $TargetVersion -ReleaseNotes $ReleaseNotes
+Update-ModuleManifest "$ModuleDirectory\$ModuleName.psd1" -ModuleVersion $TargetVersion -ReleaseNotes $ReleaseNotes -FunctionsToExport $functions
 
 # Create clean publish folder
 if (Test-Path $PublishFolder) {

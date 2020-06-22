@@ -1,4 +1,9 @@
-[bool] $Global:loggerNotInitWarned = $false	# Indicates wether warning about logger is not initialized was shown
+# Indicates wether warning about logger is not initialized was shown
+[bool] $Global:loggerNotInitWarned = $false
+
+# Load all package dlls
+. "$PSScriptRoot\functions\internal\Add-PackageTypes.ps1"
+Add-PackageTypes -LibsDirectory "$PSScriptRoot\lib"
 
 # dot source all script files
 Get-ChildItem -Path "$PSScriptRoot\functions" -Recurse -File -Filter '*.ps1' | ForEach-Object {
@@ -10,11 +15,5 @@ Get-ChildItem -Path "$PSScriptRoot\functions" -Recurse -File -Filter '*.ps1' | F
 	}
 }
 
-# Load all package dlls
-Add-PackageTypes -LibsDirectory "$PSScriptRoot\lib"
-
-# Remove package directory from previous version
-[string] $obsoletePackagesPath = "$env:APPDATA\PoShLog\packages"
-if (Test-Path $obsoletePackagesPath ) {
-	Remove-Item $obsoletePackagesPath -Recurse -Force -ErrorAction SilentlyContinue
-}
+# Default text formatter for Get-FormattedMessage cmdlet
+$global:TextFormatter = [Serilog.Formatting.Display.MessageTemplateTextFormatter]::new('{Message:lj}')

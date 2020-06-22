@@ -21,7 +21,7 @@ function Add-SinkConsole {
 	.INPUTS
 		Instance of LoggerConfiguration
 	.OUTPUTS
-		Configuration object allowing method chaining
+		LoggerConfiguration object allowing method chaining
 	.EXAMPLE
 		PS> Add-SinkConsole
 	.EXAMPLE
