@@ -14,7 +14,7 @@ function Close-Logger {
 		PS> Close-Logger
 	#>
 	param(
-		[Parameter(Mandatory = $false)]
+		[Parameter(Mandatory = $false, ValueFromPipeline = $true)]
 		[Serilog.ILogger]$Logger
 	)
 

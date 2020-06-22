@@ -46,7 +46,7 @@ function Write-DebugLog {
 		[Parameter(Mandatory = $false)]
 		[AllowNull()]
 		[object[]]$PropertyValues,
-		
+
 		[Parameter(Mandatory = $false)]
 		[switch]$PassThru
 	)

@@ -1,4 +1,5 @@
-[bool] $Global:loggerNotInitWarned = $false	# Indicates wether warning about logger is not initialized was shown
+# Indicates wether warning about logger is not initialized was shown
+[bool] $Global:loggerNotInitWarned = $false
 
 # Load all package dlls
 . "$PSScriptRoot\functions\internal\Add-PackageTypes.ps1"
@@ -12,12 +13,6 @@ Get-ChildItem -Path "$PSScriptRoot\functions" -Recurse -File -Filter '*.ps1' | F
 	if ($_.FullName -notlike '*\internal\*') {
 		Export-ModuleMember $_.BaseName
 	}
-}
-
-# Remove package directory from previous version
-[string] $obsoletePackagesPath = "$env:APPDATA\PoShLog\packages"
-if (Test-Path $obsoletePackagesPath ) {
-	Remove-Item $obsoletePackagesPath -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 # Default text formatter for Get-FormattedMessage cmdlet

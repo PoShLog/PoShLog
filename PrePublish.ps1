@@ -6,5 +6,6 @@ $publishFolder = "$PSScriptRoot\publish\$ModuleName\"
 # Add readme for published module
 Copy-Item "$PSScriptRoot\README.md" -Destination $publishFolder
 
+# Run tests
+Invoke-Pester -Path "$PSScriptRoot\tests\PoShLog.Tests.ps1"
 
-## TODO Run tests

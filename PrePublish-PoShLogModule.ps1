@@ -26,8 +26,17 @@ Remove-Item "$ModuleDirectory\lib\*.json" -Force
 Remove-Item "$ModuleDirectory\lib\*.pdb" -Force
 Remove-Item "$ModuleDirectory\lib\System.Management.Automation.dll" -Force
 
+$functions = @()
+
+Get-ChildItem -Path "$ModuleDirectory\functions" -Recurse -File -Filter '*.ps1' | ForEach-Object {
+	# Export all functions except internal
+	if ($_.FullName -notlike '*\internal\*') {
+		$functions += $_.BaseName
+	}
+}
+
 # Update module version
-Update-ModuleManifest "$ModuleDirectory\$ModuleName.psd1" -ModuleVersion $TargetVersion -ReleaseNotes $ReleaseNotes
+Update-ModuleManifest "$ModuleDirectory\$ModuleName.psd1" -ModuleVersion $TargetVersion -ReleaseNotes $ReleaseNotes -FunctionsToExport $functions
 
 # Create clean publish folder
 if (Test-Path $PublishFolder) {
