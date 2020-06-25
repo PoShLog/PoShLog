@@ -12,5 +12,6 @@ function New-Logger {
 		PS> New-Logger
 	#>
 
-	New-Object Serilog.LoggerConfiguration
+	$loggerConfig = New-Object Serilog.LoggerConfiguration
+	$loggerConfig | Add-EnrichWithErrorRecord
 }

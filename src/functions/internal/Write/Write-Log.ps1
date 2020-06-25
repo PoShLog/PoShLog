@@ -35,7 +35,7 @@ function Write-Log {
 			$Exception = $ErrorRecord.Exception
 		}
 
-		$Exception = [System.Management.Automation.RuntimeException]::new($null, $Exception, $ErrorRecord)
+		$Exception = [PoShLog.Core.Exceptions.WrapperException]::new($Exception, $ErrorRecord)
 	}
 
 	switch ($LogLevel) {

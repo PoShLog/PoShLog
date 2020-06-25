@@ -1,5 +1,5 @@
-﻿using System.Management.Automation;
-using PoShLog.Core.Enrichers.Extensions;
+﻿using PoShLog.Core.Enrichers.Extensions;
+using PoShLog.Core.Exceptions;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -12,16 +12,10 @@ namespace PoShLog.Core.Enrichers
 
 		public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
 		{
-			if (logEvent.Exception is RuntimeException runtimeException)
+			if (logEvent.Exception is WrapperException wrapperException)
 			{
-				var errRecord = runtimeException.ErrorRecord;
-				var invocationInfo = errRecord.InvocationInfo;
-
-				var errorRecordProperty = propertyFactory.CreateProperty(ERR_PROPERTY_NAME_FULL, errRecord.ToTable());
-				logEvent.AddPropertyIfAbsent(errorRecordProperty);
-
-				var invocationInfoProperty = propertyFactory.CreateProperty(II_PROPERTY_NAME_FULL, invocationInfo.ToTable());
-				logEvent.AddPropertyIfAbsent(invocationInfoProperty);
+				logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty(ERR_PROPERTY_NAME_FULL, wrapperException.ErrorRecordWrapper));
+				logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty(II_PROPERTY_NAME_FULL, wrapperException.ErrorRecordWrapper.InvocationInfoWrapper));
 			}
 		}
 	}

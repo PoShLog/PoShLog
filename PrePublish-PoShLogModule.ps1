@@ -17,14 +17,15 @@ param(
 	[switch]$IsExtensionModule
 )
 
-$excludedItems = Get-Content "$PSScriptRoot\.publishExclude"
+$excludedItems = Get-Content "$PSScriptRoot\.publishExclude" -ErrorAction SilentlyContinue
 
 & "$PSScriptRoot\Build-Dependencies.ps1" -ProjectPath $ProjectPath -ModuleDirectory $ModuleDirectory -IsExtensionModule:$IsExtensionModule
 
 # Remove unecessary files from lib folder
 Remove-Item "$ModuleDirectory\lib\*.json" -Force
 Remove-Item "$ModuleDirectory\lib\*.pdb" -Force
-Remove-Item "$ModuleDirectory\lib\System.Management.Automation.dll" -Force
+Remove-Item "$ModuleDirectory\lib\Dependencies.dll" -Force -ErrorAction SilentlyContinue
+Remove-Item "$ModuleDirectory\lib\System.Management.Automation.dll" -Force -ErrorAction SilentlyContinue
 
 $functions = @()
 
