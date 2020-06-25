@@ -42,54 +42,96 @@ function Add-SinkFile {
 		PS> New-Logger | Add-SinkFile -Path "C:\Logs\test-.txt" -RollingInterval Hour -OutputTemplate '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception} {Properties:j}{NewLine}' | Start-Logger
 	#>
 
-	[Cmdletbinding()]
+	[Cmdletbinding(DefaultParameterSetName = 'Default')]
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Serilog.LoggerConfiguration]$LoggerConfig,
+
 		[Parameter(Mandatory = $true)]
 		[string]$Path,
+
+		[Parameter(Mandatory = $true, ParameterSetName = 'Formatter')]
+		[Serilog.Formatting.ITextFormatter]$Formatter,
+
 		[Parameter(Mandatory = $false)]
 		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose,
+
 		[Parameter(Mandatory = $false)]
 		[string]$OutputTemplate = '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}',
-		[Parameter(Mandatory = $false)]
+
+		[Parameter(Mandatory = $false, ParameterSetName = 'Default')]
 		[System.IFormatProvider]$FormatProvider = $null,
+
 		[Parameter(Mandatory = $false)]
 		[Nullable[long]]$FileSizeLimitBytes = [long]'1073741824',
+
 		[Parameter(Mandatory = $false)]
 		[Serilog.Core.LoggingLevelSwitch]$LevelSwitch = $null,
+
 		[Parameter(Mandatory = $false)]
 		[switch]$Buffered,
+
 		[Parameter(Mandatory = $false)]
 		[switch]$Shared,
+
 		[Parameter(Mandatory = $false)]
 		[Nullable[timespan]]$FlushToDiskInterval = $null,
+
 		[Parameter(Mandatory = $false)]
 		[Serilog.RollingInterval]$RollingInterval = [Serilog.RollingInterval]::Infinite,
+
 		[Parameter(Mandatory = $false)]
 		[switch]$RollOnFileSizeLimit,
+
 		[Parameter(Mandatory = $false)]
 		[Nullable[int]]$RetainedFileCountLimit = 31,
+
 		[Parameter(Mandatory = $false)]
-		[System.Text.Encoding]$Encoding = $null
+		[System.Text.Encoding]$Encoding = $null,
+
+		[Parameter(Mandatory = $false)]
+		[Serilog.Sinks.File.FileLifecycleHooks]$Hooks = $null
 	)
 
 	process {
-		$LoggerConfig = [Serilog.FileLoggerConfigurationExtensions]::File($LoggerConfig.WriteTo, 
-			$Path, 
-			$RestrictedToMinimumLevel,
-			$OutputTemplate,
-			$FormatProvider,
-			$FileSizeLimitBytes,
-			$LevelSwitch,
-			$Buffered,
-			$Shared,
-			$FlushToDiskInterval,
-			$RollingInterval,
-			$RollOnFileSizeLimit,
-			$RetainedFileCountLimit,
-			$Encoding
-		)
+
+		switch ($PSCmdlet.ParameterSetName) {
+			'Default' {
+				$LoggerConfig = [Serilog.FileLoggerConfigurationExtensions]::File($LoggerConfig.WriteTo, 
+					$Path, 
+					$RestrictedToMinimumLevel,
+					$OutputTemplate,
+					$FormatProvider,
+					$FileSizeLimitBytes,
+					$LevelSwitch,
+					$Buffered,
+					$Shared,
+					$FlushToDiskInterval,
+					$RollingInterval,
+					$RollOnFileSizeLimit,
+					$RetainedFileCountLimit,
+					$Encoding,
+					$Hooks
+				)
+			}
+			'Formatter' {
+				$LoggerConfig = [Serilog.FileLoggerConfigurationExtensions]::File($LoggerConfig.WriteTo, 
+					$Formatter,
+					$Path, 
+					$RestrictedToMinimumLevel,
+					$FileSizeLimitBytes,
+					$LevelSwitch,
+					$Buffered,
+					$Shared,
+					$FlushToDiskInterval,
+					$RollingInterval,
+					$RollOnFileSizeLimit,
+					$RetainedFileCountLimit,
+					$Encoding,
+					$Hooks
+				)
+			}
+		}
 
 		$LoggerConfig
 	}
