@@ -8,6 +8,8 @@ function Add-SinkFile {
 		Instance of LoggerConfiguration
 	.PARAMETER Path
 		Path to the file.
+	.PARAMETER Formatter
+		A formatter, such as JsonFormatter(See Get-JsonFormatter), to convert the log events into text for the file. If control of regular text formatting is required, use Default parameter set.
 	.PARAMETER RestrictedToMinimumLevel
 		The minimum level for events passed through the sink. Ignored when LevelSwitch is specified.
 	.PARAMETER OutputTemplate
@@ -32,6 +34,8 @@ function Add-SinkFile {
 		The maximum number of log files that will be retained, including the current log file. For unlimited retention, pass null. The default is 31.
 	.PARAMETER Encoding
 		Character encoding used to write the text file. The default is UTF-8 without BOM.
+	.PARAMETER Hooks
+		Optionally enables hooking into log file lifecycle events.
 	.INPUTS
 		Instance of LoggerConfiguration
 	.OUTPUTS
@@ -40,6 +44,8 @@ function Add-SinkFile {
 		PS> New-Logger | Add-SinkFile -Path "C:\Logs\test.log" | Start-Logger
 	.EXAMPLE
 		PS> New-Logger | Add-SinkFile -Path "C:\Logs\test-.txt" -RollingInterval Hour -OutputTemplate '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception} {Properties:j}{NewLine}' | Start-Logger
+	.EXAMPLE
+		PS> New-Logger | Add-SinkFile -Path 'C:\Data\Log\test.log' -Formatter (Get-JsonFormatter) | Start-Logger
 	#>
 
 	[Cmdletbinding(DefaultParameterSetName = 'Default')]
@@ -57,7 +63,7 @@ function Add-SinkFile {
 		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose,
 
 		[Parameter(Mandatory = $false)]
-		[string]$OutputTemplate = '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}',
+		[string]$OutputTemplate = '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}{ErrorRecord}',
 
 		[Parameter(Mandatory = $false, ParameterSetName = 'Default')]
 		[System.IFormatProvider]$FormatProvider = $null,

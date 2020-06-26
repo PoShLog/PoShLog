@@ -1,15 +1,13 @@
-using System;
 using Serilog;
 using Serilog.Configuration;
-using Serilog.Events;
 
 namespace PoShLog.Core.Enrichers.Extensions
 {
 	public static class ErrorRecordEnricherExtensions
 	{
-		public static LoggerConfiguration WithErrorRecord(this LoggerEnrichmentConfiguration loggerConfiguration)
+		public static LoggerConfiguration WithErrorRecord(this LoggerEnrichmentConfiguration loggerConfiguration, bool desctructureObjects = false)
 		{
-			return loggerConfiguration.With(new ErrorRecordEnricher());
+			return loggerConfiguration.With(new ErrorRecordEnricher(desctructureObjects));
 		}
 	}
 }

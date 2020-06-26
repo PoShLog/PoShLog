@@ -1,21 +1,3 @@
-class PowerShellSink {
-
-	[Serilog.Formatting.ITextFormatter]$TextFormatter
-
-	[ValidateNotNullOrEmpty()][string]$OutputTemplate
-
-	[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose
-
-	PowerShellSink(
-		[string]$outputTemplate,
-		[Serilog.Events.LogEventLevel]$restrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose
-	) {
-		$this.OutputTemplate = $outputTemplate
-		$this.RestrictedToMinimumLevel = $restrictedToMinimumLevel
-		$this.TextFormatter = [Serilog.Formatting.Display.MessageTemplateTextFormatter]::new($outputTemplate)
-	}
-}
-
 function Add-SinkPowerShell {
 	<#
 	.SYNOPSIS
@@ -24,8 +6,12 @@ function Add-SinkPowerShell {
 		Writes log events to powershell host
 	.PARAMETER LoggerConfig
 		Instance of LoggerConfiguration
+	.PARAMETER RestrictedToMinimumLevel
+		The minimum level for events passed through the sink. Ignored when LevelSwitch is specified.
 	.PARAMETER OutputTemplate
 		A message template describing the format used to write to the sink.
+	.PARAMETER LevelSwitch
+		A switch allowing the pass-through minimum level to be changed at runtime.
 	.INPUTS
 		Instance of LoggerConfiguration
 	.OUTPUTS
@@ -45,7 +31,7 @@ function Add-SinkPowerShell {
 		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose,
 
 		[Parameter(Mandatory = $false)]
-		[string]$OutputTemplate = '{Message:lj}',
+		[string]$OutputTemplate = '{Message:lj}{ErrorRecord}',
 		
 		[Parameter(Mandatory = $false)]
 		[Serilog.Core.LoggingLevelSwitch]$LevelSwitch = $null
