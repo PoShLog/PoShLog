@@ -1,0 +1,7 @@
+2020-06-26 12:13:56.486 +02:00 [VRB] Test verbose message
+2020-06-26 12:13:56.496 +02:00 [DBG] Test debug message
+2020-06-26 12:13:56.498 +02:00 [INF] Test info message
+2020-06-26 12:13:56.500 +02:00 [WRN] Test warning message
+2020-06-26 12:13:56.502 +02:00 [ERR] Test error message
+2020-06-26 12:13:56.504 +02:00 [FTL] Test fatal message
+2020-06-26 12:13:56.506 +02:00 [INF] Processed [{"Key":"Longitude","Value":134,"$type":"DictionaryEntry"},{"Key":"Latitude","Value":25,"$type":"DictionaryEntry"}] in 034 ms.

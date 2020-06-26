@@ -23,6 +23,40 @@ Install-Module -Name PoShLog
 
 ## Usage
 
+### Full version
+
+Setup using pipeline fluent API:
+
+```ps1
+Import-Module PoShLog
+
+# Create new logger
+New-Logger |
+    Set-MinimumLevel -Value Verbose |
+    Add-SinkConsole |
+    Add-SinkFile -Path 'C:\Data\my_awesome.log' |
+    Start-Logger
+
+# Test all log levels
+Write-VerboseLog 'Test verbose message'
+Write-DebugLog 'Test debug message'
+Write-InfoLog 'Test info message'
+Write-WarningLog 'Test warning message'
+Write-ErrorLog 'Test error message'
+Write-FatalLog 'Test fatal message'
+
+# Example of formatted output
+$position = @{
+    Latitude = 25
+    Longitude = 134
+}
+$elapsedMs = 34
+
+Write-InfoLog 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
+
+Close-Logger
+```
+
 ### Short version
 
 Minimum setup to log into console and file:
@@ -46,40 +80,6 @@ Close-Logger
 ![poshlog_example_simplest_file](images/poshlog_example_simplest_file.png)
 
 *Image 2: `C:\Data\my_awesome.log` in VS Code*
-
-### Full version
-
-Setup using pipeline fluent API:
-
-```ps1
-Import-Module PoShLog
-
-# Create new logger
-New-Logger |
-    Set-MinimumLevel -Value Verbose |
-    Add-SinkPowerShell |
-    Add-SinkFile -Path 'C:\Data\my_awesome.log' |
-    Start-Logger
-
-# Test all log levels
-Write-VerboseLog 'Test verbose message'
-Write-DebugLog 'Test debug message'
-Write-InfoLog 'Test info message'
-Write-WarningLog 'Test warning message'
-Write-ErrorLog 'Test error message'
-Write-FatalLog 'Test fatal message'
-
-# Example of formatted output
-$position = @{
-    Latitude = 25
-    Longitude = 134
-}
-$elapsedMs = 34
-
-Write-InfoLog 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
-
-Close-Logger
-```
 
 ### Extendability
 
