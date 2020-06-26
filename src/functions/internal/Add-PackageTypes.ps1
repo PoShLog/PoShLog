@@ -6,7 +6,7 @@ function Add-PackageTypes {
 
 	process {
 		foreach ($path in (Get-ChildItem $LibsDirectory | Where-Object { $_.Name -like '*.dll' } | Select-Object -ExpandProperty FullName)) {
-			Add-Type -Path $path -ErrorAction Stop
+			Add-Type -Path $path
 		}
 	}
 }
