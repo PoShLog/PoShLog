@@ -21,7 +21,7 @@ function Add-EnrichWithErrorRecord {
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Serilog.LoggerConfiguration]$LoggerConfig,
 		[Parameter(Mandatory = $false)]
-		[bool]$DestructureObjects = $false
+		[switch]$DestructureObjects
 	)
 
 	process {
