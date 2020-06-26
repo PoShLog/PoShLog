@@ -18,7 +18,7 @@ If you are familiar with PowerShell, skip to [Installation](#installation) secti
 To install PoShLog, run following snippet from powershell:
 
 ```ps1
-Install-Module -Name PoShLog
+Install-Module PoShLog
 ```
 
 ## Usage
@@ -33,8 +33,9 @@ Import-Module PoShLog
 # Create new logger
 New-Logger |
     Set-MinimumLevel -Value Verbose |
-    Add-SinkConsole |
-    Add-SinkFile -Path 'C:\Data\my_awesome.log' |
+    # You can add as many sinks as you want
+    Add-SinkConsole |   # Write event messages to console
+    Add-SinkFile -Path 'C:\Data\my_awesome.log' | # Write event messages to file
     Start-Logger
 
 # Test all log levels
@@ -57,9 +58,13 @@ Write-InfoLog 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $posi
 Close-Logger
 ```
 
+Creates file [my_awesome.log](https://github.com/PoShLog/PoShLog/blob/master/examples/my_awesome.log.txt) and also outputs event messages to console:
+
+![poshlog_example_fullversion](https://raw.githubusercontent.com/PoShLog/PoShLog/master/images/poshlog_example_fullversion.png)
+
 ### Short version
 
-Minimum setup to log into console and file:
+Minimum setup to log into console and [file](https://github.com/PoShLog/PoShLog/blob/master/images/poshlog_example_simplest_file.png):
 
 ```ps1
 Import-Module PoShLog
@@ -76,10 +81,6 @@ Close-Logger
 ![poshlog_example_simplest_console](images/poshlog_example_simplest_console.png)
 
 *Image 1: Windows Terminal*
-
-![poshlog_example_simplest_file](images/poshlog_example_simplest_file.png)
-
-*Image 2: `C:\Data\my_awesome.log` in VS Code*
 
 ### Extendability
 
