@@ -3,6 +3,7 @@ using System.IO;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
+using Serilog.Formatting.Display;
 
 namespace PoShLog.Core.Sinks
 {
@@ -19,7 +20,7 @@ namespace PoShLog.Core.Sinks
 		public PowerShellSink(Action<LogEvent, string> callback, string outputTemplate = DEFAULT_OUTPUT_TEMPLATE)
 		{
 
-			TextFormatter = new Serilog.Formatting.Display.MessageTemplateTextFormatter(outputTemplate);
+			TextFormatter = new MessageTemplateTextFormatter(outputTemplate);
 			Callback = callback;
 		}
 

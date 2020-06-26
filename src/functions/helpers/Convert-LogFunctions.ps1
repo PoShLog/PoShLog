@@ -28,7 +28,7 @@ function Convert-LogFunctions {
 		   -replace 'Write-Verbose ', 'Write-VerboseLog ' `
 		   -replace 'Write-Debug -Message', 'Write-DebugLog -MessageTemplate' `
 		   -replace 'Write-Debug ', 'Write-DebugLog ' `
-		   -replace 'Write-Information -Message', 'Write-InfoLog -MessageTemplate' `
+		   -replace 'Write-Information -MessageData', 'Write-InfoLog -MessageTemplate' `
 		   -replace 'Write-Information ', 'Write-InfoLog ' `
 		   -replace 'Write-Host -Object', 'Write-InfoLog -MessageTemplate' `
 		   -replace 'Write-Host ', 'Write-InfoLog ' `
