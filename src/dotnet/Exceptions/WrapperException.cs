@@ -24,5 +24,10 @@ namespace PoShLog.Core.Exceptions
 		public WrapperException()
 		{
 		}
+
+		public override string ToString()
+		{
+			return InnerException?.ToString();
+		}
 	}
 }
