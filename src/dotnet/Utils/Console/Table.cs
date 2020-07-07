@@ -3,86 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PoShLog.Core.Utils
+namespace PoShLog.Core.Utils.Console
 {
-	public class Cell
-	{
-		public const string NULL_PLACEHOLDER = "$null";
-
-		public int Index { get; }
-		public string Value { get; }
-		public static int MaxWidth { get; private set; }
-
-		public Row Row { get; }
-		public Column Column { get; set; }
-
-		public int Width => Value.Length;
-
-		public Cell(object value, int index, Row row)
-		{
-			Index = index;
-			Value = value?.ToString() ?? NULL_PLACEHOLDER;
-			MaxWidth = Width > MaxWidth ? Width : MaxWidth;
-			Row = row;
-		}
-
-		public override string ToString()
-		{
-			return Value.PadRight(Column.MaxWidth, ' ');
-		}
-	}
-
-	public class Column
-	{
-		public int Index { get; }
-		public List<Cell> Cells { get; } = new List<Cell>();
-
-		public int MaxWidth => Cells.Max(c => c.Width);
-
-		public Column(int index)
-		{
-			Index = index;
-		}
-
-		public Column(Cell cell)
-		{
-			AddCell(cell);
-			Index = cell.Index;
-		}
-
-		public void AddCell(Cell cell)
-		{
-			Cells.Add(cell);
-			cell.Column = this;
-		}
-	}
-
-	public class Row
-	{
-		public bool IsHeader { get; }
-		public int Index { get; }
-		public List<Cell> Cells { get; }
-		public bool DisableTopGrid { get; set; }
-
-		public Row(int index, bool isHeader = false, params object[] values)
-			: this(index, isHeader, values?.Select(v => v?.ToString() ?? Cell.NULL_PLACEHOLDER).ToArray())
-		{
-		}
-
-		public Row(int index, bool isHeader = false, params string[] values)
-		{
-			if (values == null)
-			{
-				throw new ArgumentException("You must provide cells when creating row!", nameof(values));
-			}
-
-			int cellIndex = 0;
-			Cells = new List<Cell>(values.Select(v => new Cell(v, cellIndex++, this)));
-			Index = index;
-			IsHeader = isHeader;
-		}
-	}
-
 	public class Table
 	{
 		public const string TOP_LEFT_JOINT = "┌";
@@ -101,9 +23,19 @@ namespace PoShLog.Core.Utils
 		private List<Column> Columns { get; set; }
 
 		public bool HeaderSet { get; set; }
-		public int Padding { get; set; } = 1;
+		public Padding Padding { get; } = new Padding(0);
 
 		private int _rowIndex;
+
+		public Table()
+		{
+
+		}
+
+		public Table(Padding padding)
+		{
+			Padding = padding;
+		}
 
 		public void SetHeader(params string[] headers)
 		{
@@ -171,8 +103,6 @@ namespace PoShLog.Core.Utils
 			var sb = new StringBuilder();
 			CalculateColumns();
 
-			string ps = string.Concat(Enumerable.Repeat(' ', Padding));
-
 			foreach (var row in Rows)
 			{
 				// Don't render grid if row is multiline
@@ -183,11 +113,28 @@ namespace PoShLog.Core.Utils
 
 				foreach (var cell in row.Cells)
 				{
-					sb.Append($"{VERTICAL_LINE}{ps}{cell}{ps}");
+					sb.Append($"{VERTICAL_LINE}{Padding.LeftString()}{cell}{Padding.RightString()}");
 				}
 				sb.AppendLine(VERTICAL_LINE);
 
 				RenderGrid(sb, row.Index, false);
+			}
+
+			return sb.ToString();
+		}
+
+		public string RenderWithoutGrid()
+		{
+			var sb = new StringBuilder();
+			CalculateColumns();
+
+			foreach (var row in Rows)
+			{
+				foreach (var cell in row.Cells)
+				{
+					sb.Append($"{Padding.LeftString()}{cell}{Padding.RightString()}");
+				}
+				sb.AppendLine();
 			}
 
 			return sb.ToString();
@@ -213,7 +160,7 @@ namespace PoShLog.Core.Utils
 		{
 			for (int i = 0; i < Columns.Count; i++)
 			{
-				var columnWidth = Columns[i].MaxWidth + Padding * 2;
+				var columnWidth = Columns[i].MaxWidth + Padding.Right + Padding.Left;
 				if (i == 0)
 				{
 					sb.Append(leftJoint + string.Empty.PadLeft(columnWidth, HORIZONTAL_LINE) + middleJoint);
@@ -227,7 +174,6 @@ namespace PoShLog.Core.Utils
 					sb.Append(string.Empty.PadLeft(columnWidth, HORIZONTAL_LINE) + middleJoint);
 				}
 			}
-
 			sb.AppendLine();
 		}
 

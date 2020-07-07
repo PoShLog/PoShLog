@@ -63,7 +63,7 @@ function Add-SinkFile {
 		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose,
 
 		[Parameter(Mandatory = $false)]
-		[string]$OutputTemplate = '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}{ErrorRecord}',
+		[string]$OutputTemplate = '{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{ErrorRecord}{Exception}',
 
 		[Parameter(Mandatory = $false, ParameterSetName = 'Default')]
 		[System.IFormatProvider]$FormatProvider = $null,

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using PoShLog.Core.Data;
-using PoShLog.Core.Utils;
+using PoShLog.Core.Utils.Console;
+using PoShLog.Core.Utils.Console.Extensions;
 
 namespace PoShLog.Core.Enrichers.Extensions
 {
@@ -8,39 +9,39 @@ namespace PoShLog.Core.Enrichers.Extensions
 	{
 		public static string ToTable(this ErrorRecordWrapper errorRecord)
 		{
-			var table = new Table();
+			var table = new Table(new Padding(1));
 
-			table.AddRow("CategoryInfo", errorRecord.CategoryInfo);
-			table.AddRow("ErrorDetails", errorRecord.ErrorDetails);
-			table.AddRow("FullyQualifiedErrorId", errorRecord.FullyQualifiedErrorId);
-			table.AddRow("PipelineIterationInfo", errorRecord.PipelineIterationInfo);
-			table.AddRow("ScriptStackTrace", errorRecord.ScriptStackTrace);
-			table.AddRow("TargetObject", errorRecord.TargetObject);
+			table.AddPropertyRow("CategoryInfo", errorRecord.CategoryInfo);
+			table.AddPropertyRow("ErrorDetails", errorRecord.ErrorDetails);
+			table.AddPropertyRow("FullyQualifiedErrorId", errorRecord.FullyQualifiedErrorId);
+			table.AddPropertyRow("PipelineIterationInfo", string.Join(";", errorRecord.PipelineIterationInfo));
+			table.AddPropertyRow("ScriptStackTrace", errorRecord.ScriptStackTrace);
+			table.AddPropertyRow("TargetObject", errorRecord.TargetObject);
 
 			return table.ToString();
 		}
 
 		public static string ToTable(this InvocationInfoWrapper invocationInfo)
 		{
-			var table = new Table();
+			var table = new Table(new Padding(1));
 
 			var boundParams = string.Join(", ", invocationInfo.BoundParameters.Select(kv => $"{kv.Key}:{kv.Value}"));
-			table.AddRow("BoundParameters", boundParams);
-			table.AddRow("CommandOrigin", invocationInfo.CommandOrigin);
-			table.AddRow("DisplayScriptPosition", invocationInfo.DisplayScriptPosition);
-			table.AddRow("ExpectingInput", invocationInfo.ExpectingInput);
-			table.AddRow("HistoryId", invocationInfo.HistoryId);
-			table.AddRow("InvocationName", invocationInfo.InvocationName);
-			table.AddRow("Line", invocationInfo.Line);
-			table.AddRow("MyCommand", invocationInfo.MyCommand);
-			table.AddRow("OffsetInLine", invocationInfo.OffsetInLine);
-			table.AddRow("PipelineLength", invocationInfo.PipelineLength);
-			table.AddRow("PipelinePosition", invocationInfo.PipelinePosition);
-			table.AddRow("PSCommandPath", invocationInfo.PSCommandPath);
-			table.AddRow("PSScriptRoot", invocationInfo.PSScriptRoot);
-			table.AddRow("ScriptLineNumber", invocationInfo.ScriptLineNumber);
-			table.AddRow("ScriptName", invocationInfo.ScriptName);
-			table.AddRow("UnboundArguments", string.Join("; ", invocationInfo.UnboundArguments));
+			table.AddPropertyRow("BoundParameters", boundParams);
+			table.AddPropertyRow("CommandOrigin", invocationInfo.CommandOrigin);
+			table.AddPropertyRow("DisplayScriptPosition", invocationInfo.DisplayScriptPosition);
+			table.AddPropertyRow("ExpectingInput", invocationInfo.ExpectingInput);
+			table.AddPropertyRow("HistoryId", invocationInfo.HistoryId);
+			table.AddPropertyRow("InvocationName", invocationInfo.InvocationName);
+			table.AddPropertyRow("Line", invocationInfo.Line);
+			table.AddPropertyRow("MyCommand", invocationInfo.MyCommand);
+			table.AddPropertyRow("OffsetInLine", invocationInfo.OffsetInLine);
+			table.AddPropertyRow("PipelineLength", invocationInfo.PipelineLength);
+			table.AddPropertyRow("PipelinePosition", invocationInfo.PipelinePosition);
+			table.AddPropertyRow("PSCommandPath", invocationInfo.PSCommandPath);
+			table.AddPropertyRow("PSScriptRoot", invocationInfo.PSScriptRoot);
+			table.AddPropertyRow("ScriptLineNumber", invocationInfo.ScriptLineNumber);
+			table.AddPropertyRow("ScriptName", invocationInfo.ScriptName);
+			table.AddPropertyRow("UnboundArguments", string.Join("; ", invocationInfo.UnboundArguments));
 
 			return table.ToString();
 		}
