@@ -11,7 +11,7 @@ pool:
 
 variables:
   moduleName: 'PoShLog'
-  buildConfiguration: 'Dev'
+  buildConfiguration: 'Prod'
 
 steps:
 - checkout: self
