@@ -28,6 +28,18 @@ steps:
       Bootstrap '.\cd\RequiredModules.psd1'
       Expand-VersionFromBranch -BranchName $(Build.SourceBranch)
 
+- task: Pester@10
+  inputs:
+    scriptFolder: '$(System.DefaultWorkingDirectory)\tests\*'
+    resultsFile: '$(System.DefaultWorkingDirectory)\Test-$(FullVersion).xml'
+    usePSCore: False
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'NUnit'
+    testResultsFiles: '**/Test-*.xml'
+    failTaskOnFailedTests: true
+
 - powershell: Invoke-Build '.\src\$(moduleName).Build.ps1' -Configuration '$(buildConfiguration)' -Task Clean, BuildDependencies, UpdateManifest, CopyModuleFiles, PublishModule -ModuleVersion "$(MajorVersion).$(MinorVersion).$(BugfixVersion)" -PreRelease "$(VersionLabel)"
   displayName: 'Publish PowerShell Module'
   env:
