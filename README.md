@@ -2,7 +2,7 @@
 
 [![icon](https://github.com/PoShLog/PoShLog/blob/master/images/icons/poshlog-icon-64.png?raw=true)](https://github.com/PoShLog/PoShLog)
 
-[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![PowerShell Gallery](https://img.shields.io/powershellgallery/p/poshlog?color=blue)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/FVdVxuw)
+[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![PowerShell Gallery](https://img.shields.io/powershellgallery/p/poshlog?color=blue)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/FVdVxuw) [![Build Status](https://tomlabscloud.visualstudio.com/PoShLog/_apis/build/status/PoShLog.PoShLog?branchName=master)](https://tomlabscloud.visualstudio.com/PoShLog/_build/latest?definitionId=15&branchName=master)
 
 >Serilog for powershell
 
@@ -18,34 +18,10 @@ If you are familiar with PowerShell, skip to [Installation](#installation) secti
 To install PoShLog, run following snippet from powershell:
 
 ```ps1
-Install-Module -Name PoShLog
+Install-Module PoShLog
 ```
 
 ## Usage
-
-### Short version
-
-Minimum setup to log into console and file:
-
-```ps1
-Import-Module PoShLog
-
-# Create and start new logger
-Start-Logger -FilePath 'C:\Data\my_awesome.log' -Console
-
-Write-InfoLog 'Hurrray, my first log message!'
-
-# Don't forget to close the logger
-Close-Logger
-```
-
-![poshlog_example_simplest_console](images/poshlog_example_simplest_console.png)
-
-*Image 1: Windows Terminal*
-
-![poshlog_example_simplest_file](images/poshlog_example_simplest_file.png)
-
-*Image 2: `C:\Data\my_awesome.log` in VS Code*
 
 ### Full version
 
@@ -57,8 +33,9 @@ Import-Module PoShLog
 # Create new logger
 New-Logger |
     Set-MinimumLevel -Value Verbose |
-    Add-SinkPowerShell |
-    Add-SinkFile -Path 'C:\Data\my_awesome.log' |
+    # You can add as many sinks as you want
+    Add-SinkConsole |   # Write event messages to console
+    Add-SinkFile -Path 'C:\Data\my_awesome.log' | # Write event messages to file
     Start-Logger
 
 # Test all log levels
@@ -80,6 +57,30 @@ Write-InfoLog 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $posi
 
 Close-Logger
 ```
+
+Creates file [my_awesome.log](https://github.com/PoShLog/PoShLog/blob/master/examples/my_awesome.log.txt) and also outputs event messages to console:
+
+![poshlog_example_fullversion](https://raw.githubusercontent.com/PoShLog/PoShLog/master/images/poshlog_example_fullversion.png)
+
+### Short version
+
+Minimum setup to log into console and [file](https://github.com/PoShLog/PoShLog/blob/master/images/poshlog_example_simplest_file.png):
+
+```ps1
+Import-Module PoShLog
+
+# Create and start new logger
+Start-Logger -FilePath 'C:\Data\my_awesome.log' -Console
+
+Write-InfoLog 'Hurrray, my first log message!'
+
+# Don't forget to close the logger
+Close-Logger
+```
+
+![poshlog_example_simplest_console](images/poshlog_example_simplest_console.png)
+
+*Image 1: Windows Terminal*
 
 ### Extendability
 
