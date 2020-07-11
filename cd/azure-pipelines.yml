@@ -28,6 +28,9 @@ steps:
       Bootstrap '.\cd\RequiredModules.psd1'
       Expand-VersionFromBranch -BranchName $(Build.SourceBranch)
 
+- powershell: Invoke-Build '.\src\$(moduleName).Build.ps1' -Configuration '$(buildConfiguration)' -Task Clean, BuildDependencies -ModuleVersion "$(MajorVersion).$(MinorVersion).$(BugfixVersion)" -PreRelease "$(VersionLabel)"
+  displayName: 'Build PowerShell Module'
+
 - task: Pester@10
   inputs:
     scriptFolder: '$(System.DefaultWorkingDirectory)\tests\*'
@@ -40,7 +43,7 @@ steps:
     testResultsFiles: '**/Test-*.xml'
     failTaskOnFailedTests: true
 
-- powershell: Invoke-Build '.\src\$(moduleName).Build.ps1' -Configuration '$(buildConfiguration)' -Task Clean, BuildDependencies, UpdateManifest, CopyModuleFiles, PublishModule -ModuleVersion "$(MajorVersion).$(MinorVersion).$(BugfixVersion)" -PreRelease "$(VersionLabel)"
+- powershell: Invoke-Build '.\src\$(moduleName).Build.ps1' -Configuration '$(buildConfiguration)' -Task UpdateManifest, CopyModuleFiles, PublishModule -ModuleVersion "$(MajorVersion).$(MinorVersion).$(BugfixVersion)" -PreRelease "$(VersionLabel)"
   displayName: 'Publish PowerShell Module'
   env:
     psgalleryapikey: $(psgalleryapikey)
