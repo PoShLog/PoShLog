@@ -1,14 +1,12 @@
-$ModuleDirectory = "$PSScriptRoot\..\src"
-
 Describe "PoShLog-main" {
 	It "imports the module" {
 		{
-			Import-Module "$ModuleDirectory\PoShLog.psm1" -Force
+			Import-Module "$PSScriptRoot\..\src\PoShLog.psm1" -Force
 		} | Should -Not -Throw
 	}
 	It "imports the module using manifest" {
 		{
-			Import-Module "$ModuleDirectory\PoShLog.psd1" -Force
+			Import-Module "$PSScriptRoot\..\src\PoShLog.psd1" -Force
 		} | Should -Not -Throw
 	}
 }

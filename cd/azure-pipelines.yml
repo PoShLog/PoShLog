@@ -1,19 +1,78 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- master
+  branches:
+    include:
+    - releases/*
+
+# Disable PullRequest Validation
+pr: none
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'
+
+variables:
+  moduleName: 'PoShLog'
+  buildConfiguration: 'Prod'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- checkout: self
+  persistCredentials: true
+  clean: true
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
+      Install-Module -Name PoShLog.Tools -Force -Verbose -Scope CurrentUser
+      Import-Module -Name PoShLog.Tools
+      Bootstrap '.\cd\RequiredModules.psd1'
+      Expand-VersionFromBranch -BranchName $(Build.SourceBranch)
+
+- powershell: Invoke-Build '.\src\$(moduleName).Build.ps1' -Configuration '$(buildConfiguration)' -Task Clean, BuildDependencies, UpdateManifest, CopyModuleFiles, PublishModule -ModuleVersion "$(MajorVersion).$(MinorVersion).$(BugfixVersion)" -PreRelease "$(VersionLabel)"
+  displayName: 'Publish PowerShell Module'
+  env:
+    psgalleryapikey: $(psgalleryapikey)
+
+- task: ArchiveFiles@2
+  displayName: Archive module files
+  inputs:
+    rootFolderOrFile: '.\src\output\$(moduleName)'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(moduleName)_$(FullVersion).zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'Module'
+    publishLocation: 'Container'
+
+- task: PowerShell@2
+  displayName: Git commit & push
+  inputs:
+    targetType: 'inline'
+    script: |
+      Import-Module -Name PoShPipeline
+      
+      git --version
+      git config --global user.email "email@tomasbouda.cz"
+      git config --global user.name "CI-Build"
+      Invoke-Git 'status'
+      Invoke-Git 'checkout releases/$(Build.SourceBranchName)'
+      Invoke-Git 'status'
+      Invoke-Git 'add -A'
+      Invoke-Git 'tag v$(FullVersion)'
+      Invoke-Git 'commit -m ''Released v$(FullVersion) [skip ci]'''
+      Invoke-Git 'push --tags'
+      
+    ignoreLASTEXITCODE: true
+
+- task: PowerShell@2
+  displayName: Create PullRequest
+  inputs:
+    targetType: 'inline'
+    script: |
+      Import-Module -Name PoShPipeline
+      $ownerAndRepo = '$(Build.Repository.Name)' -split '/'
+      New-PullRequest -Owner $ownerAndRepo[0] -Repo $ownerAndRepo[1] -AuthToken '$(GitHubAuthToken)' -Title 'Released v$(FullVersion)' -Head 'releases/$(Build.SourceBranchName)' -Base 'master'
