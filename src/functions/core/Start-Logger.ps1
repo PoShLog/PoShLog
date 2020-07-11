@@ -9,6 +9,8 @@ function Start-Logger {
 	.PARAMETER MinimumLevel
 		Configures the minimum level at which events will be passed to sinks. All messages with levels beneath this level will be ignored.
 	.PARAMETER Console
+		Setups Console sink. All messages will be writen to console host.
+	.PARAMETER PowerShell
 		Setups PowerShell console sink. All messages will be writen to powershell host.
 	.PARAMETER FilePath
 		Setups File sink at given path. All messages will be written to given file path.

@@ -14,6 +14,7 @@ namespace PoShLog.Core.Data
 		public string ScriptStackTrace { get; }
 		public object TargetObject { get; }
 		public string ExceptionMessage { get; }
+		public string ExceptionDetails { get; }
 
 		public ErrorRecordWrapper(ErrorRecord errorRecord)
 		{
@@ -25,6 +26,7 @@ namespace PoShLog.Core.Data
 			ScriptStackTrace = errorRecord.ScriptStackTrace;
 			TargetObject = errorRecord.TargetObject;
 			ExceptionMessage = errorRecord.Exception?.Message;
+			ExceptionDetails = errorRecord.Exception?.ToString();
 		}
 
 		public override string ToString()

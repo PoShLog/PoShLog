@@ -35,7 +35,7 @@ function Add-SinkConsole {
 		[Parameter(Mandatory = $false)]
 		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose,
 		[Parameter(Mandatory = $false)]
-		[string]$OutputTemplate = '[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{ErrorRecord}',
+		[string]$OutputTemplate = '[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{ErrorRecord}{Exception}',
 		[Parameter(Mandatory = $false)]
 		[System.IFormatProvider]$FormatProvider = $null,
 		[Parameter(Mandatory = $false)]
