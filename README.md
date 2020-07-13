@@ -92,6 +92,7 @@ These examples are just to get you started fast. For more detailed documentation
 
 ## Release Notes
 
+* [v2.1.1](releaseNotes/v2.1.1.md)
 * [v2.1.0](releaseNotes/v2.1.0.md)
 
 ## Contributing
