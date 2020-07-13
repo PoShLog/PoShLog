@@ -33,7 +33,7 @@ function Add-EnrichWithProperty {
 	)
 
 	process {
-		$LoggerConfig = [Serilog.Configuration.LoggerEnrichmentConfiguration]::WithProperty($LoggerConfig.Enrich, $Name, $Value, $DestructureObjects)
+		$LoggerConfig = $LoggerConfig.Enrich.WithProperty($Name, $Value, $DestructureObjects)
 
 		$LoggerConfig
 	}
