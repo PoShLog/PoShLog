@@ -29,7 +29,7 @@ steps:
       $dateTime=$(Get-Date -Format yyyyMMddTHHmmss);
       Write-Host "##vso[task.setvariable variable=time]$dateTime"
 
-- powershell: Invoke-Build '.\src\$(moduleName).Build.ps1' -Configuration '$(buildConfiguration)' -Task Clean, BuildDependencies
+- powershell: Invoke-Build '.\src\$(moduleName).Build.ps1' -Configuration '$(buildConfiguration)' -Task Clean, BuildDependencies, CopyModuleFiles
   displayName: 'Build PowerShell Module'
 
 - task: Pester@10
