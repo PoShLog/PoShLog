@@ -1,0 +1,61 @@
+trigger:
+  branches:
+    include:
+    - master
+
+# Disable PullRequest Validation
+# pr: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  moduleName: 'PoShLog'
+  buildConfiguration: 'Dev'
+
+steps:
+- checkout: self
+  persistCredentials: true
+  clean: true
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
+      Install-Module -Name PoShLog.Tools -Force -Verbose -Scope CurrentUser
+      Import-Module -Name PoShLog.Tools
+      Bootstrap '.\cd\RequiredModules.psd1'
+      Expand-VersionFromBranch -BranchName $(Build.SourceBranch)
+      $dateTime=$(Get-Date -Format yyyyMMddTHHmmss);
+      Write-Host "##vso[task.setvariable variable=time]$dateTime"
+
+- powershell: Invoke-Build '.\src\$(moduleName).Build.ps1' -Configuration '$(buildConfiguration)' -Task Clean, BuildDependencies
+  displayName: 'Build PowerShell Module'
+
+- task: Pester@10
+  inputs:
+    scriptFolder: '$(System.DefaultWorkingDirectory)\tests\*'
+    resultsFile: '$(System.DefaultWorkingDirectory)\Test-$(time).xml'
+    usePSCore: False
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'NUnit'
+    testResultsFiles: '**/Test-*.xml'
+    failTaskOnFailedTests: true
+
+- task: ArchiveFiles@2
+  displayName: Archive module files
+  inputs:
+    rootFolderOrFile: '.\src\output\$(moduleName)'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(moduleName)_$(time).zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'Module'
+    publishLocation: 'Container'
