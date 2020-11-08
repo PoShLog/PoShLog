@@ -9,6 +9,13 @@
 PoShLog is powershell cross-platform logging module. PoShLog allows you to log structured event data into **console**, **file** and much more [places](https://github.com/PoShLog/PoShLog/wiki/Sinks) easily.
 It's built upon great C# logging library [Serilog](https://serilog.net/).
 
+## Key Features
+
+* [x] Structured log event data
+* [x] Clean and easy to use [API](https://github.com/PoShLog/PoShLog/wiki/Cmdlets)
+* [x] Cross-platform
+* [x] Easily extensible
+
 ## Getting started
 
 If you are familiar with PowerShell, skip to [Installation](#installation) section. For more detailed installation instructions check out [Getting started](https://github.com/PoShLog/PoShLog/wiki/Getting-started) wiki.
@@ -23,19 +30,18 @@ Install-Module PoShLog
 
 ## Usage
 
-### Full version
-
-Setup using pipeline fluent API:
+Setup logger using pipeline fluent API and write some log messages(*in this case into file and console*):
 
 ```ps1
 Import-Module PoShLog
 
 # Create new logger
+# This is where you customize where, when and how to log
 New-Logger |
-    Set-MinimumLevel -Value Verbose |
-    # You can add as many sinks as you want
-    Add-SinkConsole |   # Write event messages to console
-    Add-SinkFile -Path 'C:\Data\my_awesome.log' | # Write event messages to file
+    Set-MinimumLevel -Value Verbose | # You can change this value later to filter log messages
+    # Here you can add as many sinks as you want - see https://github.com/PoShLog/PoShLog/wiki/Sinks for all available sinks
+    Add-SinkConsole |   # Tell logger to write log messages to console
+    Add-SinkFile -Path 'C:\Data\my_awesome.log' | # Tell logger to write log messages into file
     Start-Logger
 
 # Test all log levels
@@ -46,7 +52,18 @@ Write-WarningLog 'Test warning message'
 Write-ErrorLog 'Test error message'
 Write-FatalLog 'Test fatal message'
 
-# Example of formatted output
+Close-Logger
+```
+
+![poshlog_example_fullversion](images/poshlog_example_fullversion.png)
+
+[*For detailed documentation see wiki*](https://github.com/PoShLog/PoShLog/wiki)
+You can(*and you should*) log formatted data:
+
+```ps1
+Write-InfoLog 'Current date and time is {DateTime}' -PropertyValues (Get-Date)
+
+# Some example data
 $position = @{
     Latitude = 25
     Longitude = 134
@@ -54,21 +71,13 @@ $position = @{
 $elapsedMs = 34
 
 Write-InfoLog 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
-
-Close-Logger
 ```
 
-Creates file [my_awesome.log](https://github.com/PoShLog/PoShLog/blob/master/examples/my_awesome.log.txt) and also outputs event messages to console:
+![poshlog_example_simplest_console](images/poshlog_example_structured_data.png)
 
-![poshlog_example_fullversion](https://raw.githubusercontent.com/PoShLog/PoShLog/master/images/poshlog_example_fullversion.png)
-
-### Short version
-
-Minimum setup to log into console and [file](https://github.com/PoShLog/PoShLog/blob/master/images/poshlog_example_simplest_file.png):
+Fluent API is too bulky? You don't need extra sinks? Use short setup version(*logs into console and [file](poshlog_example_simplest_file.png)*):
 
 ```ps1
-Import-Module PoShLog
-
 # Create and start new logger
 Start-Logger -FilePath 'C:\Data\my_awesome.log' -Console
 
@@ -80,8 +89,6 @@ Close-Logger
 
 ![poshlog_example_simplest_console](images/poshlog_example_simplest_console.png)
 
-*Image 1: Windows Terminal*
-
 ### Extendability
 
 PoShLog is extensible just like Serilog. All available extensions can be found [here](https://github.com/PoShLog/PoShLog/wiki/Extension-modules).
@@ -90,21 +97,16 @@ PoShLog is extensible just like Serilog. All available extensions can be found [
 
 These examples are just to get you started fast. For more detailed documentation please check [wiki](https://github.com/PoShLog/PoShLog/wiki).
 
-## Release Notes
-
-* [v2.1.1](releaseNotes/v2.1.1.md)
-* [v2.1.0](releaseNotes/v2.1.0.md)
-
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ### Show your support
 
-* :star: Star the PoShLog repository
-* :thumbsup: Give me some feedback on [discord](https://discord.gg/FVdVxuw)
-* Test PoShLog and raise [issues](https://github.com/PoShLog/PoShLog/issues)
-* Contribute :rocket:
+* :star: Star the PoShLog repository. This is the least you can do to support this project.
+* :thumbsup: Give us some feedback or suggest features on [discord](https://discord.gg/FVdVxuw)
+* :mag_right: Test PoShLog and raise [issues](https://github.com/PoShLog/PoShLog/issues)
+* Contribute :rocket: you can start with [good first issues](https://github.com/PoShLog/PoShLog/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 
 ### Contributors
 
@@ -112,7 +114,12 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## Authors
 
-* [**Tomáš Bouda**](http://tomasbouda.cz/)
+* [**Tomáš Bouda**](http://tomasbouda.cz)
+
+## Release Notes
+
+* [v2.1.1](releaseNotes/v2.1.1.md)
+* [v2.1.0](releaseNotes/v2.1.0.md)
 
 ## License
 
