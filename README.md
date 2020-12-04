@@ -58,6 +58,7 @@ Close-Logger
 ![poshlog_example_fullversion](images/poshlog_example_fullversion.png)
 
 [*For detailed documentation see wiki*](https://github.com/PoShLog/PoShLog/wiki)
+
 You can(*and you should*) log formatted data:
 
 ```ps1
