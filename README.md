@@ -6,12 +6,14 @@
 
 >Serilog for powershell
 
-PoShLog is powershell cross-platform logging module. PoShLog allows you to log structured event data into **console**, **file** and much more [places](https://github.com/PoShLog/PoShLog/wiki/Sinks) easily.
+PoShLog is powershell cross-platform logging module. PoShLog allows you to log structured messages into **console**, **file** and much more [places](https://github.com/PoShLog/PoShLog/wiki/Sinks) easily.
 It's built upon great C# logging library [Serilog](https://serilog.net/).
 
 ## Key Features
 
-* [x] Structured log event data
+* [x] Structured log messages
+* [x] Many *sinks* allowing you to log in multiple places, such as dB, cloud and so on. 
+* [x] Message templates with predefined variables such as **Timestamp**
 * [x] Clean and easy to use [API](https://github.com/PoShLog/PoShLog/wiki/Cmdlets)
 * [x] Cross-platform
 * [x] Easily extensible
