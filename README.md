@@ -1,4 +1,4 @@
-[![icon](https://github.com/PoShLog/PoShLog/blob/master/images/icons/poshlog-xmas-icon-64.png?raw=true)](https://github.com/PoShLog/PoShLog)
+[![icon](https://github.com/PoShLog/PoShLog/blob/master/images/icons/poshlog-icon-64.png?raw=true)](https://github.com/PoShLog/PoShLog)
 
 # PoShLog
 
