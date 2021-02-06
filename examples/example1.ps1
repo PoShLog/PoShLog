@@ -1,7 +1,7 @@
 Import-Module PoShLog
 Import-Module PoShLog.Enrichers
 
-# Level switch allows you to switch minimum logging level
+# Level switch allows you to switch minimum logging level at runtime
 $levelSwitch = New-LevelSwitch -MinimumLevel Verbose
 
 $l0 = New-Logger |

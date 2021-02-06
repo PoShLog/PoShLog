@@ -2,7 +2,7 @@
 
 # PoShLog
 
-[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/FVdVxuw) [![Build Status](https://tomlabscloud.visualstudio.com/PoShLog/_apis/build/status/PoShLog.PoShLog?branchName=master)](https://tomlabscloud.visualstudio.com/PoShLog/_build?definitionId=15) [![Support](https://img.shields.io/badge/%24-Support-blueviolet)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GRARVRTVNEUHS)
+[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/FVdVxuw) [![Build Status](https://tomlabscloud.visualstudio.com/PoShLog/_apis/build/status/PoShLog.PoShLog%20-%20BuildOnly?branchName=master)](https://tomlabscloud.visualstudio.com/PoShLog/_build/latest?definitionId=17&branchName=master) [![Support](https://img.shields.io/badge/%24-Support-blueviolet)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GRARVRTVNEUHS)
 
 >Serilog for powershell
 
@@ -58,6 +58,7 @@ Close-Logger
 ![poshlog_example_fullversion](images/poshlog_example_fullversion.png)
 
 [*For detailed documentation see wiki*](https://github.com/PoShLog/PoShLog/wiki)
+
 You can(*and you should*) log formatted data:
 
 ```ps1
