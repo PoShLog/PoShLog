@@ -105,7 +105,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ### Show your support
 
 * :star: Star the PoShLog repository. This is the least you can do to support this project.
-* :thumbsup: Give us some feedback or suggest features on [discord](https://discord.gg/FVdVxuw)
+* :thumbsup: Give us some feedback or suggest features using [Discussions](https://github.com/PoShLog/PoShLog/discussions) or [discord](https://discord.gg/FVdVxuw)
 * :mag_right: Test PoShLog and raise [issues](https://github.com/PoShLog/PoShLog/issues)
 * Contribute :rocket: you can start with [good first issues](https://github.com/PoShLog/PoShLog/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 
