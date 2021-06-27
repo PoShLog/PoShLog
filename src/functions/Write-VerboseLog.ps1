@@ -59,5 +59,7 @@ function Write-VerboseLog {
 		[switch]$PassThru
 	)
 
-	Write-Log -LogLevel Verbose -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
+	Process {
+		Write-Log -LogLevel Verbose -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
+	}
 }

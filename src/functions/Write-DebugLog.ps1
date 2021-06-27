@@ -59,5 +59,7 @@ function Write-DebugLog {
 		[switch]$PassThru
 	)
 
-	Write-Log -LogLevel Debug -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
+	Process {
+		Write-Log -LogLevel Debug -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
+	}
 }
