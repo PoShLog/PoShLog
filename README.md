@@ -112,6 +112,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ### Contributors
 
 * [Michael Zimmerli](https://github.com/gitbute)
+* [Martin Dennhardt](https://github.com/mamidenn)
 
 ## Authors
 
