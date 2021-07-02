@@ -5,6 +5,7 @@ function Add-PackageTypes {
 	)
 
 	process {
+		$exceptions = @()
 		foreach ($path in (Get-ChildItem $LibsDirectory | Where-Object { $_.Name -like '*.dll' } | Select-Object -ExpandProperty FullName)) {
 			try
 			{
@@ -12,17 +13,22 @@ function Add-PackageTypes {
 			}
 			catch [System.Reflection.ReflectionTypeLoadException]
 			{
-				Write-Host $_.Exception.Message -ForegroundColor Yellow
-				Write-Host $_.Exception.StackTrace -ForegroundColor DarkYellow
+				$ex = $_.Exception
+				Write-Host $ex.Message -ForegroundColor Yellow
+				Write-Host $ex.StackTrace -ForegroundColor DarkYellow
 
-				if($null -ne $_.Exception.LoaderExceptions) { 
-					foreach($loaderEx in $_.Exception.LoaderExceptions) { 
+				if($null -ne $ex.LoaderExceptions) { 
+					foreach($loaderEx in $ex.LoaderExceptions) { 
 						Write-Host "LoaderException: $loaderEx" -ForegroundColor Cyan
 					}
 				}
 
-				# throw 'Error occured while loading PoShLog libraries!'
+				$exceptions += $ex
 			}
+		}
+
+		if($exceptions.Length -gt 0){
+			throw (New-Object -TypeName System.AggregateException -ArgumentList $exceptions)
 		}
 	}
 }
