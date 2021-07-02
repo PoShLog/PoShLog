@@ -75,13 +75,13 @@ NestedModules = @('lib\PoShLog.Core.dll')
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = 'Write-DebugLog', 'Write-ErrorLog', 'Write-FatalLog', 'Write-InfoLog', 
                'Write-InformationLog', 'Write-VerboseLog', 'Write-WarningLog', 
-               'Close-Logger', 'New-LevelSwitch', 'New-Logger', 'Set-LevelSwitch', 
-               'Set-Logger', 'Set-MinimumLevel', 'Start-Logger', 'Disable-SelfLog', 
-               'Enable-SelfLog', 'Add-EnrichFromLogContext', 
+               'Close-Logger', 'Get-Logger', 'New-LevelSwitch', 'New-Logger', 
+               'Set-LevelSwitch', 'Set-Logger', 'Set-MinimumLevel', 'Start-Logger', 
+               'Disable-SelfLog', 'Enable-SelfLog', 'Add-EnrichFromLogContext', 
                'Add-EnrichWithErrorRecord', 'Add-EnrichWithProperty', 
                'Get-JsonFormatter', 'Add-PackageTypes', 'Convert-LogFunctions', 
-               'Test-PsCore', 'Add-SinkConsole', 'Add-SinkFile', 'Add-SinkLogger', 
-               'Add-SinkPowerShell'
+               'Set-DefaultMessageFormatter', 'Test-PsCore', 'Add-SinkConsole', 
+               'Add-SinkFile', 'Add-SinkLogger', 'Add-SinkPowerShell'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
