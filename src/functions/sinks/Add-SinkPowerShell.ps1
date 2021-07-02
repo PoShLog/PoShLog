@@ -22,6 +22,7 @@ function Add-SinkPowerShell {
 		PS> Add-SinkPowerShell -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
 	#>
 
+	[OutputType([Serilog.LoggerConfiguration])]
 	[Cmdletbinding()]
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]

@@ -48,6 +48,7 @@ function Add-SinkFile {
 		PS> New-Logger | Add-SinkFile -Path 'C:\Data\Log\test.log' -Formatter (Get-JsonFormatter) | Start-Logger
 	#>
 
+	[OutputType([Serilog.LoggerConfiguration])]
 	[Cmdletbinding(DefaultParameterSetName = 'Default')]
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]

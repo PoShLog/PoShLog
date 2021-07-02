@@ -28,6 +28,7 @@ function Add-SinkConsole {
 		PS> Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}" -RestrictedToMinimumLevel Verbose 
 	#>
 
+	[OutputType([Serilog.LoggerConfiguration])]
 	[Cmdletbinding()]
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -43,17 +44,17 @@ function Add-SinkConsole {
 		[Parameter(Mandatory = $false)]
 		[Nullable[Serilog.Events.LogEventLevel]]$StandardErrorFromLevel = $null,
 		[Parameter(Mandatory = $false)]
-		[Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]$Theme
+		[Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]$Theme = $null
 	)
 
 	process {	
-		$LoggerConfig = [Serilog.ConsoleLoggerConfigurationExtensions]::Console($LoggerConfig.WriteTo,
-			$RestrictedToMinimumLevel,
-			$OutputTemplate,
-			$FormatProvider,
-			$LevelSwitch,
-			$StandardErrorFromLevel,
-			$Theme
+		$LoggerConfig = [Serilog.ConsoleLoggerConfigurationExtensions]::Console([Serilog.Configuration.LoggerSinkConfiguration]$LoggerConfig.WriteTo,
+			[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel,
+			[string]$OutputTemplate,
+			[System.IFormatProvider]$FormatProvider,
+			[Serilog.Core.LoggingLevelSwitch]$LevelSwitch,
+			[Nullable[Serilog.Events.LogEventLevel]]$StandardErrorFromLevel,
+			[Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]$Theme
 		)
 
 		$LoggerConfig
