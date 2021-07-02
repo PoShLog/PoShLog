@@ -59,5 +59,7 @@ function Write-FatalLog {
 		[switch]$PassThru
 	)
 
-	Write-Log -LogLevel Fatal -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
+	Process {
+		Write-Log -LogLevel Fatal -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
+	}
 }
