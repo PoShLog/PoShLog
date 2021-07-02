@@ -80,8 +80,9 @@ FunctionsToExport = 'Write-DebugLog', 'Write-ErrorLog', 'Write-FatalLog', 'Write
                'Disable-SelfLog', 'Enable-SelfLog', 'Add-EnrichFromLogContext', 
                'Add-EnrichWithErrorRecord', 'Add-EnrichWithProperty', 
                'Get-JsonFormatter', 'Add-PackageTypes', 'Convert-LogFunctions', 
-               'Set-DefaultMessageFormatter', 'Test-PsCore', 'Add-SinkConsole', 
-               'Add-SinkFile', 'Add-SinkLogger', 'Add-SinkPowerShell'
+               'Test-PsCore', 'Add-SinkConsole', 'Add-SinkFile', 'Add-SinkLogger', 
+               'Add-SinkPowerShell', 'Get-CurrentLogFiles', 
+               'Set-DefaultMessageFormatter'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
