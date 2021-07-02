@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PoShLog.Core</name>
+    </assembly>
+    <members>
+        <member name="M:PoShLog.Core.Utils.Console.Extensions.TableExtensions.AddPropertyRow(PoShLog.Core.Utils.Console.Table,System.String,System.Object)">
+            <summary>
+            Adds one row with two cells into <see cref="T:PoShLog.Core.Utils.Console.Table"/> only if <paramref name="propertyValue"/> is not null or empty string.
+            </summary>
+            <param name="table"></param>
+            <param name="propertyName"></param>
+            <param name="propertyValue"></param>
+        </member>
+    </members>
+</doc>
