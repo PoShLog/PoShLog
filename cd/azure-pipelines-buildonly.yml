@@ -26,7 +26,6 @@ steps:
       Install-Module -Name PoShLog.Tools -Force -Verbose -Scope CurrentUser
       Import-Module -Name PoShLog.Tools
       Bootstrap '.\cd\RequiredModules.psd1'
-      Expand-VersionFromBranch -BranchName $(Build.SourceBranch)
       $dateTime=$(Get-Date -Format yyyyMMddTHHmmss);
       Write-Host "##vso[task.setvariable variable=time]$dateTime"
 

@@ -61,5 +61,7 @@ function Write-InfoLog {
 		[switch]$PassThru
 	)
 
-	Write-InformationLog -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
+	Process {
+		Write-InformationLog -MessageTemplate $MessageTemplate -Logger $Logger -Exception $Exception -ErrorRecord $ErrorRecord -PropertyValues $PropertyValues -PassThru:$PassThru
+	}
 }

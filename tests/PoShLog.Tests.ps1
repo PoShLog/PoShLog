@@ -14,7 +14,7 @@ Describe "PoShLog-main" {
 Describe "PoShLog-extended" {
 	Context "Test all functions for throws" {
 		It "should create a new logger without throwing" {
-			{ 
+			{
 				New-Logger |
 				Set-MinimumLevel -Value Verbose |
 				Add-SinkPowerShell -OutputTemplate '[{Timestamp:HH:mm:ss}] {Message:lj}' |
@@ -50,7 +50,7 @@ Describe "PoShLog-extended" {
 				Write-InfoLog 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
 			} | Should -Not -Throw
 		}
-        
+
 		It "should close logger without throwing" {
 			{ Close-Logger } | Should -Not -Throw
 		}
@@ -60,7 +60,7 @@ Describe "PoShLog-extended" {
 	}
 
 	Context "Test console output functionality, including correct streams" {
-		BeforeAll { 
+		BeforeAll {
 			New-Logger |
 			Set-MinimumLevel -Value Verbose |
 			Add-SinkPowerShell -OutputTemplate '[{Timestamp:HH:mm:ss}] {Message:lj}' |
@@ -104,6 +104,28 @@ Describe "PoShLog-extended" {
 		}
 		It "should write a fatal log" {
 			(Write-FatalLog 'Test fatal message') 6>&1 | Should -BeLike "* Test fatal message"
+		}
+		AfterAll {
+			Close-Logger
+		}
+	}
+
+	Context "Test pipeline input functionality" {
+		BeforeAll {
+			New-Logger |
+				Set-MinimumLevel -Value Verbose |
+				Add-SinkPowerShell |
+				Start-Logger
+		}
+		It "should write a log line for every pipeline input" {
+			$messages = "Test pipeline message 1",  "Test pipeline message 2", "Test pipeline message 3"
+			($messages | Write-DebugLog -Debug) 5>&1 | Should -HaveCount 3
+			($messages | Write-ErrorLog) 6>&1 | Should -HaveCount 3
+			($messages | Write-FatalLog) 6>&1 | Should -HaveCount 3
+			($messages | Write-InfoLog -InformationAction Continue) 6>&1 | Should -HaveCount 3
+			($messages | Write-InformationLog -InformationAction Continue) 6>&1 | Should -HaveCount 3
+			($messages | Write-VerboseLog -Verbose) 4>&1 | Should -HaveCount 3
+			($messages | Write-WarningLog) 3>&1 | Should -HaveCount 3
 		}
 		AfterAll {
 			Close-Logger
