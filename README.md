@@ -100,15 +100,15 @@ PoShLog is extensible just like Serilog. All available extensions can be found [
 
 These examples are just to get you started fast. For more detailed documentation please check [wiki](https://github.com/PoShLog/PoShLog/wiki).
 
-## Give a Star! :star:
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+### Give PoShLog a Star! :star:
 
 If you are using this project or you just like it, then please give it a star. Thank you! :pray:
 
 ![star repository](images/star_repo.gif)
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ### Show your support
 

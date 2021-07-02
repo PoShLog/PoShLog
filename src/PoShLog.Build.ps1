@@ -5,7 +5,7 @@ param (
 	[Parameter(Mandatory = $false)]
 	[AllowEmptyString()]
 	[AllowNull()]
-	[string]$PreRelease,
+	[string]$PreRelease = $null,
 
 	[Parameter(Mandatory = $false)]
 	[AllowEmptyString()]
@@ -23,6 +23,16 @@ $moduleName = 'PoShLog'
 Set-StrictMode -Version Latest
 #endregion
 
+#region Task clean up Output folder
+task Clean {
+	# Clean output folder
+	if ((Test-Path '.\output')) {
+		Remove-Item -Path '.\output\*' -Recurse -Force
+	}
+	Remove-Item -Path '.\lib\*' -Recurse -Force
+}
+#endregion
+
 #region Task to run all Pester tests in folder .\tests
 task Test {
 	$testsDir = '.\..\tests'
@@ -35,14 +45,22 @@ task Test {
 }
 #endregion
 
+#region Task to build dotnet files into libraries
 task BuildDependencies {
-	Import-Module PoShLog.Tools
+	if($env:PS_DEBUG){
+		Import-Module "$PSScriptRoot\..\..\PoShLog.Tools\src\output\PoShLog.Tools"
+	}
+	else{
+		Import-Module PoShLog.Tools
+	}
 	Build-Dependencies '.\dotnet\PoShLog.Core.csproj' -ModuleDirectory $PSScriptRoot
 }
+#endregion
 
-#region Task to update the Module Manifest file with info from the Changelog in Readme.
+#region Task to update the Module Manifest file
 task UpdateManifest {
 
+	# Get all function names
 	$functions = @()
 	Get-ChildItem -Path "$PSScriptRoot\functions" -Recurse -File -Filter '*.ps1' | ForEach-Object {
 		# Export all functions except internal
@@ -51,6 +69,20 @@ task UpdateManifest {
 		}
 	}
 
+	# Export all C# cmdlet names from binary module
+	$cmdlets = @()
+	Get-ChildItem -Path "$PSScriptRoot\dotnet\Cmdlets" -Recurse -File -Filter '*.cs' | ForEach-Object {
+		$split = [System.Text.RegularExpressions.Regex]::Split($_.BaseName, "([A-Z]{1}[a-z]+)") | Where-Object { $_  -ne '' } | Select-Object -First 1
+		$cmdlets += ($_.BaseName -replace $split, "$split-")
+	}
+
+	# Update RequiredAssemblies with all embedded dlls from \lib folder
+	# $libs = @()
+	# Get-ChildItem -Path "$PSScriptRoot\lib" -Recurse -File -Filter '*.dll' | ForEach-Object {
+	# 	$libs += $_.FullName
+	# }
+
+	# If user didn't pass new module version, we need to load current version
 	$manifestFile = "$PSScriptRoot\$moduleName.psd1"
 	$manifest = $null
 	if ($null -eq $ModuleVersion) {
@@ -59,6 +91,7 @@ task UpdateManifest {
 	}
 	Write-Output ('New Module version: {0}-{1}' -f $ModuleVersion, $PreRelease)
 
+	# Create link to release notes markdown file
 	if ([string]::IsNullOrEmpty($ReleaseNotes)) {
 		if ($null -eq $manifest) {
 			$manifest = Test-ModuleManifest -Path $manifestFile
@@ -67,13 +100,8 @@ task UpdateManifest {
 		$ReleaseNotes = "$($manifest.PrivateData.PSData.ProjectUri)/blob/master/releaseNotes/v$($ModuleVersion).md"
 	}
 
-	# Comment out Prerelease property if its empty
-	if ([string]::IsNullOrEmpty($Prerelease)) {
-		(Get-Content $manifestFile) -replace '[^#]\sPrerelease\s=', '# Prerelease =' | Set-Content $manifestFile
-	}
-
-	# Update module version
-	Update-ModuleManifest $manifestFile -ModuleVersion $ModuleVersion -Prerelease $Prerelease -FunctionsToExport $functions -ReleaseNotes $ReleaseNotes
+	# Update module manifest with all information
+	Update-ModuleManifest $manifestFile -ModuleVersion $ModuleVersion -Prerelease $Prerelease -FunctionsToExport $functions -CmdletsToExport $cmdlets -ReleaseNotes $ReleaseNotes
 }
 #endregion
 
@@ -109,16 +137,7 @@ task PublishModule -If ($Configuration -eq 'Prod') {
 	}
 	Publish-Module @params
 
-	Write-Output "$moduleName successfully published to the PowerShell Gallery"
-}
-#endregion
-
-#region Task clean up Output folder
-task Clean {
-	# Clean output folder
-	if ((Test-Path '.\output')) {
-		Remove-Item -Path '.\output\*' -Recurse -Force
-	}
+	Write-Host "$moduleName successfully published to the PowerShell Gallery"
 }
 #endregion
 
