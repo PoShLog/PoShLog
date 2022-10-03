@@ -18,6 +18,8 @@ function Add-SinkConsole {
 		Specifies the level at which events will be written to standard error.
 	.PARAMETER Theme
 		The theme to apply to the styled output. If not specified uses Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme.Literate.
+	.PARAMETER Formatter
+		A formatter, such as JsonFormatter(See Get-JsonFormatter), to convert the log events into text. If control of regular text formatting is required, use Default parameter set.
 	.INPUTS
 		Instance of LoggerConfiguration
 	.OUTPUTS
@@ -25,10 +27,10 @@ function Add-SinkConsole {
 	.EXAMPLE
 		PS> Add-SinkConsole
 	.EXAMPLE
-		PS> Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}" -RestrictedToMinimumLevel Verbose 
+		PS> Add-SinkConsole -OutputTemplate "[{EnvironmentUserName}{MachineName} {Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}" -RestrictedToMinimumLevel Verbose
 	#>
 
-	[Cmdletbinding()]
+	[Cmdletbinding(DefaultParameterSetName = 'Default')]
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Serilog.LoggerConfiguration]$LoggerConfig,
@@ -43,18 +45,33 @@ function Add-SinkConsole {
 		[Parameter(Mandatory = $false)]
 		[Nullable[Serilog.Events.LogEventLevel]]$StandardErrorFromLevel = $null,
 		[Parameter(Mandatory = $false)]
-		[Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]$Theme
+		[Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]$Theme,
+		[Parameter(Mandatory = $false, ParameterSetName = 'Formatter')]
+		[Serilog.Formatting.ITextFormatter]$Formatter
+
 	)
 
-	process {	
-		$LoggerConfig = [Serilog.ConsoleLoggerConfigurationExtensions]::Console($LoggerConfig.WriteTo,
-			$RestrictedToMinimumLevel,
-			$OutputTemplate,
-			$FormatProvider,
-			$LevelSwitch,
-			$StandardErrorFromLevel,
-			$Theme
-		)
+	process {
+		switch ($PSCmdlet.ParameterSetName) {
+			'Default' {
+				$LoggerConfig = [Serilog.ConsoleLoggerConfigurationExtensions]::Console($LoggerConfig.WriteTo,
+					$RestrictedToMinimumLevel,
+					$OutputTemplate,
+					$FormatProvider,
+					$LevelSwitch,
+					$StandardErrorFromLevel,
+					$Theme
+				)
+			}
+			'Formatter' {
+				$LoggerConfig = [Serilog.ConsoleLoggerConfigurationExtensions]::Console($LoggerConfig.WriteTo,
+					$Formatter,
+					$RestrictedToMinimumLevel,
+					$LevelSwitch,
+					$StandardErrorFromLevel	
+				)
+			}
+		}
 
 		$LoggerConfig
 	}
