@@ -3,7 +3,7 @@ function Get-JsonFormatter {
 	.SYNOPSIS
 		Returns new instance of Serilog.Formatting.Json.JsonFormatter.
 	.DESCRIPTION
-		Returns new instance of Serilog.Formatting.Json.JsonFormatter that can be used with File sink.
+		Returns new instance of Serilog.Formatting.Json.JsonFormatter that can be used with File or Console sink.
 	.INPUTS
 		None
 	.OUTPUTS

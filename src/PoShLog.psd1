@@ -12,7 +12,7 @@
 RootModule = 'PoShLog.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.1.0'
+ModuleVersion = '2.2.0'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Desktop', 'Core'
@@ -78,7 +78,7 @@ FunctionsToExport = 'Write-DebugLog', 'Write-ErrorLog', 'Write-FatalLog', 'Write
                'Close-Logger', 'New-LevelSwitch', 'New-Logger', 'Set-LevelSwitch', 
                'Set-Logger', 'Set-MinimumLevel', 'Start-Logger', 
                'Add-EnrichFromLogContext', 'Add-EnrichWithErrorRecord', 
-               'Add-EnrichWithProperty', 'Get-JsonFormatter', 'Convert-LogFunctions', 
+               'Add-EnrichWithProperty', 'Get-JsonFormatter', 'Get-ElasticFormatter', 'Convert-LogFunctions', 
                'Add-SinkConsole', 'Add-SinkFile', 'Add-SinkPowerShell'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.

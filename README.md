@@ -114,6 +114,17 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 * [Michael Zimmerli](https://github.com/gitbute)
 * [Martin Dennhardt](https://github.com/mamidenn)
 
+### Building Locally
+
+1. Install PoShLog.Tools
+        Install-Module -Name PoShLog.Tools -Force -Verbose -Scope CurrentUser
+2. Import PoShLog.Tools
+        Import-Module -Name PoShLog.Tools
+3. Bootstrap the required modules
+        Bootstrap '.\cd\RequiredModules.psd1'
+4. Run the build script
+        Invoke-Build '.\src\PoShLog.Build.ps1' -Configuration '(Dev/Prod)' -Task Clean, BuildDependencies, CopyModuleFiles -ModuleVersion "$(MajorVersion).$(MinorVersion).$(BugfixVersion)"
+
 ## Authors
 
 * [**Tomáš Bouda**](http://tomasbouda.cz)
