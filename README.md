@@ -113,6 +113,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 * [Michael Zimmerli](https://github.com/gitbute)
 * [Martin Dennhardt](https://github.com/mamidenn)
+* [Brady Shober](https://github.com/BradyShober)
 
 ### Building Locally
 
