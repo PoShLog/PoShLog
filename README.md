@@ -36,7 +36,7 @@ Setup logger using pipeline fluent API and write some log messages(*in this case
 Import-Module PoShLog
 
 # Create new logger
-# This is where you customize where, when and how to log
+# This is where you customize, when and how to log
 New-Logger |
     Set-MinimumLevel -Value Verbose | # You can change this value later to filter log messages
     # Here you can add as many sinks as you want - see https://github.com/PoShLog/PoShLog/wiki/Sinks for all available sinks
