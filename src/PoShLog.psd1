@@ -9,13 +9,13 @@
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = 'PoShLog.psm1'
+RootModule = 'lib/PoShLog.Core.dll'
 
 # Version number of this module.
-ModuleVersion = '2.2.0'
+ModuleVersion = '3.0.0'
 
 # Supported PSEditions
-CompatiblePSEditions = 'Desktop', 'Core'
+CompatiblePSEditions = 'Core'
 
 # ID used to uniquely identify this module
 GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'
@@ -37,7 +37,7 @@ It is wrapper of great C# logging library Serilog - https://serilog.net/.
 For documentation check PoShLog wiki - https://github.com/PoShLog/PoShLog/wiki'
 
 # Minimum version of the PowerShell engine required by this module
-PowerShellVersion = '5.1'
+PowerShellVersion = '7.0'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -73,16 +73,16 @@ PowerShellVersion = '5.1'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Write-DebugLog', 'Write-ErrorLog', 'Write-FatalLog', 'Write-InfoLog', 
-               'Write-InformationLog', 'Write-VerboseLog', 'Write-WarningLog', 
-               'Close-Logger', 'Get-Logger', 'New-LevelSwitch', 'New-Logger', 'Set-LevelSwitch', 
-               'Set-Logger', 'Set-MinimumLevel', 'Start-Logger', 
-               'Add-EnrichFromLogContext', 'Add-EnrichWithErrorRecord', 
-               'Add-EnrichWithProperty', 'Get-JsonFormatter', 'Convert-LogFunctions', 
-               'Add-SinkConsole', 'Add-SinkFile', 'Add-SinkPowerShell'
+FunctionsToExport = @()
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @()
+CmdletsToExport = 'Write-DebugLog', 'Write-ErrorLog', 'Write-FatalLog', 'Write-InfoLog',
+               'Write-InformationLog', 'Write-VerboseLog', 'Write-WarningLog',
+               'Close-Logger', 'Get-Logger', 'New-LevelSwitch', 'New-Logger', 'Set-LevelSwitch',
+               'Set-Logger', 'Set-MinimumLevel', 'Start-Logger',
+               'Add-EnrichFromLogContext', 'Add-EnrichWithErrorRecord',
+               'Add-EnrichWithProperty', 'Get-JsonFormatter', 'Convert-LogFunctions',
+               'Add-SinkConsole', 'Add-SinkFile', 'Add-SinkPowerShell'
 
 # Variables to export from this module
 # VariablesToExport = @()

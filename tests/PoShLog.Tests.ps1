@@ -1,9 +1,4 @@
 Describe "PoShLog-main" {
-	It "imports the module" {
-		{
-			Import-Module "$PSScriptRoot\..\src\PoShLog.psm1" -Force
-		} | Should -Not -Throw
-	}
 	It "imports the module using manifest" {
 		{
 			Import-Module "$PSScriptRoot\..\src\PoShLog.psd1" -Force

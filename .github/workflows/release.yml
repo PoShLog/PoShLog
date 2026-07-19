@@ -46,7 +46,7 @@ jobs:
           (Get-Content $manifestPath) -replace '[^#]\sPrerelease\s=', '# Prerelease =' | Set-Content $manifestPath
 
       - name: dotnet build
-        run: dotnet build tests/PoShLog.UnitTests/PoShLog.UnitTests.csproj --configuration Release
+        run: dotnet build PoShLog.sln --configuration Release
 
       - name: dotnet test (xUnit)
         run: >
@@ -83,9 +83,8 @@ jobs:
           $outputDir = "src/output/$moduleName"
 
           New-Item -Path $outputDir -ItemType Directory -Force | Out-Null
-          Copy-Item -Path 'src/functions' -Filter *.* -Recurse -Destination $outputDir -Force
           Copy-Item -Path 'src/lib' -Filter *.* -Recurse -Destination $outputDir -Force
-          Copy-Item -Path @('README.md', "src/$moduleName.psd1", "src/$moduleName.psm1") -Destination $outputDir -Force
+          Copy-Item -Path @('README.md', "src/$moduleName.psd1") -Destination $outputDir -Force
 
       - name: Publish to PowerShell Gallery (stable)
         env:

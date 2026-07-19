@@ -35,7 +35,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: dotnet build
-        run: dotnet build tests/PoShLog.UnitTests/PoShLog.UnitTests.csproj --configuration Release
+        run: dotnet build PoShLog.sln --configuration Release
 
       - name: dotnet test (xUnit)
         run: >
@@ -119,9 +119,8 @@ jobs:
           dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
 
           New-Item -Path $outputDir -ItemType Directory -Force | Out-Null
-          Copy-Item -Path 'src/functions' -Filter *.* -Recurse -Destination $outputDir -Force
           Copy-Item -Path 'src/lib' -Filter *.* -Recurse -Destination $outputDir -Force
-          Copy-Item -Path @('README.md', "src/$moduleName.psd1", "src/$moduleName.psm1") -Destination $outputDir -Force
+          Copy-Item -Path @('README.md', "src/$moduleName.psd1") -Destination $outputDir -Force
 
       - name: Set prerelease version
         run: |

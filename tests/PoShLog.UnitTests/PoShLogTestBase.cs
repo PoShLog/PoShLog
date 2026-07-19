@@ -62,10 +62,24 @@ public abstract class PoShLogTestBase : IDisposable
             return new Collection<PSObject>();
         }
 
-        if (!allowErrors && Shell.HadErrors)
+        if (Shell.HadErrors)
         {
-            var errors = string.Join(Environment.NewLine, Shell.Streams.Error.Select(e => e.ToString()));
-            throw new InvalidOperationException($"Script produced errors:{Environment.NewLine}{script}{Environment.NewLine}{errors}");
+            if (!allowErrors)
+            {
+                var errors = string.Join(Environment.NewLine, Shell.Streams.Error.Select(e => e.ToString()));
+                throw new InvalidOperationException($"Script produced errors:{Environment.NewLine}{script}{Environment.NewLine}{errors}");
+            }
+
+            // Compiled cmdlets running under a non-interactive host (as used in these tests)
+            // surface missing/invalid mandatory parameter failures as a non-terminating error
+            // record instead of throwing synchronously from Invoke(), unlike an interactive
+            // console host. Normalize both cases into LastException so callers can assert
+            // consistently regardless of which path the engine took.
+            var firstError = Shell.Streams.Error.FirstOrDefault();
+            if (firstError is not null)
+            {
+                LastException = firstError.Exception ?? new InvalidOperationException(firstError.ToString());
+            }
         }
 
         return results;

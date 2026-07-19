@@ -43,14 +43,6 @@ task BuildDependencies {
 #region Task to update the Module Manifest file with info from the Changelog in Readme.
 task UpdateManifest {
 
-	$functions = @()
-	Get-ChildItem -Path "$PSScriptRoot\functions" -Recurse -File -Filter '*.ps1' | ForEach-Object {
-		# Export all functions except internal
-		if ($_.FullName -notlike '*\internal\*') {
-			$functions += $_.BaseName
-		}
-	}
-
 	$manifestFile = "$PSScriptRoot\$moduleName.psd1"
 	$manifest = $null
 	if ($null -eq $ModuleVersion) {
@@ -72,8 +64,10 @@ task UpdateManifest {
 		(Get-Content $manifestFile) -replace '[^#]\sPrerelease\s=', '# Prerelease =' | Set-Content $manifestFile
 	}
 
-	# Update module version
-	Update-ModuleManifest $manifestFile -ModuleVersion $ModuleVersion -Prerelease $Prerelease -FunctionsToExport $functions -ReleaseNotes $ReleaseNotes
+	# Update module version. PoShLog is now a compiled binary module, so cmdlets are exported
+	# directly from the built assembly (CmdletsToExport in the manifest) instead of being
+	# discovered from loose .ps1 function files.
+	Update-ModuleManifest $manifestFile -ModuleVersion $ModuleVersion -Prerelease $Prerelease -ReleaseNotes $ReleaseNotes
 }
 #endregion
 
@@ -87,14 +81,12 @@ task CopyModuleFiles {
 		New-Item -Path $moduleDirectory -ItemType Directory | Out-Null
 	}
 
-	Copy-Item -Path '.\functions\' -Filter *.* -Recurse -Destination $moduleDirectory -Force
 	Copy-Item -Path '.\lib\' -Filter *.* -Recurse -Destination $moduleDirectory -Force
 
 	#Copy Module Manifest files
 	Copy-Item -Path @(
 		'.\..\README.md'
 		".\$moduleName.psd1"
-		".\$moduleName.psm1"
 	) -Destination $moduleDirectory -Force        
 }
 #endregion
