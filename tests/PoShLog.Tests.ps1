@@ -240,6 +240,91 @@ Describe "PoShLog-e2e" {
 	}
 }
 
+Describe "PoShLog-preview-cmdlets" {
+	BeforeAll {
+		Import-Module "$PSScriptRoot\..\src\PoShLog.psd1" -Force
+	}
+
+	Context "Get-CurrentLogFiles" {
+		BeforeAll {
+			$script:logFilePath = "$env:TEMP\poshlog-current-files-test.log"
+			if (Test-Path $script:logFilePath) {
+				Remove-Item $script:logFilePath -Force
+			}
+
+			New-Logger |
+			Add-SinkFile -Path $script:logFilePath |
+			Start-Logger
+		}
+		It "should return the active log file path" {
+			$files = Get-CurrentLogFiles
+			$files | Should -Contain $script:logFilePath
+		}
+		AfterAll {
+			Close-Logger
+			if (Test-Path $script:logFilePath) {
+				Remove-Item $script:logFilePath -Force
+			}
+		}
+	}
+
+	Context "Set-DefaultMessageFormatter" {
+		BeforeAll {
+			New-Logger | Add-SinkConsole | Start-Logger
+		}
+		It "should change the -PassThru output format" {
+			Set-DefaultMessageFormatter -Template '>>{Message:lj}<<'
+			$formatted = Write-InfoLog -MessageTemplate 'formatted message' -PassThru
+			$formatted | Should -Be '>>formatted message<<'
+		}
+		AfterAll {
+			Close-Logger
+		}
+	}
+
+	Context "Enable-SelfLog / Disable-SelfLog" {
+		It "should invoke a custom self-log callback without throwing" {
+			$script:selfLogMessages = [System.Collections.Generic.List[string]]::new()
+			$callback = [System.Action[string]] { param($msg) $script:selfLogMessages.Add($msg) }
+
+			{ Enable-SelfLog -MessageFunc $callback } | Should -Not -Throw
+			[Serilog.Debugging.SelfLog]::WriteLine('pester self log message')
+			($script:selfLogMessages -join [Environment]::NewLine) | Should -BeLike '*pester self log message*'
+		}
+		It "should disable the self log without throwing" {
+			{ Disable-SelfLog } | Should -Not -Throw
+		}
+	}
+
+	Context "Add-SinkLogger" {
+		BeforeAll {
+			$script:subLoggerLogFilePath = "$env:TEMP\poshlog-sub-logger-test.log"
+			if (Test-Path $script:subLoggerLogFilePath) {
+				Remove-Item $script:subLoggerLogFilePath -Force
+			}
+		}
+		It "should route log events to the sub-logger" {
+			$subLogger = New-Logger | Add-SinkFile -Path $script:subLoggerLogFilePath | Start-Logger -PassThru
+
+			New-Logger |
+			Add-SinkLogger -Logger $subLogger |
+			Start-Logger
+
+			Write-InfoLog 'Routed through Add-SinkLogger'
+			Close-Logger
+			$subLogger | Close-Logger
+
+			$script:subLoggerLogFilePath | Should -Exist
+			Get-Content $script:subLoggerLogFilePath -Raw | Should -BeLike '*Routed through Add-SinkLogger*'
+		}
+		AfterAll {
+			if (Test-Path $script:subLoggerLogFilePath) {
+				Remove-Item $script:subLoggerLogFilePath -Force
+			}
+		}
+	}
+}
+
 if (Get-Module PoShLog -ErrorAction SilentlyContinue) {
 	Remove-Module PoShLog
 }

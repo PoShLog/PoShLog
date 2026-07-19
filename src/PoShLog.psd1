@@ -82,7 +82,9 @@ CmdletsToExport = 'Write-DebugLog', 'Write-ErrorLog', 'Write-FatalLog', 'Write-I
                'Set-Logger', 'Set-MinimumLevel', 'Start-Logger',
                'Add-EnrichFromLogContext', 'Add-EnrichWithErrorRecord',
                'Add-EnrichWithProperty', 'Get-JsonFormatter', 'Convert-LogFunctions',
-               'Add-SinkConsole', 'Add-SinkFile', 'Add-SinkPowerShell'
+               'Add-SinkConsole', 'Add-SinkFile', 'Add-SinkPowerShell', 'Add-SinkLogger',
+               'Get-CurrentLogFiles', 'Set-DefaultMessageFormatter',
+               'Enable-SelfLog', 'Disable-SelfLog'
 
 # Variables to export from this module
 # VariablesToExport = @()

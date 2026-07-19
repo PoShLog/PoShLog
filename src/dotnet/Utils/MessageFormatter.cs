@@ -12,7 +12,13 @@ namespace PoShLog.Core.Utils
 	/// </summary>
 	public static class MessageFormatter
 	{
-		private static readonly MessageTemplateTextFormatter Formatter = new MessageTemplateTextFormatter("{Message:lj}");
+		private static readonly MessageTemplateTextFormatter DefaultFormatter = new MessageTemplateTextFormatter("{Message:lj}");
+
+		/// <summary>
+		/// Global text formatter used to render -PassThru output for the Write-*Log cmdlets.
+		/// Set via Set-DefaultMessageFormatter; falls back to the built-in "{Message:lj}" template.
+		/// </summary>
+		public static MessageTemplateTextFormatter TextFormatter { get; set; }
 
 		public static string Format(ILogger logger, LogEventLevel level, string messageTemplate, object[] propertyValues, Exception exception)
 		{
@@ -21,7 +27,8 @@ namespace PoShLog.Core.Utils
 				var logEvent = new LogEvent(DateTimeOffset.Now, level, exception, parsedTemplate, boundProperties);
 				using (var writer = new StringWriter())
 				{
-					Formatter.Format(logEvent, writer);
+					var formatter = TextFormatter ?? DefaultFormatter;
+					formatter.Format(logEvent, writer);
 					return writer.ToString();
 				}
 			}
