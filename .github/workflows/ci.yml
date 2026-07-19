@@ -95,3 +95,47 @@ jobs:
         with:
           name: pester-results-${{ matrix.os }}
           path: TestResults/pester-results.xml
+
+  preview-publish:
+    name: Publish Preview to PowerShell Gallery
+    needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build module output folder
+        run: |
+          $moduleName = 'PoShLog'
+          $outputDir = "src/output/$moduleName"
+
+          dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
+
+          New-Item -Path $outputDir -ItemType Directory -Force | Out-Null
+          Copy-Item -Path 'src/functions' -Filter *.* -Recurse -Destination $outputDir -Force
+          Copy-Item -Path 'src/lib' -Filter *.* -Recurse -Destination $outputDir -Force
+          Copy-Item -Path @('README.md', "src/$moduleName.psd1", "src/$moduleName.psm1") -Destination $outputDir -Force
+
+      - name: Set prerelease version
+        run: |
+          $manifestPath = 'src/output/PoShLog/PoShLog.psd1'
+          $shortSha = '${{ github.sha }}'.Substring(0, 7)
+          $prerelease = "ci$shortSha"
+
+          Update-ModuleManifest -Path $manifestPath -Prerelease $prerelease
+
+          $manifest = Test-ModuleManifest -Path $manifestPath
+          Write-Output "Publishing prerelease version $($manifest.Version)-$prerelease"
+
+      - name: Publish to PowerShell Gallery (prerelease)
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: |
+          Publish-Module -Path 'src/output/PoShLog' -NuGetApiKey $env:PSGALLERY_API_KEY -Verbose

@@ -1,0 +1,111 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Stable module version to release (e.g. 3.0.0)'
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  release:
+    name: Build, Test & Release
+    runs-on: windows-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Validate version input
+        run: |
+          if ('${{ inputs.version }}' -notmatch '^\d+\.\d+\.\d+$') {
+              throw "Version '${{ inputs.version }}' is not a valid semantic version (expected e.g. 3.0.0)."
+          }
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Update module manifest version
+        run: |
+          $manifestPath = 'src/PoShLog.psd1'
+
+          # Stable release: no prerelease tag.
+          Update-ModuleManifest -Path $manifestPath -ModuleVersion '${{ inputs.version }}' -Prerelease ''
+
+          # Comment out the Prerelease line so it is not published as a prerelease.
+          (Get-Content $manifestPath) -replace '[^#]\sPrerelease\s=', '# Prerelease =' | Set-Content $manifestPath
+
+      - name: dotnet build
+        run: dotnet build tests/PoShLog.UnitTests/PoShLog.UnitTests.csproj --configuration Release
+
+      - name: dotnet test (xUnit)
+        run: >
+          dotnet test tests/PoShLog.UnitTests/PoShLog.UnitTests.csproj
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=xunit-results.trx"
+          --results-directory TestResults
+
+      - name: Build PoShLog.Core module assembly
+        run: dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
+
+      - name: Install Pester
+        run: Install-Module -Name Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck -Scope CurrentUser
+
+      - name: Run Pester tests
+        run: |
+          Import-Module "$($PWD)/src/PoShLog.psd1" -Force
+          Import-Module Pester -MinimumVersion 5.0.0
+
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests'
+          $config.Run.PassThru = $true
+          $config.Output.Verbosity = 'Detailed'
+          $result = Invoke-Pester -Configuration $config
+
+          if ($result.FailedCount -gt 0) {
+              throw "$($result.FailedCount) Pester test(s) failed."
+          }
+
+      - name: Build module output folder
+        run: |
+          $moduleName = 'PoShLog'
+          $outputDir = "src/output/$moduleName"
+
+          New-Item -Path $outputDir -ItemType Directory -Force | Out-Null
+          Copy-Item -Path 'src/functions' -Filter *.* -Recurse -Destination $outputDir -Force
+          Copy-Item -Path 'src/lib' -Filter *.* -Recurse -Destination $outputDir -Force
+          Copy-Item -Path @('README.md', "src/$moduleName.psd1", "src/$moduleName.psm1") -Destination $outputDir -Force
+
+      - name: Publish to PowerShell Gallery (stable)
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: |
+          Publish-Module -Path 'src/output/PoShLog' -NuGetApiKey $env:PSGALLERY_API_KEY -Verbose
+
+      - name: Commit updated module manifest
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add src/PoShLog.psd1
+          git commit -m "Released v${{ inputs.version }} [skip ci]" --allow-empty
+          git push origin HEAD:${{ github.ref_name }}
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ inputs.version }}" `
+            --title "v${{ inputs.version }}" `
+            --generate-notes `
+            --target ${{ github.ref_name }}
