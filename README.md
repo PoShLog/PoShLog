@@ -2,23 +2,26 @@
 
 # PoShLog
 
-[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/FVdVxuw) [![Build Status](https://tomlabscloud.visualstudio.com/PoShLog/_apis/build/status/PoShLog.PoShLog%20-%20BuildOnly?branchName=master)](https://tomlabscloud.visualstudio.com/PoShLog/_build/latest?definitionId=17&branchName=master) [![Support](https://img.shields.io/badge/%24-Support-blueviolet)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GRARVRTVNEUHS)
+[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/FVdVxuw) [![CI](https://github.com/PoShLog/PoShLog/actions/workflows/ci.yml/badge.svg)](https://github.com/PoShLog/PoShLog/actions/workflows/ci.yml) [![Support](https://img.shields.io/badge/%24-Support-blueviolet)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GRARVRTVNEUHS)
 
 >Serilog for powershell
 
-PoShLog is powershell cross-platform logging module. PoShLog allows you to log structured event data into **console**, **file** and much more [places](https://github.com/PoShLog/PoShLog/wiki/Sinks) easily.
-It's built upon great C# logging library [Serilog](https://serilog.net/).
+PoShLog is a cross-platform PowerShell logging module. PoShLog allows you to log structured event data into **console**, **file** and much more [places](docs/sinks/README.md) easily.
+It's built upon the great C# logging library [Serilog](https://serilog.net/) (v4.2.0).
+
+As of **v3.0.0**, PoShLog is a **compiled C# binary module** (`.NET 8`) — all cmdlets are implemented as compiled `PSCmdlet`/`Cmdlet` classes rather than PowerShell script functions, for better performance and startup time. Cmdlet names, parameters, aliases, and pipeline behavior are unchanged from previous versions. **Requires PowerShell 7.0+ (PowerShell Core)** — Windows PowerShell 5.1 / Desktop edition is no longer supported.
 
 ## Key Features
 
 * [x] Structured log event data
-* [x] Clean and easy to use [API](https://github.com/PoShLog/PoShLog/wiki/Cmdlets)
+* [x] Clean and easy to use [API](docs/cmdlets/README.md)
 * [x] Cross-platform
+* [x] Compiled C# binary module (.NET 8)
 * [x] Easily extensible
 
 ## Getting started
 
-If you are familiar with PowerShell, skip to [Installation](#installation) section. For more detailed installation instructions check out [Getting started](https://github.com/PoShLog/PoShLog/wiki/Getting-started) wiki.
+If you are familiar with PowerShell, skip to [Installation](#installation) section. For more detailed installation instructions check out [Getting started](docs/getting-started.md).
 
 ### Installation
 
@@ -57,7 +60,7 @@ Close-Logger
 
 ![poshlog_example_fullversion](images/poshlog_example_fullversion.png)
 
-[*For detailed documentation see wiki*](https://github.com/PoShLog/PoShLog/wiki)
+[*For detailed documentation see docs*](docs/getting-started.md)
 
 You can(*and you should*) log formatted data:
 
@@ -92,11 +95,19 @@ Close-Logger
 
 ### Extendability
 
-PoShLog is extensible just like Serilog. All available extensions can be found [here](https://github.com/PoShLog/PoShLog/wiki/Extension-modules).
+PoShLog is extensible just like Serilog. All available extensions can be found [here](docs/guides/extension-modules.md).
 
 ### Documentation
 
-These examples are just to get you started fast. For more detailed documentation please check [wiki](https://github.com/PoShLog/PoShLog/wiki).
+These examples are just to get you started fast. For more detailed documentation please check the [docs](docs/getting-started.md):
+
+* [Getting started](docs/getting-started.md)
+* [Usage](docs/usage.md)
+* [Log event levels](docs/log-event-levels.md)
+* [Cmdlets reference](docs/cmdlets/README.md)
+* [Sinks](docs/sinks/README.md)
+* [Enrichers](docs/enrichers/README.md)
+* [Guides](docs/guides/for-developers.md) (creating a sink, extension modules, contributing)
 
 ## Contributing
 
@@ -118,22 +129,29 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ### Building Locally
 
-1. Install PoShLog.Tools
+PoShLog is a compiled .NET 8 binary module. To build and test it locally:
 
-        Install-Module -Name PoShLog.Tools -Force -Verbose -Scope CurrentUser
+1. Install the [.NET 8 SDK](https://dotnet.microsoft.com/download) and [PowerShell 7+](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell).
 
-2. Import PoShLog.Tools
+2. Build the solution
 
-        Import-Module -Name PoShLog.Tools
+        dotnet build PoShLog.sln
 
-3. Bootstrap the required modules
+3. Publish the compiled module into `src/lib`
 
-        Bootstrap '.\cd\RequiredModules.psd1'
+        dotnet publish src/dotnet/PoShLog.Core.csproj -o src/lib
 
-4. Run the build script
+4. Import and test the module
 
-        Invoke-Build '.\src\PoShLog.Build.ps1' -Configuration '(Dev/Prod)' -Task Clean, BuildDependencies, CopyModuleFiles -ModuleVersion "$(MajorVersion).$(MinorVersion).$(BugfixVersion)"
-        
+        Import-Module ./src/PoShLog.psd1
+        Start-Logger -Console
+        Write-InfoLog 'Hello from PoShLog!'
+        Close-Logger
+
+5. Run the tests
+
+        dotnet test tests/PoShLog.UnitTests/PoShLog.UnitTests.csproj
+        Invoke-Pester ./tests/PoShLog.Tests.ps1
 
 ## Authors
 
