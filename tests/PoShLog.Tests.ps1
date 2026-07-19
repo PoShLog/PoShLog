@@ -111,6 +111,140 @@ Describe "PoShLog-extended" {
 	}
 }
 
+Describe "PoShLog-e2e" {
+	BeforeAll {
+		Import-Module "$PSScriptRoot\..\src\PoShLog.psd1" -Force
+	}
+
+	Context "Full pipeline scenario" {
+		It "should build a logger through New-Logger | Set-MinimumLevel | Add-SinkConsole | Start-Logger without throwing" {
+			{
+				New-Logger |
+				Set-MinimumLevel -Value Verbose |
+				Add-SinkConsole |
+				Start-Logger
+			} | Should -Not -Throw
+		}
+		It "should expose the started logger via Get-Logger" {
+			$logger = Get-Logger
+			$logger | Should -Not -BeNullOrEmpty
+			$logger.GetType().FullName | Should -Be 'Serilog.Core.Logger'
+		}
+		AfterAll {
+			Close-Logger
+		}
+	}
+
+	Context "Logging at each level" {
+		BeforeAll {
+			$global:VerbosePreference = 'Continue'
+			$global:DebugPreference = 'Continue'
+			$global:InformationPreference = 'Continue'
+			$global:WarningPreference = 'Continue'
+
+			New-Logger |
+			Set-MinimumLevel -Value Verbose |
+			Add-SinkPowerShell |
+			Start-Logger
+		}
+
+		It "should write a message at the <Level> level" -TestCases @(
+			@{ Level = 'Verbose'; Cmdlet = 'Write-VerboseLog'; Stream = 4 }
+			@{ Level = 'Debug'; Cmdlet = 'Write-DebugLog'; Stream = 5 }
+			@{ Level = 'Information'; Cmdlet = 'Write-InformationLog'; Stream = 6 }
+			@{ Level = 'Warning'; Cmdlet = 'Write-WarningLog'; Stream = 3 }
+			@{ Level = 'Error'; Cmdlet = 'Write-ErrorLog'; Stream = 6 }
+			@{ Level = 'Fatal'; Cmdlet = 'Write-FatalLog'; Stream = 6 }
+		) {
+			param($Level, $Cmdlet, $Stream)
+
+			$message = "Test $Level level message"
+			$output = & { & $Cmdlet $message } *>&1
+			($output | Out-String) | Should -BeLike "*$message*"
+		}
+
+		AfterAll {
+			Close-Logger
+			$global:VerbosePreference = 'SilentlyContinue'
+			$global:DebugPreference = 'SilentlyContinue'
+			$global:InformationPreference = 'SilentlyContinue'
+			$global:WarningPreference = 'SilentlyContinue'
+		}
+	}
+
+	Context "File sink writes actual files" {
+		BeforeAll {
+			$script:logFilePath = "$env:TEMP\poshlog-e2e-test.log"
+			if (Test-Path $script:logFilePath) {
+				Remove-Item $script:logFilePath -Force
+			}
+
+			New-Logger |
+			Set-MinimumLevel -Value Verbose |
+			Add-SinkFile -Path $script:logFilePath |
+			Start-Logger
+		}
+		It "should create the log file and write the message content to disk" {
+			Write-InfoLog 'Message written to file sink'
+			Close-Logger
+
+			$script:logFilePath | Should -Exist
+			Get-Content $script:logFilePath -Raw | Should -BeLike '*Message written to file sink*'
+		}
+		AfterAll {
+			if (Test-Path $script:logFilePath) {
+				Remove-Item $script:logFilePath -Force
+			}
+		}
+	}
+
+	Context "PowerShell sink routes to correct streams" {
+		BeforeAll {
+			New-Logger |
+			Set-MinimumLevel -Value Verbose |
+			Add-SinkPowerShell |
+			Start-Logger
+		}
+		It "should route Information messages to the information stream" {
+			$global:InformationPreference = 'Continue'
+			(Write-InfoLog 'Routed to information stream') 6>&1 | Should -BeLike '*Routed to information stream'
+		}
+		It "should route Warning messages to the warning stream" {
+			$global:WarningPreference = 'Continue'
+			(Write-WarningLog 'Routed to warning stream') 3>&1 | Should -BeLike '*Routed to warning stream'
+		}
+		It "should route Verbose messages to the verbose stream" {
+			$global:VerbosePreference = 'Continue'
+			(Write-VerboseLog 'Routed to verbose stream') 4>&1 | Should -BeLike '*Routed to verbose stream'
+		}
+		AfterAll {
+			Close-Logger
+			$global:InformationPreference = 'SilentlyContinue'
+			$global:WarningPreference = 'SilentlyContinue'
+			$global:VerbosePreference = 'SilentlyContinue'
+		}
+	}
+
+	Context "Close-Logger cleanup" {
+		It "should reset the global logger to a non-initialized state" {
+			New-Logger | Start-Logger
+			Close-Logger
+
+			$logger = Get-Logger
+			$logger.GetType().FullName | Should -Not -Be 'Serilog.Core.Logger'
+		}
+		It "should dispose an explicitly provided logger without throwing" {
+			$logger = New-Logger | Start-Logger -PassThru
+			{ $logger | Close-Logger } | Should -Not -Throw
+		}
+		It "should be safe to call multiple times in a row" {
+			New-Logger | Start-Logger
+			Close-Logger
+			{ Close-Logger } | Should -Not -Throw
+		}
+	}
+}
+
 if (Get-Module PoShLog -ErrorAction SilentlyContinue) {
 	Remove-Module PoShLog
 }

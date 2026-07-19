@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+      - master
+      - 'feature/**'
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  build-and-test:
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: dotnet build
+        run: dotnet build tests/PoShLog.UnitTests/PoShLog.UnitTests.csproj --configuration Release
+
+      - name: dotnet test (xUnit)
+        run: >
+          dotnet test tests/PoShLog.UnitTests/PoShLog.UnitTests.csproj
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=xunit-results.trx"
+          --logger "console;verbosity=normal"
+          --results-directory TestResults
+
+      - name: Publish xUnit test results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: xUnit Tests (${{ matrix.os }})
+          path: TestResults/*.trx
+          reporter: dotnet-trx
+          fail-on-error: true
+
+      - name: Upload xUnit test results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xunit-results-${{ matrix.os }}
+          path: TestResults/*.trx
+
+      - name: Build PoShLog.Core module assembly
+        run: dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
+
+      - name: Install Pester
+        run: Install-Module -Name Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck -Scope CurrentUser
+
+      - name: Import PoShLog module
+        run: |
+          Import-Module "$($PWD)/src/PoShLog.psd1" -Force
+          Get-Module PoShLog
+
+      - name: Run Pester tests
+        run: |
+          Import-Module Pester -MinimumVersion 5.0.0
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests'
+          $config.Run.PassThru = $true
+          $config.Output.Verbosity = 'Detailed'
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputFormat = 'NUnitXml'
+          $config.TestResult.OutputPath = './TestResults/pester-results.xml'
+          $result = Invoke-Pester -Configuration $config
+
+          if ($result.FailedCount -gt 0) {
+              throw "$($result.FailedCount) Pester test(s) failed."
+          }
+
+      - name: Upload Pester test results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pester-results-${{ matrix.os }}
+          path: TestResults/pester-results.xml
