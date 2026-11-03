@@ -31,6 +31,8 @@ To install PoShLog, run following snippet from powershell:
 Install-Module PoShLog
 ```
 
+PoShLog 3 needs PowerShell 7.4 or newer. On Windows PowerShell 5.1 use the maintained v2 line; see [v2 or v3?](docs/v2-or-v3.md).
+
 ## Usage
 
 Setup logger using pipeline fluent API and write some log messages(*in this case into file and console*):
