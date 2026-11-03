@@ -1,0 +1,37 @@
+# Copy to .github/workflows/check-json.yml and the two scripts to scripts/ in your repository.
+name: Check JSON
+
+on:
+  push:
+  pull_request:
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      # Pin the version you tested with.
+      POSHLOG_VERSION: 3.0.0-preview2
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PoShLog
+        run: Install-PSResource PoShLog -Version $env:POSHLOG_VERSION -Prerelease -TrustRepository
+
+      - name: Check JSON files
+        run: ./scripts/Test-JsonFiles.ps1 -Path ./config -LogPath "$env:RUNNER_TEMP/poshlog/test-json.clef"
+
+      - name: Annotate warnings and errors
+        if: always()
+        run: ./scripts/Write-LogAnnotations.ps1 -Path "$env:RUNNER_TEMP/poshlog/test-json.clef"
+
+      - name: Upload the log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: poshlog-${{ github.job }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/poshlog/
+          if-no-files-found: warn

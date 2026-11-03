@@ -109,6 +109,7 @@ These examples are just to get you started fast. For more detailed documentation
 * [Cmdlets reference](docs/cmdlets/README.md)
 * [Sinks](docs/sinks/README.md)
 * [Enrichers](docs/enrichers/README.md)
+* [Recipes](docs/recipes/README.md) (scheduled scripts, GitHub Actions, Pester)
 * [Guides](docs/guides/for-developers.md) (creating a sink, extension modules, contributing)
 
 ## Contributing

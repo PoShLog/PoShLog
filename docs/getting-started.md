@@ -44,4 +44,5 @@ On Windows PowerShell 5.1, use the [v2 line](v2-or-v3.md): `Install-Module PoShL
 * Built on [Serilog](https://serilog.net/) 4.4.0.
 * Minimum supported PowerShell version is now **7.4**.
 
-Continue to [Usage](usage.md).
+Continue to [Usage](usage.md), or start from a [recipe](recipes/README.md) for a scheduled script, GitHub Actions
+or Pester tests.
