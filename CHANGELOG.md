@@ -16,7 +16,8 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 
 ### Changes
 - Refresh Serilog to 4.4.0, Console to 6.1.1 and File to 7.0.0.
-- Add Seq, EventLog, Http and Enrichers 1.1.0 under extensions/ with a shared build script.
+- Add Seq, EventLog, Http and Enrichers 2.0.0 under extensions/ with a shared build script.
+- Require PoShLog 3.0.0 for refreshed Seq, EventLog, Http and Enrichers 2.0.0; reuse same/newer loaded dependencies and reject older copies with a clear import error (2.x users stay on 1.0.x).
 - Add CI compatibility checks for source builds and pinned published extensions.
 - Publish a selected module through the manual release workflow.
 - Requires PowerShell 7.4 or newer; Windows PowerShell 5.1 users stay on 2.x.

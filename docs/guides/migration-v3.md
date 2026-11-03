@@ -33,7 +33,7 @@ PoShLog v3.0 requires PowerShell 7.4 or later. If you need PS 5.1 support, stay 
 
 v2 extension modules work with v3: the shared `Serilog.LoggerConfiguration` pipeline and default assembly load context remain the public contract (ADR 0003). PoShLog.Sinks.Seq 1.0.0 was verified delivering events to a local listener with v3.
 
-Seq, EventLog, Http and Enrichers have refreshed 1.1.0 builds under `extensions/`. Published versions and third-party extensions are tested in CI against freshly built Core. EventLog requires Windows. The third-party Elasticsearch module is Windows PowerShell only and ships its own Serilog.dll; use it with PoShLog 2.x on Windows PowerShell 5.1.
+Seq, EventLog, Http and Enrichers have refreshed 2.0.0 builds under `extensions/`. Published versions and third-party extensions are tested in CI against freshly built Core. EventLog requires Windows. The third-party Elasticsearch module is Windows PowerShell only and ships its own Serilog.dll; use it with PoShLog 2.x on Windows PowerShell 5.1.
 
 ### 3. Internal helpers
 
