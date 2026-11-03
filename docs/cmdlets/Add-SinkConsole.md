@@ -54,7 +54,7 @@ New-Logger |
     Start-Logger
 ```
 
-![console sink format](../images/poshlog_example_addsinkconsole_format.png)
+![console sink format](../../images/poshlog_example_addsinkconsole_format.png)
 
 ## Parameters
 
