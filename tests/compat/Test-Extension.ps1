@@ -1,0 +1,119 @@
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory)][string]$Name,
+    [Parameter(Mandatory)][string]$ModulePath
+)
+$ErrorActionPreference = 'Stop'
+$root = (Resolve-Path "$PSScriptRoot/../..").Path
+Import-Module "$root/src/PoShLog.psd1" -Force
+$shared = @('Serilog', 'Serilog.Sinks.File', 'Serilog.Sinks.Console')
+foreach ($assembly in $shared) {
+    $loaded = [AppDomain]::CurrentDomain.GetAssemblies() | Where-Object { $_.GetName().Name -eq $assembly }
+    if ($loaded -and [Runtime.Loader.AssemblyLoadContext]::GetLoadContext($loaded) -ne [Runtime.Loader.AssemblyLoadContext]::Default) { throw "$assembly is isolated from extensions." }
+    if (!$loaded -or $loaded.Location -ne (Join-Path $root "src/lib/$assembly.dll")) {
+        throw "Core did not preload $assembly from src/lib."
+    }
+}
+if ($Name -ne 'PoShLog') { Import-Module (Resolve-Path $ModulePath) -Force }
+Add-Type -Path "$PSScriptRoot/CompatHttpListener.cs"
+$listener = $null
+$udp = $null
+$marker = "compat-$([guid]::NewGuid().ToString('N'))"
+$directory = Join-Path $root ".compat/$marker"
+New-Item -ItemType Directory -Force $directory | Out-Null
+$file = Join-Path $directory 'event.json'
+try {
+    $config = New-Logger
+    $delivery = 'file'
+    switch ($Name) {
+        'PoShLog' { }
+        'PoShLog.Enrichers' {
+            $config = $config | Add-EnrichWithEnvironment | Add-EnrichWithProcessId |
+                Add-EnrichWithProcessName | Add-EnrichWithExceptionDetails
+        }
+        'PoShLog.Sinks.Seq' {
+            $listener = [CompatHttpListener]::new()
+            $config = $config | Add-SinkSeq -ServerUrl $listener.Url -Period ([timespan]::FromMilliseconds(100))
+            $delivery = 'http'
+        }
+        'PoShLog.Sinks.Http' {
+            $listener = [CompatHttpListener]::new()
+            $options = @{ RequestUri = $listener.Url; Period = [timespan]::FromMilliseconds(100); BatchPostingLimit = 1; QueueLimit = 10 }
+            if ((Get-Command Get-ApiKeyHttpClient -ErrorAction SilentlyContinue)) {
+                $options.HttpClient = Get-ApiKeyHttpClient -ApiKey 'compat-placeholder'
+            }
+            $config = $config | Add-SinkHttp @options
+            $delivery = 'http'
+        }
+        'PoShLog.Sinks.EventLog' {
+            # Build the sink without creating an event source or requiring elevation.
+            $config = $config | Add-SinkEventLog -Source 'Application' -LogName Application -ManageEventSource $false
+            $delivery = 'configuration'
+        }
+        'PoShLog.Sinks.Syslog' {
+            $udp = [Net.Sockets.UdpClient]::new([Net.IPEndPoint]::new([Net.IPAddress]::Loopback, 0))
+            $port = ([Net.IPEndPoint]$udp.Client.LocalEndPoint).Port
+            if ($port -eq 5240) { throw 'Reserved port selected unexpectedly.' }
+            $received = $udp.ReceiveAsync()
+            $config = $config | Add-SinkSyslogUdp -Hostname '127.0.0.1' -Port $port
+            $delivery = 'udp'
+        }
+        'PoShLog.Sinks.Splunk' {
+            $listener = [CompatHttpListener]::new()
+            $config = $config | Add-SinkSplunk -SplunkHost $listener.Url -EventCollectorToken 'compat-placeholder' -BatchIntervalSeconds 1
+            $delivery = 'http'
+        }
+        'PoShLog.Sinks.DataDog' {
+            $listener = [CompatHttpListener]::new()
+            $options = [Serilog.Sinks.Datadog.Logs.DatadogConfiguration]::new()
+            $options.Url = $listener.Url.TrimEnd('/')
+            $options.Port = ([uri]$listener.Url).Port
+            $options.UseSSL = $false
+            $options.UseTCP = $false
+            $config = $config | Add-SinkDataDog -ApiKey 'compat-placeholder' -Configuration $options -Period ([timespan]::FromMilliseconds(100))
+            $delivery = 'http'
+        }
+        'PoShLog.Sinks.Exceptionless' {
+            $listener = [CompatHttpListener]::new()
+            $config = $config | Add-SinkExceptionless -ApiKey 'compat-placeholder-key' -ServerUrl $listener.Url
+            $delivery = 'http'
+        }
+        'PoShLog.Sinks.ElmahIo' {
+            # No endpoint parameter: configure without sending to the hosted service.
+            $config = $config | Add-SinkElmahIo -ApiKey 'compat-placeholder' -LogId ([guid]::NewGuid()) -RestrictedToMinimumLevel Fatal
+            $delivery = 'configuration'
+        }
+        default { throw "No compatibility case for $Name." }
+    }
+    if ($config -isnot [Serilog.LoggerConfiguration]) { throw "$Name broke the configuration pipeline." }
+    $config | Add-SinkFile -Path $file -Formatter (Get-JsonFormatter) | Start-Logger
+    if ($delivery -ne 'configuration') {
+        Write-InfoLog $marker
+    }
+    if ($delivery -in @('http', 'udp')) {
+        $deadline = [datetime]::UtcNow.AddSeconds(30)
+        do {
+            if ($delivery -eq 'http') { $body = $listener.Bodies.ToArray() -join "`n" }
+            elseif ($received.IsCompletedSuccessfully) { $body = [Text.Encoding]::UTF8.GetString($received.Result.Buffer) }
+            if ($body -like "*$marker*") { break }
+            Start-Sleep -Milliseconds 100
+        } while ([datetime]::UtcNow -lt $deadline)
+        if ($body -notlike "*$marker*") { throw "$Name did not deliver the event to loopback within 30 seconds." }
+    }
+    Close-Logger
+    if ($delivery -ne 'configuration') {
+        $json = Get-Content $file -Raw
+        if ($json -notlike "*$marker*") { throw 'Core file sink did not receive the event.' }
+        if ($Name -eq 'PoShLog.Enrichers') {
+            $properties = ($json | ConvertFrom-Json).Properties
+            foreach ($property in @('MachineName', 'EnvironmentUserName', 'ProcessId', 'ProcessName')) {
+                if (!$properties.PSObject.Properties[$property]) { throw "Missing enricher property $property." }
+            }
+        }
+    }
+    Write-Output "PASS $Name ($delivery)"
+} finally {
+    Close-Logger
+    if ($listener) { $listener.Dispose() }
+    if ($udp) { $udp.Dispose() }
+}

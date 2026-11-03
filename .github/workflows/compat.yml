@@ -1,0 +1,39 @@
+name: Compatibility
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  extensions:
+    name: Extensions (${{ matrix.os }}, ${{ matrix.mode }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        mode: [InRepo, Published]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Publish Core
+        run: |
+          dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib --configfile build/nuget.config
+          if ($LASTEXITCODE) { throw 'Core publish failed.' }
+      - name: Build source extensions
+        if: matrix.mode == 'InRepo'
+        run: |
+          Get-ChildItem extensions -Directory | ForEach-Object {
+            ./build/Build-Extension.ps1 -Module $_.Name
+          }
+      - name: Verify compatibility
+        run: ./tests/compat/Invoke-Compatibility.ps1 -Mode '${{ matrix.mode }}'
