@@ -14,13 +14,7 @@ function Write-SinkPowerShell {
 			Write-Debug -Message $RenderedMessage
 		}
 		Information { 
-			# On 5.1 plain information records and the transcript disagree about visibility.
-			if ($InformationPreference -eq 'Continue') {
-				Write-Host -Object $RenderedMessage
-			}
-			elseif ($InformationPreference -notin 'SilentlyContinue', 'Ignore') {
-				Write-Information -MessageData $RenderedMessage
-			}
+			Write-Information -MessageData $RenderedMessage
 		}
 		Warning { 
 			Write-Warning -Message $RenderedMessage

@@ -1,6 +1,6 @@
-# 0002 - Conservative script conversion
+# 0025 - Conservative script conversion
 
-- Status: accepted
+- Status: Proposed
 - Date: 2026-11-03
 
 ## Context

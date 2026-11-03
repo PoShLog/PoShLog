@@ -56,6 +56,39 @@ Describe 'Select-Object property values (#46)' {
 	}
 }
 
+Describe 'Information stream compatibility' {
+	It 'captures an information record with 6>&1 in a fresh session' {
+		$result = Invoke-ChildPowerShell @'
+if ($InformationPreference -ne 'SilentlyContinue') { throw 'Unexpected default InformationPreference.' }
+New-Logger | Add-SinkPowerShell | Start-Logger
+try {
+    $records = @(& { Write-InfoLog 'hello {N}' -PropertyValues 1 } 6>&1)
+    [pscustomobject]@{
+        Count = $records.Count
+        IsInformationRecord = $records.Count -eq 1 -and $records[0] -is [System.Management.Automation.InformationRecord]
+        Message = ($records | ForEach-Object { $_.ToString() }) -join ''
+    } | ConvertTo-Json -Compress
+} finally { Close-Logger }
+'@
+		$captured = $result | ConvertFrom-Json
+		$captured.Count | Should -Be 1
+		$captured.IsInformationRecord | Should -BeTrue
+		$captured.Message | Should -Be 'hello 1'
+	}
+
+	It 'captures an information message with 6> file in a fresh session' {
+		$path = Join-Path $TestDrive 'information.txt'
+		$null = Invoke-ChildPowerShell @"
+if (`$InformationPreference -ne 'SilentlyContinue') { throw 'Unexpected default InformationPreference.' }
+New-Logger | Add-SinkPowerShell | Start-Logger
+try { & { Write-InfoLog 'hello {N}' -PropertyValues 1 } 6> '$path' }
+finally { Close-Logger }
+"@
+		@(Get-Content -LiteralPath $path).Count | Should -Be 1
+		(Get-Content -LiteralPath $path -Raw).Trim() | Should -Be 'hello 1'
+	}
+}
+
 Describe 'Console and transcript (#45, #28)' {
 	It 'writes structured JSON with a console formatter (#31, #40, discussion #38)' {
 		$console = Invoke-ChildPowerShell @'
@@ -98,7 +131,7 @@ try {
 	It 'rejects text formatting options in the formatter parameter set' {
 		{ New-Logger | Add-SinkConsole -Formatter (Get-JsonFormatter) -OutputTemplate '{Message}' } | Should -Throw
 	}
-	It 'shows and transcribes the same levels with default preferences (#45)' {
+	It 'shows and transcribes Warning, Error and Fatal with default preferences (#45)' {
 		$transcript = Join-Path $TestDrive 'default.txt'
 		$console = Invoke-ChildPowerShell @"
 Start-Transcript -Path '$transcript' | Out-Null
@@ -119,11 +152,11 @@ try {
 		}
 		foreach ($marker in 'hidden-verbose-marker', 'hidden-debug-marker', 'hidden-info-marker') {
 			$console | Should -Not -Match $marker
-			$text | Should -Not -Match $marker
+			if ($marker -ne 'hidden-info-marker') { $text | Should -Not -Match $marker }
 		}
 	}
 
-	It 'transcribes all enabled PowerShell streams (#45)' {
+	It 'displays enabled streams and transcribes Verbose, Debug, Warning, Error and Fatal (#45)' {
 		$transcript = Join-Path $TestDrive 'enabled.txt'
 		$console = Invoke-ChildPowerShell @"
 `$VerbosePreference = `$DebugPreference = `$InformationPreference = 'Continue'
@@ -141,7 +174,8 @@ try {
 		$text = Get-Content $transcript -Raw
 		foreach ($marker in 'verbose-marker', 'debug-marker', 'info-marker', 'warning-marker', 'error-marker', 'fatal-marker') {
 			[regex]::Matches($console, $marker).Count | Should -Be 1
-			[regex]::Matches($text, $marker).Count | Should -Be 1
+			# Preserve Write-Information behavior; its transcription depends on the host version.
+			if ($marker -ne 'info-marker') { [regex]::Matches($text, $marker).Count | Should -Be 1 }
 		}
 	}
 

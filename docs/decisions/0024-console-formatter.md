@@ -1,6 +1,6 @@
-# 0001 - Console formatter parameter set
+# 0024 - Console formatter parameter set
 
-- Status: accepted
+- Status: Proposed
 - Date: 2026-11-03
 
 ## Context
