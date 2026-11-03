@@ -6,11 +6,12 @@ foreach ($assembly in [AppDomain]::CurrentDomain.GetAssemblies()) {
     $loaded[$assembly.GetName().Name] = $assembly.GetName().Version
 }
 $cmdlets = Join-Path $PSScriptRoot 'lib/PoShLog.Sinks.OpenTelemetry.dll'
-Get-ChildItem "$PSScriptRoot/lib" -Filter '*.dll' -File | Where-Object FullName -ne $cmdlets | ForEach-Object {
-    $name = [Reflection.AssemblyName]::GetAssemblyName($_.FullName)
+# A foreach statement, not ForEach-Object: a throw inside a pipeline in a module script does not stop the import.
+foreach ($file in Get-ChildItem "$PSScriptRoot/lib" -Filter '*.dll' -File | Where-Object FullName -ne $cmdlets) {
+    $name = [Reflection.AssemblyName]::GetAssemblyName($file.FullName)
     $present = $loaded[$name.Name]
     if (!$present) {
-        Add-Type -Path $_.FullName -ErrorAction Stop
+        Add-Type -Path $file.FullName -ErrorAction Stop
     } elseif ($present -lt $name.Version) {
         throw "PoShLog.Sinks.OpenTelemetry needs $($name.Name) $($name.Version), but $present is already loaded by another module. Import PoShLog.Sinks.OpenTelemetry first, or in a new session."
     }
