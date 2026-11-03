@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 480" width="1280" height="480">
+  <title>How PoShLog works: a script writes structured events, PoShLog sends them to every sink</title>
+  <style>
+    text { font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; }
+    .card { fill: #151B23; stroke: #3D444D; stroke-width: 2; }
+    .label { font-size: 18px; font-weight: 600; fill: #9198A1; letter-spacing: 1.5px; }
+    .code { font: 22px "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace; fill: #F0F6FC; }
+    .cmd { fill: #91A7FF; font-weight: 700; }
+    .str { fill: #69DB7C; }
+    .prop { fill: #D0BFFF; font-weight: 700; }
+    .title { font-size: 40px; font-weight: 700; fill: #F0F6FC; }
+    .sub { font-size: 20px; fill: #9198A1; }
+    .pill { fill: #0D1117; stroke: #364FC7; stroke-width: 2; }
+    .core { fill: #1C2142; stroke: #364FC7; }
+    .sink { font-size: 21px; font-weight: 600; fill: #F0F6FC; }
+    .note { font-size: 16px; fill: #9198A1; }
+    .wire { fill: none; stroke: #5C7CFA; stroke-width: 2.5; }
+  </style>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3B5BDB"/>
+      <stop offset="1" stop-color="#7048E8"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#5C7CFA"/>
+    </marker>
+  </defs>
+
+  <!-- Your script -->
+  <rect class="card" x="20" y="130" width="400" height="220" rx="14"/>
+  <text class="label" x="44" y="170">YOUR SCRIPT</text>
+  <text class="code" x="44" y="222"><tspan class="cmd">Write-InfoLog</tspan></text>
+  <text class="code" x="64" y="258"><tspan class="str">'Copied </tspan><tspan class="prop">{Count}</tspan><tspan class="str"> files'</tspan></text>
+  <text class="code" x="64" y="294">-PropertyValues 42</text>
+  <text class="note" x="44" y="330">a message template, not a string</text>
+
+  <path class="wire" d="M420 240 L488 240" marker-end="url(#arrow)"/>
+
+  <!-- PoShLog -->
+  <rect class="card core" x="496" y="110" width="320" height="260" rx="14"/>
+  <g transform="translate(616 132) scale(0.3125)">
+    <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+    <g fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M86 50 C64 50 62 62 62 82 L62 110 C62 121 56 128 44 128 C56 128 62 135 62 146 L62 174 C62 194 64 206 86 206"/>
+      <path d="M170 50 C192 50 194 62 194 82 L194 110 C194 121 200 128 212 128 C200 128 194 135 194 146 L194 174 C194 194 192 206 170 206"/>
+    </g>
+    <g stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" opacity="0.95">
+      <line x1="112" y1="86" x2="164" y2="86"/>
+      <line x1="112" y1="114" x2="156" y2="114"/>
+      <line x1="112" y1="142" x2="164" y2="142"/>
+      <line x1="112" y1="170" x2="146" y2="170"/>
+    </g>
+    <circle cx="94" cy="86" r="8" fill="#A5D8FF"/>
+    <circle cx="94" cy="114" r="8" fill="#69DB7C"/>
+    <circle cx="94" cy="142" r="8" fill="#FFD43B"/>
+    <circle cx="94" cy="170" r="8" fill="#FF8787"/>
+  </g>
+  <text class="title" x="656" y="264" text-anchor="middle">PoShLog</text>
+  <text class="sub" x="656" y="300" text-anchor="middle">levels · enrichers · formatters</text>
+  <text class="sub" x="656" y="330" text-anchor="middle">on the Serilog 4 pipeline</text>
+
+  <!-- Sinks -->
+  <g class="wire" marker-end="url(#arrow)">
+    <path d="M816 240 C860 240 860 44 924 44"/>
+    <path d="M816 240 C860 240 860 100 924 100"/>
+    <path d="M816 240 C860 240 860 156 924 156"/>
+    <path d="M816 240 C860 240 860 212 924 212"/>
+    <path d="M816 240 C860 240 860 268 924 268"/>
+    <path d="M816 240 C860 240 860 324 924 324"/>
+    <path d="M816 240 C860 240 860 380 924 380"/>
+    <path d="M816 240 C860 240 860 436 924 436"/>
+  </g>
+  <g>
+    <rect class="pill" x="930" y="22" width="330" height="44" rx="22"/>
+    <text class="sink" x="954" y="51">Console</text><text class="note" x="1236" y="50" text-anchor="end">built in</text>
+    <rect class="pill" x="930" y="78" width="330" height="44" rx="22"/>
+    <text class="sink" x="954" y="107">File</text><text class="note" x="1236" y="106" text-anchor="end">built in</text>
+    <rect class="pill" x="930" y="134" width="330" height="44" rx="22"/>
+    <text class="sink" x="954" y="163">OpenTelemetry (OTLP)</text>
+    <rect class="pill" x="930" y="190" width="330" height="44" rx="22"/>
+    <text class="sink" x="954" y="219">Seq</text>
+    <rect class="pill" x="930" y="246" width="330" height="44" rx="22"/>
+    <text class="sink" x="954" y="275">Splunk HEC</text>
+    <rect class="pill" x="930" y="302" width="330" height="44" rx="22"/>
+    <text class="sink" x="954" y="331">Syslog</text>
+    <rect class="pill" x="930" y="358" width="330" height="44" rx="22"/>
+    <text class="sink" x="954" y="387">HTTP</text>
+    <rect class="pill" x="930" y="414" width="330" height="44" rx="22"/>
+    <text class="sink" x="954" y="443">Windows Event Log</text>
+  </g>
+</svg>
