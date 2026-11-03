@@ -44,5 +44,6 @@ jobs:
           ./build/Build-Extension.ps1 -Module PoShLog.Sinks.OpenTelemetry
           ./build/Build-Extension.ps1 -Module PoShLog.Sinks.Splunk.Hec
           ./build/Build-Extension.ps1 -Module PoShLog.Sinks.Syslog.Rfc5424
+          ./build/Build-Extension.ps1 -Module PoShLog.Sinks.Elastic
       - name: Verify compatibility
         run: ./tests/compat/Invoke-Compatibility.ps1 -Mode '${{ matrix.mode }}'

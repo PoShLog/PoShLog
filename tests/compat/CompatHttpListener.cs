@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -41,12 +42,26 @@ public sealed class CompatHttpListener : IDisposable
                     if (encoding == "gzip") input = new GZipStream(input, CompressionMode.Decompress);
                     else if (encoding == "deflate") input = new DeflateStream(input, CompressionMode.Decompress);
                     using var reader = new StreamReader(input);
-                    Bodies.Enqueue(await reader.ReadToEndAsync());
+                    var body = await reader.ReadToEndAsync();
+                    Bodies.Enqueue(body);
                     Paths.Enqueue(context.Request.RawUrl);
-                    var response = System.Text.Encoding.UTF8.GetBytes("{\"code\":0}");
+                    var json = "{\"code\":0}";
+                    if (context.Request.RawUrl.Contains("/_bulk"))
+                    {
+                        // The Elasticsearch bulk API answers one item per action line (an action and a document per event).
+                        var count = body.Split('\n', StringSplitOptions.RemoveEmptyEntries).Length / 2;
+                        json = "{\"took\":1,\"errors\":false,\"items\":[" +
+                            string.Join(",", Enumerable.Repeat("{\"create\":{\"status\":201,\"result\":\"created\"}}", count)) + "]}";
+                    }
+                    var response = System.Text.Encoding.UTF8.GetBytes(json);
+                    // The Elasticsearch client checks the product header (on its first HEAD /) before it sends a bulk request.
+                    context.Response.Headers["X-Elastic-Product"] = "Elasticsearch";
                     context.Response.ContentType = "application/json";
-                    context.Response.ContentLength64 = response.Length;
-                    await context.Response.OutputStream.WriteAsync(response, 0, response.Length);
+                    if (context.Request.HttpMethod != "HEAD")
+                    {
+                        context.Response.ContentLength64 = response.Length;
+                        await context.Response.OutputStream.WriteAsync(response, 0, response.Length);
+                    }
                     context.Response.Close();
                 }
                 catch (Exception) when (!_listener.IsListening) { break; }
