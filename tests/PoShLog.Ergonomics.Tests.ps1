@@ -10,7 +10,8 @@ BeforeAll {
 	function Invoke-ChildPwsh([string]$Body) {
 		$script = Join-Path $TestDrive "child-$([guid]::NewGuid()).ps1"
 		Set-Content -Path $script -Value "Import-Module '$($script:manifest)'`n$Body"
-		$pwsh = (Get-Process -Id $PID).Path
+		# $PSHOME, not the process path: under a dotnet-tool pwsh (the PowerShell 7.4 CI job) the process is dotnet.
+		$pwsh = Join-Path $PSHOME 'pwsh'
 		& $pwsh -NoProfile -NonInteractive -File $script 2>&1 | ForEach-Object { "$_" }
 	}
 }
