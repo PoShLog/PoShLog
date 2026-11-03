@@ -2,6 +2,13 @@
 
 All notable changes to PoShLog, newest first. Older releases: see the GitHub releases and `releaseNotes/` in the v2 history.
 
+## Unreleased
+
+### Bug fixes
+- All seven `Write-*Log` commands emit error-only events with an empty message template, including `-PassThru`.
+- Accept constructed `ErrorRecord` instances without invocation metadata.
+- Error invocation enrichment keeps command names, script paths and line numbers, but omits argument values and source text in both text and structured output (ADR 0023).
+
 ## 3.0.0-preview2 — 2026-11-03
 
 Everything since PoShLog 2.x; 3.0.0-preview1 was published without its own section.

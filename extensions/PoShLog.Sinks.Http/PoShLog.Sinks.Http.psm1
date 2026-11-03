@@ -17,6 +17,7 @@ foreach ($file in Get-ChildItem "$PSScriptRoot/lib" -Filter '*.dll' -File) {
 }
 # Load cmdlet metadata only after checking dependencies, rather than through NestedModules (docs/decisions/0012).
 Import-Module (Join-Path $PSScriptRoot 'lib/PoShLog.Sinks.Http.dll') -ErrorAction Stop
+Export-ModuleMember -Cmdlet Get-ApiKeyHttpClient
 Get-ChildItem "$PSScriptRoot/functions" -Recurse -Filter '*.ps1' -File |
     Where-Object { $_.Directory.Name -ne 'internal' } | ForEach-Object {
         . $_.FullName

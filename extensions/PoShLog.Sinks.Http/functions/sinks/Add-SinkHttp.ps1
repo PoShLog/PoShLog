@@ -66,17 +66,19 @@ function Add-SinkHttp {
 		[Microsoft.Extensions.Configuration.IConfiguration]$Configuration = $null
 	)
 
-	$LoggerConfig = [PoShLog.Sinks.Http.Compatibility.CountLimitedHttpSink]::Configure($LoggerConfig,
-		$RequestUri,
-		$BatchPostingLimit,
-		$QueueLimit,
-		$Period,
-		$Formatter,
-		$BatchFormatter,
-		$RestrictedToMinimumLevel,
-		$HttpClient,
-		$Configuration
-	)
+	process {
+		$LoggerConfig = [PoShLog.Sinks.Http.Compatibility.CountLimitedHttpSink]::Configure($LoggerConfig,
+			$RequestUri,
+			$BatchPostingLimit,
+			$QueueLimit,
+			$Period,
+			$Formatter,
+			$BatchFormatter,
+			$RestrictedToMinimumLevel,
+			$HttpClient,
+			$Configuration
+		)
 
-	$LoggerConfig
+		$LoggerConfig
+	}
 }

@@ -59,7 +59,10 @@ try {
         'PoShLog.Sinks.Http' {
             $listener = [CompatHttpListener]::new()
             $options = @{ RequestUri = $listener.Url; Period = [timespan]::FromMilliseconds(100); BatchPostingLimit = 1; QueueLimit = 10 }
-            if ((Get-Command Get-ApiKeyHttpClient -ErrorAction SilentlyContinue)) {
+            if ($ModulePath -and (Import-PowerShellDataFile $ModulePath).CmdletsToExport -contains 'Get-ApiKeyHttpClient') {
+                # First-party modules must export their declared authentication helper.
+                $options.HttpClient = Get-ApiKeyHttpClient -ApiKey 'compat-placeholder' -ErrorAction Stop
+            } elseif ((Get-Command Get-ApiKeyHttpClient -ErrorAction SilentlyContinue)) {
                 $options.HttpClient = Get-ApiKeyHttpClient -ApiKey 'compat-placeholder'
             }
             $config = $config | Add-SinkHttp @options

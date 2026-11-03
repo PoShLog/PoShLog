@@ -1,4 +1,3 @@
-﻿using System.Linq;
 using PoShLog.Core.Data;
 using PoShLog.Core.Utils.Console;
 using PoShLog.Core.Utils.Console.Extensions;
@@ -25,14 +24,10 @@ namespace PoShLog.Core.Enrichers.Extensions
 		{
 			var table = new Table(new Padding(1));
 
-			var boundParams = string.Join(", ", invocationInfo.BoundParameters.Select(kv => $"{kv.Key}:{kv.Value}"));
-			table.AddPropertyRow("BoundParameters", boundParams);
 			table.AddPropertyRow("CommandOrigin", invocationInfo.CommandOrigin);
-			table.AddPropertyRow("DisplayScriptPosition", invocationInfo.DisplayScriptPosition);
 			table.AddPropertyRow("ExpectingInput", invocationInfo.ExpectingInput);
 			table.AddPropertyRow("HistoryId", invocationInfo.HistoryId);
 			table.AddPropertyRow("InvocationName", invocationInfo.InvocationName);
-			table.AddPropertyRow("Line", invocationInfo.Line);
 			table.AddPropertyRow("MyCommand", invocationInfo.MyCommand);
 			table.AddPropertyRow("OffsetInLine", invocationInfo.OffsetInLine);
 			table.AddPropertyRow("PipelineLength", invocationInfo.PipelineLength);
@@ -41,7 +36,6 @@ namespace PoShLog.Core.Enrichers.Extensions
 			table.AddPropertyRow("PSScriptRoot", invocationInfo.PSScriptRoot);
 			table.AddPropertyRow("ScriptLineNumber", invocationInfo.ScriptLineNumber);
 			table.AddPropertyRow("ScriptName", invocationInfo.ScriptName);
-			table.AddPropertyRow("UnboundArguments", string.Join("; ", invocationInfo.UnboundArguments));
 
 			return table.ToString();
 		}

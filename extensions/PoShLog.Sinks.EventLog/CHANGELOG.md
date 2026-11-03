@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Bug fixes
+- Bind `ManageEventSource` as a boolean, preserving explicit `$true`/`$false` calls and the default `$false`.
+- Guard source management with `ShouldProcess`; `-WhatIf` or declined confirmation returns the unchanged configuration without adding the sink.
+
 ## 2.0.0-preview2 — 2026-11-03
 
 ### Features

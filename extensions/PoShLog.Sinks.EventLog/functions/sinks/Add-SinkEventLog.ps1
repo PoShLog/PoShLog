@@ -1,9 +1,9 @@
 function Add-SinkEventLog {
 	<#
 	.SYNOPSIS
-		Writes log events to console host
+		Writes log events to the Windows Event Log
 	.DESCRIPTION
-		Writes log events to console host
+		Writes log events to the Windows Event Log
 	.PARAMETER LoggerConfig
 		Instance of LoggerConfiguration
 	.PARAMETER Source
@@ -14,6 +14,7 @@ function Add-SinkEventLog {
 		The name of the machine hosting the event log written to. The local machine by default.
 	.PARAMETER ManageEventSource
 		If true, check/create event source as required.  Defaults to false i.e. do not allow sink to manage event source creation.
+		Source management supports WhatIf and Confirm. If declined, the unchanged configuration is returned without adding the sink.
 	.PARAMETER OutputTemplate
 		A message template describing the format used to write to the sink.
 	.PARAMETER FormatProvider
@@ -27,10 +28,10 @@ function Add-SinkEventLog {
 	.OUTPUTS
 		LoggerConfiguration object allowing method chaining
 	.EXAMPLE
-		PS> Add-SinkEventLog -Source 'SampleScript' -ManageEventSource $true
+		PS> New-Logger | Add-SinkEventLog -Source 'SampleScript' -ManageEventSource $true -WhatIf
 	#>
 
-	[Cmdletbinding()]
+	[Cmdletbinding(SupportsShouldProcess = $true)]
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Serilog.LoggerConfiguration]$LoggerConfig,
@@ -41,7 +42,7 @@ function Add-SinkEventLog {
 		[Parameter(Mandatory = $false)]
 		[string]$MachineName = '.',
 		[Parameter(Mandatory = $false)]
-		[string]$ManageEventSource = $false,
+		[bool]$ManageEventSource = $false,
 		[Parameter(Mandatory = $false)]
 		[string]$OutputTemplate = '{Message}{NewLine}{Exception}{ErrorRecord}',
 		[Parameter(Mandatory = $false)]
@@ -53,6 +54,10 @@ function Add-SinkEventLog {
 	)
 
 	process {
+		if ($ManageEventSource -and !$PSCmdlet.ShouldProcess("$MachineName/$Source", 'Check or create Event Log source')) {
+			$LoggerConfig
+			return
+		}
 		$LoggerConfig = [Serilog.LoggerConfigurationEventLogExtensions]::EventLog($LoggerConfig.WriteTo,
 			$Source,
 			$LogName,

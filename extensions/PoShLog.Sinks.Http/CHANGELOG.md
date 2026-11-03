@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Bug fixes
+- Export the manifest-declared `Get-ApiKeyHttpClient` cmdlet.
+- Configure and return each logger configuration received through the pipeline.
+
 ## 2.0.0-preview2 — 2026-11-03
 
 ### Features
