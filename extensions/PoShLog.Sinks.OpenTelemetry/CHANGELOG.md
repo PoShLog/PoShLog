@@ -16,3 +16,5 @@
 ### Bug fixes
 - A parameter always wins over an `OTEL_*` variable; the Serilog package let `OTEL_EXPORTER_OTLP_ENDPOINT` replace an
   explicit endpoint.
+- The module refuses to import next to an older Protobuf or gRPC assembly loaded by another module; the error was
+  ignored and the import went on.

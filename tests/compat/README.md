@@ -25,6 +25,7 @@ authors' sinks) runs with continue-on-error: failures are annotated but gate not
 | PoShLog.Sinks.EventLog (Published) | 1.0.0 | Import and sink configuration, Windows only |
 | PoShLog.Sinks.Http (Published) | 1.0.1 | Event at loopback HTTP listener |
 | PoShLog.Sinks.OpenTelemetry (InRepo build, both modes) | 0.1.0 | Event at loopback OTLP/HTTP `/v1/logs`; also next to Seq (InRepo: refreshed Seq; Published: Seq 1.0.0), each imported first and after, both delivering |
+| PoShLog.Sinks.Splunk.Hec (InRepo build, both modes) | 0.1.0 | Event at loopback HEC `/services/collector/event`; also next to Seq, like OpenTelemetry |
 | PoShLog.Sinks.Exceptionless (Published) | 1.0.0 | Event at loopback HTTP listener |
 | PoShLog.Sinks.Syslog (ThirdParty) | 1.0.0 | Event at loopback UDP listener |
 | PoShLog.Sinks.DataDog (ThirdParty) | 0.1.1 | Event at loopback HTTP listener; skipped on Linux (RootModule case mismatch in its manifest, fails with any PoShLog version) |

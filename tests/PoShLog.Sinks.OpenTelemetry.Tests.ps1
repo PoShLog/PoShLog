@@ -89,4 +89,19 @@ Describe 'Add-SinkOpenTelemetry' {
 
 		Wait-Export $listener $marker | Should -Not -BeNullOrEmpty
 	}
+
+	It 'refuses to import next to an older Google.Protobuf' {
+		# A child process keeps the fake assembly out of this session.
+		$child = @"
+`$name = [Reflection.AssemblyName]::new('Google.Protobuf')
+`$name.Version = [version]'1.0.0.0'
+`$null = [Reflection.Emit.AssemblyBuilder]::DefineDynamicAssembly(`$name, 'Run')
+Import-Module '$root/src/PoShLog.psd1'
+try { Import-Module '$root/extensions/PoShLog.Sinks.OpenTelemetry/PoShLog.Sinks.OpenTelemetry.psd1' -ErrorAction Stop; 'IMPORTED' }
+catch { `$_.Exception.Message }
+"@
+		$output = & (Join-Path $PSHOME 'pwsh') -NoProfile -Command $child
+
+		$output | Should -Match 'needs Google.Protobuf .*but 1.0.0.0 is already loaded'
+	}
 }
