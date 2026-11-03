@@ -13,6 +13,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - New extension PoShLog.Sinks.Splunk.Hec 0.1.0: `Add-SinkSplunk` sends logs to a Splunk HTTP Event Collector, as JSON events or raw lines, and accepts the parameter names of the third-party PoShLog.Sinks.Splunk.
 - New extension PoShLog.Sinks.Syslog.Rfc5424 0.1.0: `Add-SinkSyslog` sends logs to a syslog server over UDP, TCP or TLS, as RFC 5424 messages with the properties as structured data, or as RFC 3164.
 - New extension PoShLog.Sinks.Elastic 0.1.0: `Add-SinkElasticsearch` sends logs to Elasticsearch or Elastic Cloud data streams as Elastic Common Schema documents, with an API key or a user name and password.
+- Recipes for scheduled scripts, GitHub Actions and Pester tests (`docs/recipes/`), with runnable samples under `samples/` that CI runs against the staged package.
 - Serilog 4 sink packages can be configured directly as an advanced route, with the constraints listed in `docs/guides/migration-v3.md`.
 
 ### Changes

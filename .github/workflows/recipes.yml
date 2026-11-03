@@ -1,0 +1,45 @@
+name: Recipes
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  samples:
+    name: Recipe samples (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Publish Core
+        run: |
+          dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib --configfile build/nuget.config
+          if ($LASTEXITCODE) { throw 'Core publish failed.' }
+      - name: Install Pester
+        run: |
+          # Retry because the Gallery fails intermittently.
+          foreach ($attempt in 1..3) {
+            try {
+              Install-PSResource -Name Pester -Version '[5.5.0, 7.0.0)' -Scope CurrentUser -TrustRepository -Reinstall -ErrorAction Stop
+              break
+            } catch {
+              if ($attempt -eq 3) { throw }
+              Write-Warning "Pester install attempt $attempt failed: $_"
+              Start-Sleep -Seconds (10 * $attempt)
+            }
+          }
+      - name: Run the recipe samples against the staged package
+        run: ./build/Test-Recipes.ps1

@@ -193,3 +193,6 @@ jobs:
 
   compatibility:
     uses: ./.github/workflows/compat.yml
+
+  recipes:
+    uses: ./.github/workflows/recipes.yml
