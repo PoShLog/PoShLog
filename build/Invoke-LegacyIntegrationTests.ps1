@@ -52,6 +52,13 @@ try {
         $config.TestResult.Enabled = $true
         $config.TestResult.OutputPath = $env:POSHLOG_LEGACY_RESULT
         $result = Invoke-Pester -Configuration $config
+        # The job log needs sign-in; annotations show the failure reason on the run page.
+        if ($env:GITHUB_ACTIONS -eq 'true') {
+            foreach ($test in $result.Failed) {
+                $reason = ($test.ErrorRecord | ForEach-Object { $_.Exception.Message }) -join ' ' -replace '\r?\n', ' '
+                Write-Host "::error title=$($test.ExpandedPath)::$reason"
+            }
+        }
         if ($result.FailedCount -or $result.FailedContainersCount -or !$result.PassedCount) { exit 1 }
     }
     if ($LASTEXITCODE) { throw 'Legacy integration tests failed.' }

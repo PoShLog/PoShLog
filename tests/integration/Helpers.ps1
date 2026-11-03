@@ -12,14 +12,18 @@ function Wait-IntegrationEvents {
     param([scriptblock]$Read, [scriptblock]$Select, [int]$TimeoutSeconds = 60)
     $deadline = [datetime]::UtcNow.AddSeconds($TimeoutSeconds)
     $lastError = $null
+    $all = @()
+    $events = @()
     do {
         try {
-            $events = @(& $Read | Where-Object $Select)
+            $all = @(& $Read)
+            $events = @($all | Where-Object $Select)
             if ($events.Count -ge 3) { return $events }
         } catch { $lastError = $_.Exception.Message }
         Start-Sleep -Milliseconds 500
     } while ([datetime]::UtcNow -lt $deadline)
-    throw "Timed out waiting for three events. Last read error: $lastError"
+    $sample = ($all | Select-Object -First 3 | ForEach-Object { ("$_" + $(if ($_.Message) { " Message=$($_.Message)" })) -replace '\s+', ' ' }) -join '; '
+    throw "Timed out waiting for three events: read $($all.Count), matched $($events.Count). Last read error: $lastError. First read: $sample"
 }
 
 function Write-IntegrationEvents {
@@ -34,12 +38,14 @@ function Write-IntegrationEvents {
 
 function Assert-IntegrationEvents {
     param($Events, [string]$RunId)
-    @($Events).Count | Should -Be 3
+    # Every failure message lists what the backend returned, so a CI annotation is enough to diagnose it.
+    $received = 'received: ' + ((@($Events) | ForEach-Object { "[$($_.Level)] $($_.Message) Number=$($_.Number)" }) -join '; ')
+    @($Events).Count | Should -Be 3 -Because $received
     foreach ($level in 'Information', 'Warning', 'Error') {
-        $event = @($Events | Where-Object Level -eq $level)
-        $event.Count | Should -Be 1
-        $event[0].Message | Should -Be "$RunId $level 42"
-        $event[0].Number | Should -Be 42
+        $matched = @($Events | Where-Object Level -eq $level)
+        $matched.Count | Should -Be 1 -Because $received
+        $matched[0].Message | Should -Be "$RunId $level 42" -Because $received
+        $matched[0].Number | Should -Be 42 -Because $received
     }
 }
 
