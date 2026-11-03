@@ -1,0 +1,55 @@
+name: Release v2
+
+# Pushing a tag v2.x.y[-label] from release/2.x publishes that version of the v2 line.
+# The tag must match ModuleVersion (and Prerelease, if any) in src/PoShLog.psd1.
+on:
+  push:
+    tags: ['v2.*']
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Validate tag against manifest
+        shell: pwsh
+        run: |
+          $manifest = Import-PowerShellDataFile src/PoShLog.psd1
+          $expected = 'v' + $manifest.ModuleVersion
+          if ($manifest.PrivateData.PSData.Prerelease) { $expected += '-' + $manifest.PrivateData.PSData.Prerelease }
+          if ($env:GITHUB_REF_NAME -ne $expected) { throw "Tag $env:GITHUB_REF_NAME does not match manifest $expected." }
+          if (-not (Select-String -Path CHANGELOG.md -SimpleMatch "## $($manifest.ModuleVersion) ")) { throw 'CHANGELOG.md has no section for this version.' }
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Install-PSResource -Name Pester -Version '[5.5.0, 7.0.0)' -Scope CurrentUser -TrustRepository -Reinstall
+          $path = (Get-Module Pester -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1).Path
+          "PESTER_PATH=$path" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Build module
+        shell: pwsh
+        run: ./build/Build-Module.ps1
+      - name: Test under Windows PowerShell 5.1
+        shell: powershell
+        run: |
+          Import-Module $env:PESTER_PATH -Force
+          $result = Invoke-Pester -Path ./tests -PassThru
+          if ($result.FailedCount -gt 0 -or $result.PassedCount -eq 0) { throw 'Pester failed.' }
+          ./build/Test-StagedModule.ps1
+      - name: Test under PowerShell 7
+        shell: pwsh
+        run: |
+          Import-Module $env:PESTER_PATH -Force
+          $result = Invoke-Pester -Path ./tests -PassThru
+          if ($result.FailedCount -gt 0 -or $result.PassedCount -eq 0) { throw 'Pester failed.' }
+          ./build/Test-StagedModule.ps1
+      - name: Publish to the PowerShell Gallery
+        shell: pwsh
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: Publish-Module -Path artifacts/PoShLog -NuGetApiKey $env:PSGALLERY_API_KEY -ErrorAction Stop

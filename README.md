@@ -6,6 +6,10 @@
 
 >Serilog for powershell
 
+> **This is the v2 line** (branch `release/2.x`) for Windows PowerShell 5.1 and PowerShell 7. It receives bug fixes and
+> Serilog updates; new features land in v3 (PowerShell 7.4+). Pin it with `Install-Module PoShLog -MaximumVersion 2.99`.
+> See [v2 or v3?](https://github.com/PoShLog/PoShLog/blob/master/docs/v2-or-v3.md) and the [CHANGELOG](CHANGELOG.md).
+
 PoShLog is powershell cross-platform logging module. PoShLog allows you to log structured messages into **console**, **file** and much more [places/sinks](https://github.com/PoShLog/PoShLog/wiki/Sinks) easily.
 It's built upon great C# logging library [Serilog](https://serilog.net/).
 

@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DocumentationFile>C:\Data\GIT\PoShLog\PoShLog.Core\src\dotnet\PoShLog.Core.xml</DocumentationFile>
+		<DocumentationFile>$(MSBuildProjectDirectory)\PoShLog.Core.xml</DocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>

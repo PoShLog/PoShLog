@@ -1,0 +1,54 @@
+name: CI v2
+
+# The v2 line (ADR 0010 on master): a script module for Windows PowerShell 5.1 and PowerShell 7.
+on:
+  push:
+    branches: [release/2.x]
+  pull_request:
+    branches: [release/2.x]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Pester (${{ matrix.shell }})
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [powershell, pwsh]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            try {
+              Install-PSResource -Name Pester -Version '[5.5.0, 7.0.0)' -Scope CurrentUser -TrustRepository -Reinstall -ErrorAction Stop
+              break
+            } catch {
+              if ($attempt -eq 3) { throw }
+              Write-Warning "Pester install attempt $attempt failed: $_"
+            }
+          }
+          $path = (Get-Module Pester -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1).Path
+          "PESTER_PATH=$path" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Build module
+        shell: pwsh
+        run: ./build/Build-Module.ps1
+      - name: Run Pester
+        shell: ${{ matrix.shell }}
+        run: |
+          # Windows PowerShell ships Pester 3.4; import the installed one by path.
+          Import-Module $env:PESTER_PATH -Force
+          "PowerShell $($PSVersionTable.PSVersion), Pester $((Get-Module Pester).Version)"
+          $result = Invoke-Pester -Path ./tests -PassThru
+          if ($result.FailedCount -gt 0 -or $result.PassedCount -eq 0) { throw 'Pester failed.' }
+      - name: Import staged module
+        shell: ${{ matrix.shell }}
+        run: ./build/Test-StagedModule.ps1
