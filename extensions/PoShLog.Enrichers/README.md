@@ -4,6 +4,8 @@
 
 PoShLog.Enrichers is extension module for [PoShLog](https://github.com/PoShLog/PoShLog) logging module. Contains lot of helpful enricher methods, useful when enriching log messages with more properties.
 
+Version 1.1.0 requires PoShLog 3.0.0 by GUID; PoShLog 2.x users stay on 1.0.x.
+
 ## Getting started
 
 If you are familiar with PowerShell, skip to [Installation](#installation) section. For more detailed installation instructions check out [Getting started](../../docs/getting-started.md) guide.

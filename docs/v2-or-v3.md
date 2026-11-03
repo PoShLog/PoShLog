@@ -27,6 +27,7 @@ PoShLog has two maintained lines ([ADR 0010](decisions/0010-v2-maintenance-line.
   ([ADR 0003](decisions/0003-keep-the-v2-extension-contract.md)).
 - Extensions refreshed for v3 are built on Serilog 4 and are not expected to load on v2. On v2, stay on the
   extension's 1.0.x version.
+- PoShLog 2.x users stay on 1.0.x of PoShLog.Sinks.Seq, PoShLog.Sinks.EventLog, PoShLog.Sinks.Http and PoShLog.Enrichers; 1.1.0 requires PoShLog 3.0.0 by GUID.
 
 ## Moving from v2 to v3
 
