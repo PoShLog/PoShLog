@@ -52,4 +52,6 @@ jobs:
         shell: pwsh
         env:
           PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
-        run: Publish-Module -Path artifacts/PoShLog -NuGetApiKey $env:PSGALLERY_API_KEY -ErrorAction Stop
+        run: |
+          # -Force: v2 is always below the 3.x prereleases; it only skips that client-side check (the Gallery still rejects an existing version).
+          Publish-Module -Path artifacts/PoShLog -NuGetApiKey $env:PSGALLERY_API_KEY -Force -ErrorAction Stop
