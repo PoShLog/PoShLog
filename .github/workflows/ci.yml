@@ -44,10 +44,10 @@ jobs:
 
       - name: dotnet test (xUnit)
         run: >
-          dotnet test tests/PoShLog.UnitTests/PoShLog.UnitTests.csproj
+          dotnet test PoShLog.sln
           --configuration Release
           --no-build
-          --logger "trx;LogFileName=xunit-results.trx"
+          --logger trx
           --logger "console;verbosity=normal"
           --results-directory TestResults
 

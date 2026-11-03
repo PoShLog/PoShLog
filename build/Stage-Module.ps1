@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)]
-    [ValidateSet('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http')]
+    [ValidateSet('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry')]
     [string]$Module
 )
 $ErrorActionPreference = 'Stop'
@@ -17,6 +17,8 @@ Copy-Item "$source/$Module.psd1", "$source/lib" -Destination $destination -Recur
 if ($Module -eq 'PoShLog') {
     Copy-Item "$root/README.md", "$root/LICENSE", "$root/CHANGELOG.md" $destination
 } else {
-    Copy-Item "$source/$Module.psm1", "$source/functions", "$source/README.md", "$source/LICENSE", "$source/CHANGELOG.md" $destination -Recurse
+    # A module with only compiled cmdlets (PoShLog.Sinks.OpenTelemetry) has no functions/ directory.
+    $files = @("$source/$Module.psm1", "$source/functions", "$source/README.md", "$source/LICENSE", "$source/CHANGELOG.md") | Where-Object { Test-Path $_ }
+    Copy-Item $files $destination -Recurse
 }
 Write-Output "Staged $Module -> $destination"

@@ -1,7 +1,10 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$Name,
-    [Parameter(Mandatory)][string]$ModulePath
+    [Parameter(Mandatory)][string]$ModulePath,
+    # A Seq extension imported into the same session, to prove both load and deliver side by side.
+    [string]$SeqPath,
+    [switch]$SeqFirst
 )
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path "$PSScriptRoot/../..").Path
@@ -14,13 +17,20 @@ foreach ($assembly in $shared) {
         throw "Core did not preload $assembly from src/lib."
     }
 }
+if ($SeqPath -and $SeqFirst) { Import-Module (Resolve-Path $SeqPath) -Force }
 if ($Name -ne 'PoShLog') { Import-Module (Resolve-Path $ModulePath) -Force }
+if ($SeqPath -and !$SeqFirst) { Import-Module (Resolve-Path $SeqPath) -Force }
 Add-Type -Path "$PSScriptRoot/CompatHttpListener.cs"
 $listener = $null
+$seqListener = $null
 $udp = $null
 $marker = "compat-$([guid]::NewGuid().ToString('N'))"
 $directory = Join-Path $root ".compat/$marker"
 New-Item -ItemType Directory -Force $directory | Out-Null
+# Seq 1.0.0 passes an empty buffer file name and so ships durably from files in the current directory
+# (-YYYYMMDD.json, .bookmark); keep them in the case's own folder, not in the checkout.
+Set-Location $directory
+[Environment]::CurrentDirectory = $directory
 $file = Join-Path $directory 'event.json'
 try {
     $config = New-Logger
@@ -34,6 +44,11 @@ try {
         'PoShLog.Sinks.Seq' {
             $listener = [CompatHttpListener]::new()
             $config = $config | Add-SinkSeq -ServerUrl $listener.Url -Period ([timespan]::FromMilliseconds(100))
+            $delivery = 'http'
+        }
+        'PoShLog.Sinks.OpenTelemetry' {
+            $listener = [CompatHttpListener]::new()
+            $config = $config | Add-SinkOpenTelemetry -Endpoint $listener.Url -Protocol HttpProtobuf -IgnoreEnvironment -Period ([timespan]::FromMilliseconds(100))
             $delivery = 'http'
         }
         'PoShLog.Sinks.Http' {
@@ -85,6 +100,10 @@ try {
         }
         default { throw "No compatibility case for $Name." }
     }
+    if ($SeqPath) {
+        $seqListener = [CompatHttpListener]::new()
+        $config = $config | Add-SinkSeq -ServerUrl $seqListener.Url -Period ([timespan]::FromMilliseconds(100))
+    }
     if ($config -isnot [Serilog.LoggerConfiguration]) { throw "$Name broke the configuration pipeline." }
     $config | Add-SinkFile -Path $file -Formatter (Get-JsonFormatter) | Start-Logger
     if ($delivery -ne 'configuration') {
@@ -99,6 +118,12 @@ try {
             Start-Sleep -Milliseconds 100
         } while ([datetime]::UtcNow -lt $deadline)
         if ($body -notlike "*$marker*") { throw "$Name did not deliver the event to loopback within 30 seconds." }
+        if ($Name -eq 'PoShLog.Sinks.OpenTelemetry' -and $listener.Paths.ToArray() -notcontains '/v1/logs') { throw 'OTLP/HTTP export did not use /v1/logs.' }
+    }
+    if ($seqListener) {
+        $deadline = [datetime]::UtcNow.AddSeconds(30)
+        while (($seqListener.Bodies.ToArray() -join "`n") -notlike "*$marker*" -and [datetime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 100 }
+        if (($seqListener.Bodies.ToArray() -join "`n") -notlike "*$marker*") { throw "Seq from $SeqPath did not deliver the event next to $Name." }
     }
     Close-Logger
     if ($delivery -ne 'configuration') {
@@ -111,9 +136,11 @@ try {
             }
         }
     }
-    Write-Output "PASS $Name ($delivery)"
+    $alongside = if ($SeqPath) { ", with Seq " + (Import-PowerShellDataFile $SeqPath).ModuleVersion + $(if ($SeqFirst) { ' imported first' } else { ' imported after' }) } else { '' }
+    Write-Output "PASS $Name ($delivery$alongside)"
 } finally {
     Close-Logger
     if ($listener) { $listener.Dispose() }
+    if ($seqListener) { $seqListener.Dispose() }
     if ($udp) { $udp.Dispose() }
 }

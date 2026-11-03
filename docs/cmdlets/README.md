@@ -28,6 +28,7 @@ PoShLog v3 is a compiled binary module. This index preserves the wiki's command 
 * **[Add-SinkEventLog](../sinks/Add-SinkEventLog.md)** - Writes log events into Windows Event Log **`EXTENSION`**
 * **[Add-SinkElasticsearch](https://github.com/mamidenn/PoShLog.Sinks.Elasticsearch)** - Writes log messages to Elasticsearch [**`EXTENSION`**](https://github.com/mamidenn/PoShLog.Sinks.Elasticsearch)
 * **[Add-SinkSeq](https://github.com/PoShLog/PoShLog.Sinks.Seq)** - Writes log messages to Seq [**`EXTENSION`**](https://github.com/PoShLog/PoShLog.Sinks.Seq)
+* **[Add-SinkOpenTelemetry](../sinks/Add-SinkOpenTelemetry.md)** - Sends log events over OTLP to an OpenTelemetry Collector or backend **`EXTENSION`**
 * **[Add-SinkMSSqlServer](../sinks/Add-SinkMSSqlServer.md)** - Writes log messages into MSSQL server database [**`EXTENSION`**](https://github.com/PoShLog/PoShLog.Sinks.MSSqlServer)
 
 ## Enrichment cmdlets
