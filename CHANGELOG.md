@@ -15,6 +15,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - Any Serilog sink package can be used directly, without a PoShLog wrapper module (see `docs/guides/migration-v3.md`).
 
 ### Changes
+- Add an Ubuntu PowerShell 7.4 Pester CI leg and a macOS module/file-logging smoke check.
 - Refresh Serilog to 4.4.0, Console to 6.1.1 and File to 7.0.0.
 - Add Seq, EventLog, Http and Enrichers 2.0.0 under extensions/ with a shared build script.
 - Require PoShLog 3.0.0 for refreshed Seq, EventLog, Http and Enrichers 2.0.0; reuse same/newer loaded dependencies and reject older copies with a clear import error (2.x users stay on 1.0.x).
@@ -27,6 +28,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - `Start-Logger -Console` no longer adds the PowerShell sink as well; add `-PowerShell` to get both.
 
 ### Bug fixes
+- Make Convert-LogFunctions syntax-aware and conservative: preserve literal text and Write-Error, report a reviewable diff, honor WhatIf/Confirm, and back up scripts while preserving encoding and line endings.
 - Preserve v2 extension compatibility and load shared Serilog dependencies at import.
 - Correct the migration guide and restore cmdlet indexes from the committed wiki.
 - Logging a `Select-Object` result or another PowerShell object with `{@Name}` no longer produces huge output or hangs (#46).

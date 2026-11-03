@@ -18,3 +18,4 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0012](0012-otlp-sink-design.md) | The OpenTelemetry sink: a compiled cmdlet, OTLP/HTTP by default, parameters before environment | accepted |
 | [0013](0013-splunk-hec-sink-design.md) | The Splunk HEC sink: compiled cmdlet, own batching, migration aliases | accepted |
 | [0014](0014-syslog-sink-design.md) | The Syslog sink: the package's formatters, our own transports | accepted |
+| [0015](0015-convert-logfunctions-conservative.md) | Convert-LogFunctions is a conservative, reviewable helper | proposed |
