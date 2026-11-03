@@ -1,6 +1,6 @@
 # 0016 — Convert-LogFunctions is a conservative, reviewable helper
 
-- **Status:** proposed
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 
 ## Context
