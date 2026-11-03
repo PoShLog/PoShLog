@@ -1,6 +1,6 @@
 # 0017 — Extensions require PoShLog 2.99.0 while Core 3 is a prerelease
 
-- **Status:** proposed
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 - **Amends:** [0004](0004-refreshed-extensions-require-poshlog-3.md) (the version floor only)
 
