@@ -70,6 +70,16 @@ jobs:
       - name: Build PoShLog.Core module assembly
         run: dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
 
+      - name: Test clean-process package installation
+        if: runner.os == 'Linux'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (!(Get-Module Microsoft.PowerShell.PSResourceGet -ListAvailable | Where-Object Version -ge ([version]'1.1.0'))) {
+            Install-Module Microsoft.PowerShell.PSResourceGet -Repository PSGallery -MinimumVersion 1.1.0 -Scope CurrentUser -Force
+          }
+          # Stage-Module invokes Build-Extension for each selected extension.
+          ./build/Test-PackageInstall.ps1
+
       - name: Install Pester
         run: |
           # PSResourceGet ships with PowerShell 7.4+; retry because the Gallery fails intermittently.

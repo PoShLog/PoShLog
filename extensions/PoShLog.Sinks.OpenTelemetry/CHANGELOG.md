@@ -10,7 +10,7 @@
 - The standard `OTEL_*` variables fill in what the parameters leave out; `-IgnoreEnvironment` turns them off.
 
 ### Changes
-- Requires PoShLog 3.0.0 and PowerShell 7.4 or newer.
+- Requires PoShLog 2.99.0 and PowerShell 7.4 or newer.
 - OTLP/HTTP on port 4318 is the default, not the Serilog package's gRPC on 4317.
 
 ### Bug fixes

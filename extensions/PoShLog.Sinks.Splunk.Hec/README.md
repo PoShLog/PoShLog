@@ -2,7 +2,7 @@
 
 A Splunk HTTP Event Collector (HEC) sink extension for PoShLog over
 [Serilog.Sinks.Splunk](https://github.com/serilog-contrib/serilog-sinks-splunk). Version 0.1.0 requires PowerShell 7.4+
-and PoShLog 3.0.0 (by GUID). Core supplies the shared Serilog assembly; `lib/` ships the sink.
+and PoShLog 2.99.0 (by GUID). Core supplies the shared Serilog assembly; `lib/` ships the sink.
 
 Build from the repository root:
 

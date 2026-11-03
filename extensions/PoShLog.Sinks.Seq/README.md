@@ -4,7 +4,7 @@
 
 PoShLog.Sinks.Seq is extension module for [PoShLog](https://github.com/PoShLog/PoShLog) logging module. Contains sink that publishes log messages to [Seq](https://datalust.co/seq).
 
-Version 2.0.0 requires PoShLog 3.0.0 by GUID; PoShLog 2.x users stay on 1.0.x.
+Version 2.0.0 requires PoShLog 2.99.0 by GUID; PoShLog 2.x users stay on 1.0.x.
 
 ## Getting started
 

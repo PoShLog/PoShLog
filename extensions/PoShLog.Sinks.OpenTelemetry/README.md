@@ -2,7 +2,7 @@
 
 An OpenTelemetry (OTLP) sink extension for PoShLog over
 [Serilog.Sinks.OpenTelemetry](https://github.com/serilog/serilog-sinks-opentelemetry). Version 0.1.0 requires
-PowerShell 7.4+ and PoShLog 3.0.0 (by GUID). Core supplies the shared Serilog assembly; `lib/` ships the sink, Protobuf
+PowerShell 7.4+ and PoShLog 2.99.0 (by GUID). Core supplies the shared Serilog assembly; `lib/` ships the sink, Protobuf
 and gRPC.
 
 Build from the repository root:

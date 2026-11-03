@@ -12,7 +12,7 @@
   `-BatchIntervalSeconds`.
 
 ### Changes
-- Requires PoShLog 3.0.0 and PowerShell 7.4 or newer.
+- Requires PoShLog 2.99.0 and PowerShell 7.4 or newer.
 - `-BatchInterval` accepts fractions of a second.
 - The queue is bounded at 100000 events by default.
 

@@ -15,10 +15,12 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - Any Serilog sink package can be used directly, without a PoShLog wrapper module (see `docs/guides/migration-v3.md`).
 
 ### Changes
+- Require PoShLog 2.99.0 in extensions during the Core 3 preview so prerelease dependencies resolve.
+- Publish prereleases through the release workflow with PSResourceGet and dependency validation.
 - Add an Ubuntu PowerShell 7.4 Pester CI leg and a macOS module/file-logging smoke check.
 - Refresh Serilog to 4.4.0, Console to 6.1.1 and File to 7.0.0.
 - Add Seq, EventLog, Http and Enrichers 2.0.0 under extensions/ with a shared build script.
-- Require PoShLog 3.0.0 for refreshed Seq, EventLog, Http and Enrichers 2.0.0; reuse same/newer loaded dependencies and reject older copies with a clear import error (2.x users stay on 1.0.x).
+- Refreshed Seq, EventLog, Http and Enrichers 2.0.0 reuse same/newer loaded dependencies and reject older copies with a clear import error (2.x users stay on 1.0.x).
 - Add CI compatibility checks for source builds and pinned published extensions.
 - Publish a selected module through the manual release workflow.
 - Requires PowerShell 7.4 or newer; Windows PowerShell 5.1 users stay on 2.x.

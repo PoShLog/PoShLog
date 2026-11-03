@@ -13,7 +13,7 @@
 - Batching with `-BatchInterval`, `-BatchSizeLimit` and `-QueueLimit`; a level filter and a level switch.
 
 ### Changes
-- Requires PoShLog 3.0.0 and PowerShell 7.4 or newer.
+- Requires PoShLog 2.99.0 and PowerShell 7.4 or newer.
 - One command replaces `Add-SinkSyslogUdp` and `Add-SinkSyslogTcp` of the third-party PoShLog.Sinks.Syslog.
 - Fatal events are sent as Critical, not Emergency, and Verbose events as Debug, not Notice.
 - An option that the chosen protocol or format would ignore is an error.

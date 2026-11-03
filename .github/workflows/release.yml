@@ -18,7 +18,7 @@ on:
           - PoShLog.Sinks.Splunk.Hec
           - PoShLog.Sinks.Syslog.Rfc5424
       version:
-        description: Expected manifest version (e.g. 3.0.0 or 2.0.0)
+        description: Expected manifest version (e.g. 3.0.0 or 3.0.0-preview2)
         required: true
         type: string
 
@@ -49,10 +49,12 @@ jobs:
         run: |
           $allowed = @('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424')
           if ($env:RELEASE_MODULE -notin $allowed) { throw 'Unknown module.' }
-          if ($env:RELEASE_VERSION -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid version.' }
+          if ($env:RELEASE_VERSION -cnotmatch '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+)?\z') { throw 'Invalid version.' }
           $directory = if ($env:RELEASE_MODULE -eq 'PoShLog') { 'src' } else { "extensions/$env:RELEASE_MODULE" }
           $manifest = Import-PowerShellDataFile "$directory/$env:RELEASE_MODULE.psd1"
-          if ($manifest.ModuleVersion -ne $env:RELEASE_VERSION) { throw 'Version must match the committed manifest.' }
+          $version = [string]$manifest.ModuleVersion
+          if ($manifest.PrivateData.PSData.Prerelease) { $version += '-' + $manifest.PrivateData.PSData.Prerelease }
+          if ($version -cne $env:RELEASE_VERSION) { throw 'Version must match the committed manifest.' }
       - name: Build and test Core
         run: |
           dotnet build PoShLog.sln -c Release --configfile build/nuget.config
@@ -71,9 +73,23 @@ jobs:
       - name: Stage selected module
         env:
           RELEASE_MODULE: ${{ inputs.module }}
-        run: ./build/Stage-Module.ps1 -Module $env:RELEASE_MODULE
+        run: |
+          ./build/Stage-Module.ps1 -Module $env:RELEASE_MODULE
+          if ($env:RELEASE_MODULE -ne 'PoShLog') {
+            ./build/Stage-Module.ps1 -Module PoShLog
+          }
+      - name: Ensure PSResourceGet 1.1 or newer
+        run: |
+          if (!(Get-Module Microsoft.PowerShell.PSResourceGet -ListAvailable | Where-Object Version -ge ([version]'1.1.0'))) {
+            Install-Module Microsoft.PowerShell.PSResourceGet -Repository PSGallery -MinimumVersion 1.1.0 -Scope CurrentUser -Force -ErrorAction Stop
+          }
+          Import-Module Microsoft.PowerShell.PSResourceGet -MinimumVersion 1.1.0 -Force -ErrorAction Stop
       - name: Publish selected module
         env:
           RELEASE_MODULE: ${{ inputs.module }}
           PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
-        run: Publish-Module -Path "artifacts/$env:RELEASE_MODULE" -NuGetApiKey $env:PSGALLERY_API_KEY -ErrorAction Stop
+        run: |
+          Import-Module Microsoft.PowerShell.PSResourceGet -MinimumVersion 1.1.0 -ErrorAction Stop
+          $env:PSModulePath = (Join-Path $PWD 'artifacts') + [IO.Path]::PathSeparator + $env:PSModulePath
+          # Keep dependency validation enabled: publish Core to PSGallery before extensions.
+          Publish-PSResource -Path "artifacts/$env:RELEASE_MODULE" -Repository PSGallery -ApiKey $env:PSGALLERY_API_KEY -ErrorAction Stop
