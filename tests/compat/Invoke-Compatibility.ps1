@@ -5,7 +5,7 @@ param(
     [ValidateSet('InRepo', 'Published', 'ThirdParty')]
     [string]$Mode = 'InRepo',
     [string]$GalleryPath = (Join-Path $PSScriptRoot '../../.compat/gallery'),
-    # InRepo only: an extracted PoShLog.Sinks.Seq 1.0.0 to load next to the OpenTelemetry sink, for local checks
+    # InRepo only: an extracted PoShLog.Sinks.Seq 1.0.0 to load next to the unpublished sinks, for local checks
     # outside GitHub Actions (Published mode downloads it).
     [string]$LegacySeqPath
 )
@@ -67,22 +67,24 @@ foreach ($name in $modules.Keys) {
     }
     $cases += @{ Name = $name; Path = $manifest }
 }
-# The OpenTelemetry sink is not published yet: always the in-repo build. It must load and deliver next to the Seq
-# extension in either import order, the refreshed one (InRepo) and the published 1.0.0 that ships its own older
-# assemblies (Published); see docs/decisions/0012-otlp-sink-design.md.
-$otlp = "$root/extensions/PoShLog.Sinks.OpenTelemetry/PoShLog.Sinks.OpenTelemetry.psd1"
+# The OpenTelemetry and Splunk HEC sinks are not published yet: always the in-repo builds. Each must load and deliver
+# next to the Seq extension in either import order, the refreshed one (InRepo) and the published 1.0.0 that ships its own
+# older assemblies (Published); see docs/decisions/0012-otlp-sink-design.md.
+$unpublished = @('PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec')
 $seqCase = $cases | Where-Object Name -eq 'PoShLog.Sinks.Seq'
 $seqPaths = @()
 if ($Mode -eq 'InRepo') {
-    $cases += @{ Name = 'PoShLog.Sinks.OpenTelemetry'; Path = $otlp }
+    foreach ($name in $unpublished) { $cases += @{ Name = $name; Path = "$root/extensions/$name/$name.psd1" } }
     $seqPaths += $seqCase.Path
     if ($LegacySeqPath) { $seqPaths += (Resolve-Path $LegacySeqPath).Path }
 } elseif ($Mode -eq 'Published') {
     $seqPaths += $seqCase.Path
 }
-foreach ($seqPath in $seqPaths) {
-    foreach ($first in $true, $false) {
-        $cases += @{ Name = 'PoShLog.Sinks.OpenTelemetry'; Path = $otlp; Seq = $seqPath; SeqFirst = $first }
+foreach ($name in $unpublished) {
+    foreach ($seqPath in $seqPaths) {
+        foreach ($first in $true, $false) {
+            $cases += @{ Name = $name; Path = "$root/extensions/$name/$name.psd1"; Seq = $seqPath; SeqFirst = $first }
+        }
     }
 }
 $failed = @()

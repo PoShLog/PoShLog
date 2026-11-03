@@ -51,6 +51,11 @@ try {
             $config = $config | Add-SinkOpenTelemetry -Endpoint $listener.Url -Protocol HttpProtobuf -IgnoreEnvironment -Period ([timespan]::FromMilliseconds(100))
             $delivery = 'http'
         }
+        'PoShLog.Sinks.Splunk.Hec' {
+            $listener = [CompatHttpListener]::new()
+            $config = $config | Add-SinkSplunk -Url $listener.Url -Token 'compat-placeholder' -Index 'main' -BatchInterval 0.1
+            $delivery = 'http'
+        }
         'PoShLog.Sinks.Http' {
             $listener = [CompatHttpListener]::new()
             $options = @{ RequestUri = $listener.Url; Period = [timespan]::FromMilliseconds(100); BatchPostingLimit = 1; QueueLimit = 10 }
@@ -119,6 +124,7 @@ try {
         } while ([datetime]::UtcNow -lt $deadline)
         if ($body -notlike "*$marker*") { throw "$Name did not deliver the event to loopback within 30 seconds." }
         if ($Name -eq 'PoShLog.Sinks.OpenTelemetry' -and $listener.Paths.ToArray() -notcontains '/v1/logs') { throw 'OTLP/HTTP export did not use /v1/logs.' }
+        if ($Name -eq 'PoShLog.Sinks.Splunk.Hec' -and $listener.Paths.ToArray() -notcontains '/services/collector/event') { throw 'Splunk HEC request did not use /services/collector/event.' }
     }
     if ($seqListener) {
         $deadline = [datetime]::UtcNow.AddSeconds(30)
