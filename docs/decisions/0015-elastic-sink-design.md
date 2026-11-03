@@ -1,6 +1,6 @@
 # 0015 — The Elastic sink: data streams over the bulk API, dropping when the buffer is full
 
-- **Status:** proposed
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 - **Builds on:** [0009](0009-first-party-sinks-third-party-check-non-blocking.md) (name and scope),
   [0012](0012-otlp-sink-design.md) (module layout), [0013](0013-splunk-hec-sink-design.md),
