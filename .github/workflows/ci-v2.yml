@@ -19,6 +19,10 @@ jobs:
       fail-fast: false
       matrix:
         shell: [powershell, pwsh]
+    defaults:
+      run:
+        # Step-level shell does not accept expressions; job defaults do.
+        shell: ${{ matrix.shell }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -42,7 +46,6 @@ jobs:
         shell: pwsh
         run: ./build/Build-Module.ps1
       - name: Run Pester
-        shell: ${{ matrix.shell }}
         run: |
           # Windows PowerShell ships Pester 3.4; import the installed one by path.
           Import-Module $env:PESTER_PATH -Force
@@ -50,5 +53,4 @@ jobs:
           $result = Invoke-Pester -Path ./tests -PassThru
           if ($result.FailedCount -gt 0 -or $result.PassedCount -eq 0) { throw 'Pester failed.' }
       - name: Import staged module
-        shell: ${{ matrix.shell }}
         run: ./build/Test-StagedModule.ps1
