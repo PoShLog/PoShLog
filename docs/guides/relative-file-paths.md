@@ -15,3 +15,8 @@ Close-Logger
 This uses the location at configuration time, even if the process current directory
 differs or you later change location. To explicitly use the caller's script directory,
 pass `Join-Path $PSScriptRoot 'logs/application.log'`.
+
+The same resolution applies to `New-Logger -ConfigurationPath`. Paths *inside* a JSON
+configuration also use PowerShell resolution for the core File sink. Extension buffer
+paths retain the extension's own semantics; use absolute paths for those. See
+[JSON configuration](json-configuration.md).

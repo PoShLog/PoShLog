@@ -29,3 +29,4 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0023](0023-safe-error-metadata-and-event-source-management.md) | Safe error invocation metadata and explicit Event Log source management | proposed |
 | [0026](0026-powershell-file-paths.md) | Resolve file sink paths through the PowerShell provider | Proposed |
 | [0027](0027-conditional-sublogger-expressions.md) | Filter sublogger routing with Serilog expressions | Proposed |
+| [0028](0028-json-logger-configuration.md) | Load a Serilog JSON configuration snapshot | Proposed |

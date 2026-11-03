@@ -72,3 +72,9 @@ PoShLog v3 is a compiled binary module. This index preserves the wiki's command 
 * **[Install-PoShLogExtension](Install-PoShLogExtension.md)** - Installs first-party extensions, as prereleases while PoShLog is one
 
 See also [write cmdlets](Write-cmdlets.md) and the [v3 migration guide](../guides/migration-v3.md).
+
+## Configuration guides
+
+* [Relative file paths](../guides/relative-file-paths.md)
+* [Conditional sinks](../guides/conditional-sinks.md)
+* [JSON configuration](../guides/json-configuration.md)

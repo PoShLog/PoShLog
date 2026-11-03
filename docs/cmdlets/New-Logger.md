@@ -4,6 +4,7 @@ Creates instance of Serilog logger configuration.
 
 ```ps1
 New-Logger
+    [-ConfigurationPath <string>]
     [<CommonParameters>]
 ```
 
@@ -13,7 +14,7 @@ New-Logger
 
 It's the first cmdlet used to set up a logger. If you want a simpler/faster solution, use [`Start-Logger`](Start-Logger.md) — short version.
 
-> Implemented as the compiled `NewLoggerCommand` cmdlet class in `PoShLog.Core.dll` (`src/dotnet/Cmdlets/Core/NewLoggerCommand.cs`). Parameters and pipeline behavior are unchanged from the original script version.
+> Implemented as the compiled `NewLoggerCommand` cmdlet class in `PoShLog.Core.dll` (`src/dotnet/Cmdlets/Core/NewLoggerCommand.cs`).
 
 ## Examples
 
@@ -25,3 +26,11 @@ New-Logger |
     Add-SinkConsole |
     Start-Logger
 ```
+
+## JSON configuration (v3)
+
+Optional `-ConfigurationPath <string>` reads the `Serilog` section of a JSON file
+once, resolving its path against the PowerShell FileSystem location. Missing files,
+malformed JSON and missing sections fail configuration. Import extensions before
+loading JSON. The returned configuration can continue through the normal pipeline.
+See [JSON configuration](../guides/json-configuration.md) for the schema and supported sinks.
