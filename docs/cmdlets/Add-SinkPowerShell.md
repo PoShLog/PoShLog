@@ -15,6 +15,20 @@ Add-SinkPowerShell
 
 This cmdlet sinks log event messages into the PowerShell console host. It writes log messages into PowerShell [streams](https://devblogs.microsoft.com/scripting/understanding-streams-redirection-and-write-host-in-powershell/), which you can then [redirect](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_redirection) or suppress using [preference variables](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables). Keep in mind that preference variables "override" the chosen minimum log level set via [`Set-MinimumLevel`](Set-MinimumLevel.md). You can propagate the minimum log level into preference variables using the [`-ToPreference`](Set-MinimumLevel.md#-topreference) parameter.
 
+Each level goes to the stream PowerShell itself would use:
+
+| Level | Stream | Shown by default | In the transcript |
+|-------|--------|------------------|-------------------|
+| Verbose | Verbose (4) | when `$VerbosePreference` shows it | when shown |
+| Debug | Debug (5) | when `$DebugPreference` shows it | when shown |
+| Information | Information (6) | when `$InformationPreference` shows it | when shown |
+| Warning | Warning (3) | yes | yes |
+| Error, Fatal | Information (6), red, like `Write-Host` | yes | yes |
+
+Error and Fatal events are always shown and recorded by `Start-Transcript`, like `Write-Host` output. They are not written as PowerShell errors, so logging an error never stops a script that runs with `$ErrorActionPreference = 'Stop'` and never adds to `$Error`. They can still be redirected (`6>`) or captured (`-InformationVariable`). To hide them, pass `-InformationAction SilentlyContinue` to `Write-ErrorLog`/`Write-FatalLog`: an explicit `-InformationAction` is respected (issue #45, [ADR 0008](../decisions/0008-powershell-sink-streams.md)). All records carry the source `PoShLog`.
+
+Use this sink rather than [`Add-SinkConsole`](Add-SinkConsole.md) when the output should end up in a transcript.
+
 > Implemented as the compiled `AddSinkPowerShellCommand` cmdlet class (`src/dotnet/Cmdlets/Sinks/AddSinkPowerShellCommand.cs`). Stream routing is handled via a thread-static "current cmdlet" context (`src/dotnet/Utils/PSCmdletContext.cs`) so log messages emitted by a `Write-*Log` cmdlet are written to that same cmdlet's PowerShell streams.
 
 ## Examples

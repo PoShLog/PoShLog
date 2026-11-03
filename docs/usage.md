@@ -123,6 +123,23 @@ Write-FatalLog 'Test fatal message'
 Close-Logger
 ```
 
+## Log objects
+
+Put `@` in front of a property name to log an object with its structure instead of as its string form:
+
+```ps1
+$service = Get-Service EventLog | Select-Object Name, Status, @{ l = 'Since'; e = { (Get-Date).Date } }
+Write-InfoLog 'Checked {@Service}' -PropertyValues $service
+# Checked {"Name": "EventLog", "Status": "Running", "Since": "2026-11-03T00:00:00.0000000+01:00"}
+```
+
+- A `[pscustomobject]` (also from `Select-Object`, `ConvertFrom-Json` or `Import-Csv`) is logged with its properties only: note, script and calculated properties are kept, PowerShell's adapter members are not.
+- A hashtable or `[ordered]` dictionary is logged as a JSON object.
+- An object that refers back to itself is cut with `"[Circular]"`, and nesting stops at 10 levels.
+- Other .NET objects (`Get-Item`, `Get-Service` without `Select-Object`) are logged with all their public properties, which can be a lot. Select the properties you need, or lower the depth with `$config.Destructure.ToMaximumDepth(3)` on the configuration from `New-Logger`.
+
+To add the same property to every event in a block of code, see [`Push-LogContextProperty`](cmdlets/Push-LogContextProperty.md). The rules are in [ADR 0005](decisions/0005-psobject-destructuring-policy.md).
+
 ## Close logger
 
 Don't forget to close the logger at the end of every session. This releases all resources safely.

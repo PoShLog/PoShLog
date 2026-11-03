@@ -33,6 +33,7 @@ PoShLog v3 is a compiled binary module. This index preserves the wiki's command 
 ## Enrichment cmdlets
 
 * **[Add-EnrichFromLogContext](Add-EnrichFromLogContext.md)** - Adds properties from the ambient LogContext.
+* **[Push-LogContextProperty](Push-LogContextProperty.md)** - Adds properties to every event logged within a scope
 
 * **[Add-EnrichWithErrorRecord](Add-EnrichWithErrorRecord.md)** - Enriches log events with ErrorRecord property if available
 * **[Add-EnrichWithProperty](Add-EnrichWithProperty.md)** - Enriches log events with custom property
@@ -53,6 +54,7 @@ PoShLog v3 is a compiled binary module. This index preserves the wiki's command 
 ## Formatters
 
 * **[Get-JsonFormatter](Get-JsonFormatter.md)** - Returns new instance of `Serilog.Formatting.Json.JsonFormatter`
+* **[Get-CompactFormatter](Get-CompactFormatter.md)** - Returns a formatter that writes the Compact Log Event Format (CLEF)
 
 ## Helpers
 

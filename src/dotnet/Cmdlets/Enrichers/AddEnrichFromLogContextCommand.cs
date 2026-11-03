@@ -4,7 +4,7 @@ using Serilog;
 namespace PoShLog.Core.Cmdlets.Enrichers
 {
 	/// <summary>
-	/// Enriches log events with properties from LogContext. Use Push-LogContextProp to add properties.
+	/// Enriches log events with properties from LogContext. Use Push-LogContextProperty to add properties.
 	/// </summary>
 	[Cmdlet(VerbsCommon.Add, "EnrichFromLogContext")]
 	[OutputType(typeof(LoggerConfiguration))]

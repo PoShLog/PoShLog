@@ -10,7 +10,7 @@ Add-EnrichFromLogContext
 
 ## Description
 
-Enriches log events with properties from Serilog's ambient `LogContext`. Combine this with `Serilog.Context.LogContext.PushProperty(...)` (or a `Push-LogContextProperty`-style helper) to attach contextual properties to all log events written within a given scope.
+Enriches log events with properties from Serilog's ambient `LogContext`. Combine this with [`Push-LogContextProperty`](Push-LogContextProperty.md) to attach contextual properties to all log events written within a given scope.
 
 > Implemented as the compiled `AddEnrichFromLogContextCommand` cmdlet class (`src/dotnet/Cmdlets/Enrichers/AddEnrichFromLogContextCommand.cs`).
 
@@ -23,6 +23,10 @@ New-Logger |
     Add-EnrichFromLogContext |
     Add-SinkConsole -OutputTemplate '[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}' |
     Start-Logger
+
+Push-LogContextProperty -Name RunId -Value 42 -ScriptBlock {
+    Write-InfoLog 'Carries RunId'
+}
 ```
 
 ## Parameters

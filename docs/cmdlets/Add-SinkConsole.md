@@ -18,6 +18,8 @@ Add-SinkConsole
 
 Use this cmdlet if you want your log event messages to appear in the console host. **Keep in mind that the Console sink writes to `Success` *(1, stdout)* and `Error` *(2, stderr)* streams only, and `Error` is used only when `-StandardErrorFromLevel` is present.** If you want to write log messages into PowerShell streams, use [`Add-SinkPowerShell`](Add-SinkPowerShell.md) instead.
 
+The console sink writes straight to the process console, past the PowerShell host, so its output is **not recorded by `Start-Transcript`**. Use [`Add-SinkPowerShell`](Add-SinkPowerShell.md) when the log has to be in a transcript, or pass [`Get-CompactFormatter`](Get-CompactFormatter.md) to `-Formatter` for machine-readable CLEF output.
+
 > Implemented as the compiled `AddSinkConsoleCommand` cmdlet class (`src/dotnet/Cmdlets/Sinks/AddSinkConsoleCommand.cs`), calling `Serilog.Sinks.Console` (v6.0.0).
 
 ## Examples
