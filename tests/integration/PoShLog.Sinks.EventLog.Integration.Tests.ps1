@@ -2,6 +2,12 @@ if ($env:POSHLOG_INTEGRATION -ne '1') { return }
 BeforeAll { . "$PSScriptRoot/Helpers.ps1"; Import-Module PoShLog.Sinks.EventLog }
 Describe 'Windows Event Log delivery' {
     It 'writes and reads levels, rendered messages and properties' {
+        # Known product bug: EventLog 1.0.0 ships the netstandard System.Diagnostics.EventLog stub, which
+        # throws PlatformNotSupportedException on .NET Framework. A fixed 1.0.1+ runs this test again.
+        if ($PSVersionTable.PSEdition -eq 'Desktop' -and (Get-Module PoShLog.Sinks.EventLog).Version -lt [version]'1.0.1') {
+            Set-ItResult -Skipped -Because 'PoShLog.Sinks.EventLog 1.0.0 ships the netstandard System.Diagnostics.EventLog stub (PlatformNotSupportedException on Windows PowerShell 5.1)'
+            return
+        }
         $id = [guid]::NewGuid().ToString('N')
         $source = "PoShLog-Integration-$id"
         $start = Get-Date
