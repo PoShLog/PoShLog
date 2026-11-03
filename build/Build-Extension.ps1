@@ -19,4 +19,10 @@ $shared = @('Serilog.dll', 'Serilog.Sinks.File.dll', 'Serilog.Sinks.Console.dll'
 Get-ChildItem $staging -File -Filter '*.dll' |
     Where-Object { $_.Name -notin $shared -and ($_.Name -ne 'Dependencies.dll') } |
     Copy-Item -Destination $lib
+# EventLog is Windows-only. Ship its implementation, rather than the portable
+# platform-not-supported facade, even when the package is built on Linux.
+if ($Module -eq 'PoShLog.Sinks.EventLog') {
+    Get-ChildItem "$staging/runtimes/win/lib/net8.0" -File -Filter '*.dll' |
+        Copy-Item -Destination $lib -Force
+}
 Write-Output "Built $Module -> $lib"
