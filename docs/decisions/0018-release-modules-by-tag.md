@@ -1,6 +1,6 @@
 # 0018 — Release modules by pushing a tag
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-03
 
 ## Context

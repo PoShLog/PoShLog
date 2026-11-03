@@ -1,6 +1,6 @@
 # 0019 — Extensions ship as prereleases during the Core 3 preview
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-03
 - **Amends:** [0012](0012-otlp-sink-design.md) (the version without a prerelease suffix)
 
