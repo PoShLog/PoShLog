@@ -4,7 +4,10 @@ param(
     # ThirdParty: other authors' published sinks, a non-blocking check (ADR 0009).
     [ValidateSet('InRepo', 'Published', 'ThirdParty')]
     [string]$Mode = 'InRepo',
-    [string]$GalleryPath = (Join-Path $PSScriptRoot '../../.compat/gallery')
+    [string]$GalleryPath = (Join-Path $PSScriptRoot '../../.compat/gallery'),
+    # InRepo only: an extracted PoShLog.Sinks.Seq 1.0.0 to load next to the OpenTelemetry sink, for local checks
+    # outside GitHub Actions (Published mode downloads it).
+    [string]$LegacySeqPath
 )
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path "$PSScriptRoot/../..").Path
@@ -64,6 +67,24 @@ foreach ($name in $modules.Keys) {
     }
     $cases += @{ Name = $name; Path = $manifest }
 }
+# The OpenTelemetry sink is not published yet: always the in-repo build. It must load and deliver next to the Seq
+# extension in either import order, the refreshed one (InRepo) and the published 1.0.0 that ships its own older
+# assemblies (Published); see docs/decisions/0012-otlp-sink-design.md.
+$otlp = "$root/extensions/PoShLog.Sinks.OpenTelemetry/PoShLog.Sinks.OpenTelemetry.psd1"
+$seqCase = $cases | Where-Object Name -eq 'PoShLog.Sinks.Seq'
+$seqPaths = @()
+if ($Mode -eq 'InRepo') {
+    $cases += @{ Name = 'PoShLog.Sinks.OpenTelemetry'; Path = $otlp }
+    $seqPaths += $seqCase.Path
+    if ($LegacySeqPath) { $seqPaths += (Resolve-Path $LegacySeqPath).Path }
+} elseif ($Mode -eq 'Published') {
+    $seqPaths += $seqCase.Path
+}
+foreach ($seqPath in $seqPaths) {
+    foreach ($first in $true, $false) {
+        $cases += @{ Name = 'PoShLog.Sinks.OpenTelemetry'; Path = $otlp; Seq = $seqPath; SeqFirst = $first }
+    }
+}
 $failed = @()
 foreach ($case in $cases) {
     # One process per module: legacy assemblies must not mask failures in another extension.
@@ -72,7 +93,9 @@ foreach ($case in $cases) {
     $startInfo.CreateNoWindow = $true
     $startInfo.RedirectStandardOutput = $true
     $startInfo.RedirectStandardError = $true
-    foreach ($argument in @('-NoProfile', '-File', "$PSScriptRoot/Test-Extension.ps1", '-Name', $case.Name, '-ModulePath', $case.Path)) {
+    $arguments = @('-NoProfile', '-File', "$PSScriptRoot/Test-Extension.ps1", '-Name', $case.Name, '-ModulePath', $case.Path)
+    if ($case.Seq) { $arguments += @('-SeqPath', $case.Seq); if ($case.SeqFirst) { $arguments += '-SeqFirst' } }
+    foreach ($argument in $arguments) {
         $startInfo.ArgumentList.Add($argument)
     }
     $process = [Diagnostics.Process]::Start($startInfo)
@@ -98,4 +121,4 @@ foreach ($case in $cases) {
     $process.Dispose()
 }
 if ($failed.Count) { throw "Compatibility failures: $($failed -join ', ')" }
-Write-Output "PASS $Mode compatibility ($($cases.Count) modules)"
+Write-Output "PASS $Mode compatibility ($($cases.Count) cases)"
