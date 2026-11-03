@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- ADR 0001: compatible with the PowerShell 7.4 runtime. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>PoShLog.Sinks.Elastic</AssemblyName>
+    <RootNamespace>PoShLog.Sinks.Elastic</RootNamespace>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="4.4.0" />
+    <PackageReference Include="Elastic.Serilog.Sinks" Version="9.0.0" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.6" ExcludeAssets="runtime" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

@@ -182,8 +182,8 @@ New-Logger |
 
 A self-managed APM Server listens on `http://<host>:8200`; with a secret token the header is
 `Authorization = 'Bearer <token>'`. The Elastic Distribution of OpenTelemetry (EDOT) Collector on `:4318` works like
-any collector. Writing straight into Elasticsearch data streams, without APM Server or a collector, is the planned
-first-party module `PoShLog.Sinks.Elastic` (ADR 0009).
+any collector. To write straight into Elasticsearch data streams, without APM Server or a collector, use
+[Add-SinkElasticsearch](Add-SinkElasticsearch.md).
 
 ### OpenTelemetry Collector
 
@@ -220,5 +220,5 @@ New-Logger | Add-SinkOpenTelemetry | Start-Logger   # http://localhost:4318 by d
 | Grafana Loki / Cloud | Native (Loki 3, OTLP gateway) | - |
 | Datadog | Agent with OTLP ingest | No Agent on the machine: planned `PoShLog.Sinks.Datadog.Logs` (ADR 0009, later). |
 | Splunk | Collector with HEC exporter | No collector: [Add-SinkSplunk](Add-SinkSplunk.md). |
-| Elastic | APM Server, managed OTLP, EDOT Collector | Straight into data streams: planned `PoShLog.Sinks.Elastic`. |
+| Elastic | APM Server, managed OTLP, EDOT Collector | Straight into data streams: [Add-SinkElasticsearch](Add-SinkElasticsearch.md). |
 | Syslog | None | Always: [Add-SinkSyslog](Add-SinkSyslog.md). |

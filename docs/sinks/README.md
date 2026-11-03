@@ -14,7 +14,7 @@ You can see all Serilog (the C# library PoShLog is built upon) sinks [here](http
 
 **`These sinks must be installed separately! See each cmdlet's documentation for more information.`**
 
-* [**Add-SinkElasticsearch**](https://github.com/mamidenn/PoShLog.Sinks.Elasticsearch)
+* [**Add-SinkElasticsearch**](Add-SinkElasticsearch.md) - Elasticsearch or Elastic Cloud data streams, as ECS documents (PoShLog.Sinks.Elastic)
 * [**Add-SinkEventLog**](Add-SinkEventLog.md)
 * [**Add-SinkExceptionless**](Add-SinkExceptionless.md)
 * [**Add-SinkMSSqlServer**](Add-SinkMSSqlServer.md)
@@ -34,4 +34,4 @@ These modules are maintained separately. The pinned versions listed below are ch
 | [PoShLog.Sinks.ElmahIo](https://www.powershellgallery.com/packages/PoShLog.Sinks.ElmahIo) | elmah.io | 4.0.4 | PowerShell Core |
 | [PoShLog.Sinks.Splunk](https://www.powershellgallery.com/packages/PoShLog.Sinks.Splunk) | Mike Powell | 1.0.4 | PowerShell Core; the first-party alternative is PoShLog.Sinks.Splunk.Hec ([Add-SinkSplunk](Add-SinkSplunk.md)), import only one of the two |
 | [PoShLog.Sinks.Syslog](https://www.powershellgallery.com/packages/PoShLog.Sinks.Syslog) | Michael Zimmerli | 1.0.0 | PowerShell Core; the first-party alternative is PoShLog.Sinks.Syslog.Rfc5424 ([Add-SinkSyslog](Add-SinkSyslog.md)), import only one of the two |
-| [PoShLog.Sinks.Elasticsearch](https://github.com/mamidenn/PoShLog.Sinks.Elasticsearch) | mamidenn | Excluded | Windows PowerShell only; use PoShLog 2.x |
+| [PoShLog.Sinks.Elasticsearch](https://github.com/mamidenn/PoShLog.Sinks.Elasticsearch) | mamidenn | Excluded | Windows PowerShell only; use PoShLog 2.x. On PowerShell 7 the first-party alternative is PoShLog.Sinks.Elastic ([Add-SinkElasticsearch](Add-SinkElasticsearch.md)) |

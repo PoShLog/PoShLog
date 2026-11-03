@@ -8,12 +8,12 @@ dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib --configfile
 ./tests/compat/Invoke-Compatibility.ps1 -Mode InRepo
 ```
 
-Run Build-Extension.ps1 for each of the seven module directories before the compatibility suite.
+Run Build-Extension.ps1 for each of the eight module directories before the compatibility suite.
 The build restores only from nuget.org, stages publish output, and copies runtime dependencies
 into lib/ while excluding Core's Serilog, File and Console assemblies. No binaries are committed.
 Stage-Module.ps1 assembles a publishable module under artifacts/ from these outputs.
 
-Each imported extension requires PoShLog >= 2.0.0 by GUID; PoShLog.Sinks.OpenTelemetry, PoShLog.Sinks.Splunk.Hec and PoShLog.Sinks.Syslog.Rfc5424 are new and require 3.0.0 (ADR 0004). The refreshed dependencies share Serilog 4
+Each imported extension requires PoShLog >= 2.0.0 by GUID; PoShLog.Sinks.OpenTelemetry, PoShLog.Sinks.Splunk.Hec, PoShLog.Sinks.Syslog.Rfc5424 and PoShLog.Sinks.Elastic are new and require 3.0.0 (ADR 0004). The refreshed dependencies share Serilog 4
 with v3 Core; the minimum preserves the v2 manifest contract, but does not guarantee that
 every new sink package supports every v2 runtime. These refreshed releases require PowerShell 7.4+.
 
@@ -43,3 +43,7 @@ newer version and refuses to import next to an older one, such as the third-part
 PoShLog.Sinks.Syslog.Rfc5424 was written here too. It uses only the formatters of Serilog.Sinks.SyslogMessages and
 sends through its own transports, so it ships no Serilog.Sinks.PeriodicBatching. Its psm1 compares file versions,
 because every release of that package has assembly version 0.0.0.0 (ADR 0014).
+
+PoShLog.Sinks.Elastic was written here too, on Elastic.Serilog.Sinks. Its psm1 compares file versions in the same way,
+because Elastic.Channels, Elastic.Ingest.* and Elastic.Transport have assembly version 0.0.0.0. The sink drops new
+events when its queue is full, where the package would block the script (ADR 0015).
