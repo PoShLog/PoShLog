@@ -59,11 +59,12 @@ namespace PoShLog.Core.Cmdlets.Write
 					exception = new WrapperException(exception, ErrorRecord);
 				}
 
-				Logger.Write(Level, exception, MessageTemplate, PropertyValues);
+				var messageTemplate = MessageTemplate ?? string.Empty;
+				Logger.Write(Level, exception, messageTemplate, PropertyValues);
 
 				if (PassThru.IsPresent)
 				{
-					var formatted = MessageFormatter.Format(Logger, Level, MessageTemplate, PropertyValues, exception);
+					var formatted = MessageFormatter.Format(Logger, Level, messageTemplate, PropertyValues, exception);
 					if (formatted != null)
 					{
 						WriteObject(formatted);

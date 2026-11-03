@@ -21,7 +21,7 @@ namespace PoShLog.Core.Data
 			CategoryInfo = errorRecord.CategoryInfo;
 			ErrorDetails = errorRecord.ErrorDetails;
 			FullyQualifiedErrorId = errorRecord.FullyQualifiedErrorId;
-			InvocationInfoWrapper = new InvocationInfoWrapper(errorRecord.InvocationInfo);
+			InvocationInfoWrapper = errorRecord.InvocationInfo == null ? null : new InvocationInfoWrapper(errorRecord.InvocationInfo);
 			PipelineIterationInfo = errorRecord.PipelineIterationInfo;
 			ScriptStackTrace = errorRecord.ScriptStackTrace;
 			TargetObject = errorRecord.TargetObject;

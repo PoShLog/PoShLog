@@ -23,13 +23,20 @@ Describe 'Refreshed extension loader: <Module>' -ForEach @(
 `$ErrorActionPreference = 'Stop'
 Import-Module '$corePath'
 Import-Module '$modulePath'
-`$expected = (Import-PowerShellDataFile '$modulePath').FunctionsToExport | Sort-Object
+`$manifest = Import-PowerShellDataFile '$modulePath'
+`$expected = `$manifest.FunctionsToExport | Sort-Object
 if (`$expected -eq '*') {
     `$expected = Get-ChildItem (Join-Path (Split-Path '$modulePath') 'functions') -Recurse -Filter '*.ps1' -File |
         Where-Object { `$_.Directory.Name -ne 'internal' } | Select-Object -ExpandProperty BaseName | Sort-Object
 }
+`$expected = @(`$expected) + @(`$manifest.CmdletsToExport) | Where-Object { `$_ -and `$_ -ne '*' } | Sort-Object
 `$actual = (Get-Command -Module '$Module').Name | Sort-Object
 if (@(Compare-Object `$expected `$actual).Count) { throw 'Unexpected exported commands.' }
+if ('$Module' -eq 'PoShLog.Sinks.Http') {
+    `$client = Get-ApiKeyHttpClient -ApiKey 'synthetic-audit-placeholder' -ErrorAction Stop
+    if (`$client -isnot [Serilog.Sinks.Http.IHttpClient]) { throw 'Authentication helper returned an invalid client.' }
+    `$client.Dispose()
+}
 Import-Module '$modulePath' -Force
 `$actual = (Get-Command -Module '$Module').Name | Sort-Object
 if (@(Compare-Object `$expected `$actual).Count) { throw 'Unexpected exported commands after reimport.' }

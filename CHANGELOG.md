@@ -10,9 +10,11 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 
 ### Changes
 - PoShLog.Enrichers lists its functions in `FunctionsToExport`, and every extension manifest describes the extension in one line.
+- Error invocation enrichment keeps command names, script paths and line numbers, but no longer logs argument values and source text (`BoundParameters`, `UnboundArguments`, `Line`, `PositionMessage`, `DisplayScriptPosition`), in text and structured output (ADR 0023).
 
 ### Bug fixes
-- None.
+- All seven `Write-*Log` commands emit error-only events with an empty message template, including `-PassThru`.
+- Accept constructed `ErrorRecord` instances without invocation metadata.
 
 ## 3.0.0-preview2 — 2026-11-03
 

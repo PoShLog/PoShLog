@@ -84,24 +84,26 @@ function Add-SinkSeq {
 		[int]$QueueSizeLimit = 100000
 	)
 
-	# Seq 9 uses a payload formatter instead of the former compact flag.
-    $payloadFormatter = if ($Compact) { $null } else { [Serilog.Formatting.Json.JsonFormatter]::new() }
-    $LoggerConfig = [Serilog.SeqLoggerConfigurationExtensions]::Seq($LoggerConfig.WriteTo,
+	process {
+		# Seq 9 uses a payload formatter instead of the former compact flag.
+		$payloadFormatter = if ($Compact) { $null } else { [Serilog.Formatting.Json.JsonFormatter]::new() }
+		$LoggerConfig = [Serilog.SeqLoggerConfigurationExtensions]::Seq($LoggerConfig.WriteTo,
 			$ServerUrl,
 			$RestrictedToMinimumLevel,
 			$BatchPostingLimit,
 			$Period,
 			$ApiKey,
-            [System.Management.Automation.Language.NullString]::Value, # Keep the sink non-durable.
+			[System.Management.Automation.Language.NullString]::Value, # Keep the sink non-durable.
 			$BufferSizeLimitBytes,
 			$EventBodyLimitBytes,
 			$ControlLevelSwitch,
 			$MessageHandler,
 			$RetainedInvalidPayloadsLimitBytes,
 			$QueueSizeLimit,
-            $payloadFormatter,
-            $null
-        )
+			$payloadFormatter,
+			$null
+		)
 
 		$LoggerConfig
+	}
 }
