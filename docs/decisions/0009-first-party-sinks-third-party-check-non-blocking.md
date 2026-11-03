@@ -38,6 +38,10 @@ the product (`Add-SinkSplunk`, ...), so scripts move over with a parameter revie
 
 The names are checked for availability and confirmed by Tomáš before the first publish.
 
+**Note (2026-11-03):** Tomáš confirmed `PoShLog.Sinks.OpenTelemetry`, `PoShLog.Sinks.Splunk.Hec` and
+`PoShLog.Sinks.Syslog.Rfc5424`; the PowerShell Gallery feed listed none of the three as taken that day. Publishing
+still needs his separate approval. `PoShLog.Sinks.Elastic` is not confirmed yet.
+
 ## Alternatives considered
 
 - **Keep third-party modules as a release gate (ADR 0003 as written).** One broken manifest outside our control
