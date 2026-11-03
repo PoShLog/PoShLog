@@ -19,6 +19,8 @@ only. Tomáš wants v2 kept as a living line for them instead.
   - Serilog updates that still load on .NET Framework 4.6.2+ (netstandard2.0 / net462 assets);
   - backports of v3 work when they are cheap and 5.1-compatible, first the PSObject destructuring (#46) and the
     console/transcript fixes (#45, #28).
+- v2 stays what it is: a script module (about 40 functions) with its small netstandard2.0 helper DLL; it is not
+  converted to a binary module (Tomáš, 2026-11-03).
 - New features land in v3 first. v2 does not get new sink modules.
 - The branch has its own CI on `windows-latest`, running Pester under both `powershell.exe` 5.1 and `pwsh` 7, and its
   own release workflow for 2.x.
