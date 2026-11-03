@@ -54,7 +54,7 @@ PowerShellVersion = '7.4'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @(@{ModuleName = 'PoShLog'; GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'; ModuleVersion = '3.0.0'; })
+RequiredModules = @(@{ModuleName = 'PoShLog'; GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'; ModuleVersion = '2.99.0'; })
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()

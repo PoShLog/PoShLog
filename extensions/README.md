@@ -13,9 +13,9 @@ The build restores only from nuget.org, stages publish output, and copies runtim
 into lib/ while excluding Core's Serilog, File and Console assemblies. No binaries are committed.
 Stage-Module.ps1 assembles a publishable module under artifacts/ from these outputs.
 
-Each imported extension requires PoShLog >= 2.0.0 by GUID; PoShLog.Sinks.OpenTelemetry, PoShLog.Sinks.Splunk.Hec, PoShLog.Sinks.Syslog.Rfc5424 and PoShLog.Sinks.Elastic are new and require 3.0.0 (ADR 0004). The refreshed dependencies share Serilog 4
-with v3 Core; the minimum preserves the v2 manifest contract, but does not guarantee that
-every new sink package supports every v2 runtime. These refreshed releases require PowerShell 7.4+.
+Each extension requires PoShLog >= 2.99.0 by GUID during the Core 3 preview (ADR 0017).
+The refreshed dependencies share Serilog 4 with v3 Core. PoShLog 2.x users stay on the
+older extensions. These refreshed releases require PowerShell 7.4+.
 
 ## Source provenance
 

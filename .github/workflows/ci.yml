@@ -70,6 +70,16 @@ jobs:
       - name: Build PoShLog.Core module assembly
         run: dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
 
+      - name: Test clean-process package installation
+        if: runner.os == 'Linux'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (!(Get-Module Microsoft.PowerShell.PSResourceGet -ListAvailable | Where-Object Version -ge ([version]'1.1.0'))) {
+            Install-Module Microsoft.PowerShell.PSResourceGet -Repository PSGallery -MinimumVersion 1.1.0 -Scope CurrentUser -Force
+          }
+          # Stage-Module invokes Build-Extension for each selected extension.
+          ./build/Test-PackageInstall.ps1
+
       - name: Install Pester
         run: |
           # PSResourceGet ships with PowerShell 7.4+; retry because the Gallery fails intermittently.
@@ -113,6 +123,68 @@ jobs:
         with:
           name: pester-results-${{ matrix.os }}
           path: TestResults/pester-results.xml
+
+  minimum-powershell:
+    name: Pester (PowerShell 7.4, Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Publish Core
+        run: dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
+      - name: Install PowerShell 7.4
+        run: dotnet tool install PowerShell --version '7.4.*' --tool-path ./.tools/powershell74
+      - name: Install Pester and run suite under PowerShell 7.4
+        shell: './.tools/powershell74/pwsh -NoLogo -NoProfile -File {0}'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSVersionTable.PSVersion
+          if ($PSVersionTable.PSVersion.Major -ne 7 -or $PSVersionTable.PSVersion.Minor -ne 4) {
+            throw 'This job must run PowerShell 7.4.x.'
+          }
+          foreach ($attempt in 1..3) {
+            try {
+              Install-PSResource -Name Pester -Version '[5.5.0, 7.0.0)' -Scope CurrentUser -TrustRepository -Reinstall -ErrorAction Stop
+              break
+            } catch {
+              if ($attempt -eq 3) { throw }
+              Write-Warning "Pester install attempt $attempt failed: $_"
+              Start-Sleep -Seconds (10 * $attempt)
+            }
+          }
+          $env:TEMP = [IO.Path]::GetTempPath()
+          Import-Module Pester -MinimumVersion 5.5.0
+          $result = Invoke-Pester ./tests -PassThru
+          if ($result.FailedCount -gt 0 -or $result.PassedCount -eq 0) {
+            throw "$($result.FailedCount) Pester test(s) failed."
+          }
+
+  macos-smoke:
+    name: Module smoke (macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Build and publish Core
+        run: dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
+      - name: Import and log a structured event
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Import-Module ./src/PoShLog.psd1 -Force
+          $log = Join-Path ([IO.Path]::GetTempPath()) "poshlog-smoke-$([guid]::NewGuid()).log"
+          try {
+            Start-Logger -Console -FilePath $log
+            Write-InfoLog -MessageTemplate 'Preview {Number} ready' -PropertyValues 2
+          } finally {
+            Close-Logger
+          }
+          if (!(Test-Path -LiteralPath $log) -or (Get-Content -LiteralPath $log -Raw) -notmatch 'Preview 2 ready') {
+            throw 'The file sink did not contain the rendered structured message.'
+          }
 
   compatibility:
     uses: ./.github/workflows/compat.yml

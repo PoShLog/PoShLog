@@ -5,7 +5,7 @@
 ### Changes
 - Build from the PoShLog monorepo with refreshed Serilog 4 dependencies.
 - Require PowerShell 7.4+ Core.
-- Require PoShLog 3.0.0 (by GUID); PoShLog 2.x users stay on 1.0.x.
+- Require PoShLog 2.99.0 (by GUID); PoShLog 2.x users stay on 1.0.x.
 - Preserve command names and parameters; use Core's shared Serilog assemblies.
 
 ### Bug fixes

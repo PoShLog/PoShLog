@@ -17,7 +17,7 @@
   documents.
 
 ### Changes
-- Requires PoShLog 3.0.0 and PowerShell 7.4 or newer.
+- Requires PoShLog 2.99.0 and PowerShell 7.4 or newer.
 - Replaces the third-party PoShLog.Sinks.Elasticsearch for PowerShell 7; `-Uri` still works as an alias of `-Node`.
 - A full queue drops new events instead of blocking the script, as in the other PoShLog sinks.
 

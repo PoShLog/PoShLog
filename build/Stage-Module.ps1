@@ -2,13 +2,14 @@
 param(
     [Parameter(Mandatory)]
     [ValidateSet('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic')]
-    [string]$Module
+    [string]$Module,
+    [string]$Destination = (Join-Path (Split-Path $PSScriptRoot) 'artifacts')
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot
 $source = if ($Module -eq 'PoShLog') { "$root/src" } else { "$root/extensions/$Module" }
 if ($Module -ne 'PoShLog') { & "$PSScriptRoot/Build-Extension.ps1" -Module $Module }
-$destination = Join-Path $root "artifacts/$Module"
+$destination = Join-Path $Destination $Module
 if (Test-Path $destination) {
     throw "Staging directory already exists: $destination. Use a clean release checkout."
 }

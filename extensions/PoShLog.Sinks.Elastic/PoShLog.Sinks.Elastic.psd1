@@ -31,7 +31,7 @@ For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/m
 PowerShellVersion = '7.4'
 
 # Modules that must be imported into the global environment prior to importing this module (ADR 0004)
-RequiredModules = @(@{ModuleName = 'PoShLog'; GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'; ModuleVersion = '3.0.0'; })
+RequiredModules = @(@{ModuleName = 'PoShLog'; GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'; ModuleVersion = '2.99.0'; })
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @()
