@@ -28,7 +28,7 @@ These modules are maintained separately. The pinned versions listed below are ch
 
 | Module | Maintainer | CI version | Platform |
 |---|---|---|---|
-| [PoShLog.Sinks.DataDog](https://www.powershellgallery.com/packages/PoShLog.Sinks.DataDog) | Chris Hunt | 0.1.1 | PowerShell Core |
+| [PoShLog.Sinks.DataDog](https://www.powershellgallery.com/packages/PoShLog.Sinks.DataDog) | Chris Hunt | 0.1.1 | PowerShell Core; Windows only (0.1.1 does not import on Linux: its manifest names `PoShLog.Sinks.Datadog.psm1` with different casing) |
 | [PoShLog.Sinks.ElmahIo](https://www.powershellgallery.com/packages/PoShLog.Sinks.ElmahIo) | elmah.io | 4.0.4 | PowerShell Core |
 | [PoShLog.Sinks.Splunk](https://www.powershellgallery.com/packages/PoShLog.Sinks.Splunk) | Mike Powell | 1.0.4 | PowerShell Core |
 | [PoShLog.Sinks.Syslog](https://www.powershellgallery.com/packages/PoShLog.Sinks.Syslog) | Michael Zimmerli | 1.0.0 | PowerShell Core |

@@ -25,7 +25,7 @@ workflow both depend on it; any download, import, configuration or delivery fail
 | PoShLog.Sinks.Http | 1.0.1 | Event at loopback HTTP listener |
 | PoShLog.Sinks.Exceptionless | 1.0.0 | Event at loopback HTTP listener |
 | PoShLog.Sinks.Syslog | 1.0.0 | Event at loopback UDP listener |
-| PoShLog.Sinks.DataDog | 0.1.1 | Event at loopback HTTP listener |
+| PoShLog.Sinks.DataDog | 0.1.1 | Event at loopback HTTP listener; skipped on Linux (RootModule case mismatch in its manifest, fails with any PoShLog version) |
 | PoShLog.Sinks.ElmahIo | 4.0.4 | Import and sink configuration; wrapper has no endpoint override |
 | PoShLog.Sinks.Splunk | 1.0.4 | Event at loopback HTTP listener |
 

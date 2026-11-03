@@ -23,10 +23,23 @@ if ($Mode -eq 'Published') {
     $modules['PoShLog.Sinks.Splunk'] = '1.0.4'
     New-Item -ItemType Directory -Force $GalleryPath | Out-Null
 }
+# Published modules that cannot load on a platform with any PoShLog version (their own defect, not a v3 break).
+$knownBroken = @{
+    'PoShLog.Sinks.DataDog' = @{
+        Linux = 'manifest RootModule is PoShLog.Sinks.Datadog.psm1 but the file is PoShLog.Sinks.DataDog.psm1; Linux paths are case-sensitive'
+    }
+}
+$platform = if ($IsWindows) { 'Windows' } elseif ($IsLinux) { 'Linux' } else { 'MacOS' }
 $cases = @(@{ Name = 'PoShLog'; Path = "$root/src/PoShLog.psd1" })
 foreach ($name in $modules.Keys) {
     if ($name -eq 'PoShLog.Sinks.EventLog' -and !$IsWindows) {
         Write-Output "SKIP $name (Windows only)"
+        continue
+    }
+    $reason = if ($Mode -eq 'Published' -and $knownBroken.ContainsKey($name)) { $knownBroken[$name][$platform] }
+    if ($reason) {
+        Write-Output "SKIP $name (known broken on ${platform}: $reason)"
+        if ($env:GITHUB_ACTIONS -eq 'true') { Write-Output "::warning title=Compatibility $name skipped on ${platform}::$reason" }
         continue
     }
     if ($Mode -eq 'Published') {
