@@ -53,6 +53,7 @@ PoShLog v3 is a compiled binary module. This index preserves the wiki's command 
 ## Formatters
 
 * **[Get-JsonFormatter](Get-JsonFormatter.md)** - Returns new instance of `Serilog.Formatting.Json.JsonFormatter`
+* **[Get-CompactFormatter](Get-CompactFormatter.md)** - Returns a formatter that writes the Compact Log Event Format (CLEF)
 
 ## Helpers
 

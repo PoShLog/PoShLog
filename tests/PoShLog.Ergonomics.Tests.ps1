@@ -1,5 +1,5 @@
 #Requires -Version 7.4
-# Structured logging of PowerShell objects: issue #46 (ADR 0005).
+# Structured logging of PowerShell objects: issues #46 and #48 (ADRs 0005 and 0007).
 
 BeforeAll {
 	$script:manifest = (Resolve-Path "$PSScriptRoot\..\src\PoShLog.psd1").Path
@@ -49,5 +49,32 @@ Describe 'PSObject destructuring (#46)' {
 		Close-Logger
 
 		Get-Content $script:log -Raw | Should -BeLike '*Processed {"Latitude":25,"Longitude":134}*'
+	}
+}
+
+Describe 'Get-CompactFormatter (#48)' {
+	It 'writes one CLEF object per line to a file sink' {
+		$log = Join-Path $TestDrive 'clef.log'
+		New-Logger | Set-MinimumLevel -Value Verbose | Add-SinkFile -Path $log -Formatter (Get-CompactFormatter) | Start-Logger
+		Write-InfoLog 'Hello {Name}' -PropertyValues 'World'
+		Write-WarningLog 'Careful'
+		Close-Logger
+
+		$events = Get-Content $log | ConvertFrom-Json
+		$events.Count | Should -Be 2
+		$events[0].'@mt' | Should -Be 'Hello {Name}'
+		$events[0].Name | Should -Be 'World'
+		$events[1].'@l' | Should -Be 'Warning'
+	}
+
+	It 'writes the rendered message with -Rendered' {
+		$log = Join-Path $TestDrive 'clef-rendered.log'
+		New-Logger | Add-SinkFile -Path $log -Formatter (Get-CompactFormatter -Rendered) | Start-Logger
+		Write-InfoLog 'Hello {Name}' -PropertyValues 'World'
+		Close-Logger
+
+		$event = Get-Content $log | ConvertFrom-Json
+		$event.'@m' | Should -Be 'Hello "World"'
+		$event.'@i' | Should -Match '^[0-9a-f]{8}$'
 	}
 }
