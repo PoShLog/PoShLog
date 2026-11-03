@@ -1,9 +1,9 @@
-# Regression coverage for the v2 maintenance release (#46, #45, #28).
+# Regression coverage for the v2 maintenance release.
 BeforeAll {
 	$script:manifest = (Resolve-Path "$PSScriptRoot\..\src\PoShLog.psd1").Path
 	Import-Module $script:manifest -Force
 
-	function Invoke-ChildPowerShell([string]$Body) {
+	function Invoke-ChildPowerShell([string]$Body, [switch]$IncludeErrors) {
 		$path = Join-Path $TestDrive "$([guid]::NewGuid()).ps1"
 		Set-Content -LiteralPath $path -Value ("`$ErrorActionPreference = 'Stop'`nImport-Module '$($script:manifest.Replace("'", "''"))'`n" + $Body)
 		$exe = if ($PSVersionTable.PSEdition -eq 'Desktop') { 'powershell.exe' } else { 'pwsh.exe' }
@@ -23,7 +23,8 @@ BeforeAll {
 				throw 'Child PowerShell timed out.'
 			}
 			if ($process.ExitCode -ne 0) { throw $errors.Result }
-			$output.Result
+			if ($IncludeErrors) { [pscustomobject]@{ Output = $output.Result; Errors = $errors.Result } }
+			else { $output.Result }
 		} finally { $process.Dispose() }
 	}
 }
@@ -56,6 +57,47 @@ Describe 'Select-Object property values (#46)' {
 }
 
 Describe 'Console and transcript (#45, #28)' {
+	It 'writes structured JSON with a console formatter (#31, #40, discussion #38)' {
+		$console = Invoke-ChildPowerShell @'
+New-Logger | Add-SinkConsole -Formatter (Get-JsonFormatter) -RestrictedToMinimumLevel Warning | Start-Logger
+try {
+    Write-InfoLog 'hidden-marker'
+    Write-WarningLog 'Hello {Name}' -PropertyValues 'world'
+} finally { Close-Logger }
+'@
+		$event = $console | ConvertFrom-Json
+		$event.Level | Should -Be 'Warning'
+		$event.MessageTemplate | Should -Be 'Hello {Name}'
+		$event.Properties.Name | Should -Be 'world'
+		$console | Should -Not -Match 'hidden-marker'
+	}
+
+	It 'keeps the console text and theme parameter set' {
+		$console = Invoke-ChildPowerShell @'
+New-Logger | Add-SinkConsole -OutputTemplate 'text:{Message:lj}{NewLine}' -Theme ([Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]::None) | Start-Logger
+try { Write-WarningLog 'text-marker' } finally { Close-Logger }
+'@
+		$console.Trim() | Should -Be 'text:text-marker'
+	}
+
+	It 'honors the level switch and standard error threshold with a formatter' {
+		$result = Invoke-ChildPowerShell -IncludeErrors -Body @'
+$switch = New-Object Serilog.Core.LoggingLevelSwitch ([Serilog.Events.LogEventLevel]::Error)
+New-Logger | Add-SinkConsole -Formatter (Get-JsonFormatter) -LevelSwitch $switch -StandardErrorFromLevel Error | Start-Logger
+try {
+    Write-WarningLog 'hidden-marker'
+    Write-ErrorLog 'error-marker'
+    $switch.MinimumLevel = [Serilog.Events.LogEventLevel]::Warning
+    Write-WarningLog 'warning-marker'
+} finally { Close-Logger }
+'@
+		($result.Output | ConvertFrom-Json).MessageTemplate | Should -Be 'warning-marker'
+		($result.Errors | ConvertFrom-Json).MessageTemplate | Should -Be 'error-marker'
+	}
+
+	It 'rejects text formatting options in the formatter parameter set' {
+		{ New-Logger | Add-SinkConsole -Formatter (Get-JsonFormatter) -OutputTemplate '{Message}' } | Should -Throw
+	}
 	It 'shows and transcribes the same levels with default preferences (#45)' {
 		$transcript = Join-Path $TestDrive 'default.txt'
 		$console = Invoke-ChildPowerShell @"

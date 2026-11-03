@@ -19,6 +19,8 @@ function Add-SinkConsole {
 		Specifies the level at which events will be written to standard error.
 	.PARAMETER Theme
 		The theme to apply to the styled output. If not specified uses Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme.Literate.
+	.PARAMETER Formatter
+		An ITextFormatter, such as Get-JsonFormatter, that formats console events.
 	.INPUTS
 		Instance of LoggerConfiguration
 	.OUTPUTS
@@ -30,33 +32,41 @@ function Add-SinkConsole {
 	#>
 
 	[OutputType([Serilog.LoggerConfiguration])]
-	[Cmdletbinding()]
+	[Cmdletbinding(DefaultParameterSetName = 'Default')]
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Serilog.LoggerConfiguration]$LoggerConfig,
 		[Parameter(Mandatory = $false)]
 		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose,
-		[Parameter(Mandatory = $false)]
+		[Parameter(Mandatory = $false, ParameterSetName = 'Default')]
 		[string]$OutputTemplate = '[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{ErrorRecord}{Exception}',
-		[Parameter(Mandatory = $false)]
+		[Parameter(Mandatory = $false, ParameterSetName = 'Default')]
 		[System.IFormatProvider]$FormatProvider = $null,
 		[Parameter(Mandatory = $false)]
 		[Serilog.Core.LoggingLevelSwitch]$LevelSwitch = $null,
 		[Parameter(Mandatory = $false)]
 		[Nullable[Serilog.Events.LogEventLevel]]$StandardErrorFromLevel = $null,
-		[Parameter(Mandatory = $false)]
-		[Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]$Theme = $null
+		[Parameter(Mandatory = $false, ParameterSetName = 'Default')]
+		[Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]$Theme = $null,
+		[Parameter(Mandatory = $true, ParameterSetName = 'Formatter')]
+		[ValidateNotNull()]
+		[Serilog.Formatting.ITextFormatter]$Formatter
 	)
 
 	process {	
-		$LoggerConfig = [Serilog.ConsoleLoggerConfigurationExtensions]::Console([Serilog.Configuration.LoggerSinkConfiguration]$LoggerConfig.WriteTo,
-			[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel,
-			[string]$OutputTemplate,
-			[System.IFormatProvider]$FormatProvider,
-			[Serilog.Core.LoggingLevelSwitch]$LevelSwitch,
-			[Nullable[Serilog.Events.LogEventLevel]]$StandardErrorFromLevel,
-			[Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]$Theme
-		)
+		if ($PSCmdlet.ParameterSetName -eq 'Formatter') {
+			$LoggerConfig = [Serilog.ConsoleLoggerConfigurationExtensions]::Console(
+				$LoggerConfig.WriteTo, $Formatter, $RestrictedToMinimumLevel, $LevelSwitch, $StandardErrorFromLevel)
+		} else {
+			$LoggerConfig = [Serilog.ConsoleLoggerConfigurationExtensions]::Console([Serilog.Configuration.LoggerSinkConfiguration]$LoggerConfig.WriteTo,
+				[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel,
+				[string]$OutputTemplate,
+				[System.IFormatProvider]$FormatProvider,
+				[Serilog.Core.LoggingLevelSwitch]$LevelSwitch,
+				[Nullable[Serilog.Events.LogEventLevel]]$StandardErrorFromLevel,
+				[Serilog.Sinks.SystemConsole.Themes.ConsoleTheme]$Theme
+			)
+		}
 
 		$LoggerConfig
 	}

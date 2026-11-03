@@ -5,6 +5,11 @@ PowerShell 7. v3 keeps its own changelog on `master`.
 
 ## 2.2.1 — 2026-11-03
 
+### Features
+- `Add-SinkConsole -Formatter` accepts an `ITextFormatter` such as `Get-JsonFormatter` for structured console
+  output (#31, #40, discussion #38), with level switches and standard-error routing. Text and theme options
+  remain available in the default parameter set.
+
 ### Bug fixes
 - Calculated property values from `Select-Object` no longer recursively expand PowerShell wrapper members when
   logged with `{@Property}` (#46). Formatting and `-PassThru` use the unwrapped value.
