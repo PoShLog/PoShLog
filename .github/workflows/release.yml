@@ -16,6 +16,7 @@ on:
           - PoShLog.Sinks.Http
           - PoShLog.Sinks.OpenTelemetry
           - PoShLog.Sinks.Splunk.Hec
+          - PoShLog.Sinks.Syslog.Rfc5424
       version:
         description: Expected manifest version (e.g. 3.0.0 or 1.1.0)
         required: true
@@ -46,7 +47,7 @@ jobs:
           RELEASE_MODULE: ${{ inputs.module }}
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
-          $allowed = @('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec')
+          $allowed = @('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424')
           if ($env:RELEASE_MODULE -notin $allowed) { throw 'Unknown module.' }
           if ($env:RELEASE_VERSION -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid version.' }
           $directory = if ($env:RELEASE_MODULE -eq 'PoShLog') { 'src' } else { "extensions/$env:RELEASE_MODULE" }

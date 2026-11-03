@@ -11,6 +11,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - New `Get-CompactFormatter` writes CLEF (compact JSON) for Seq and log shippers, with `-Rendered` for the rendered message (#48).
 - New extension PoShLog.Sinks.OpenTelemetry 0.1.0: `Add-SinkOpenTelemetry` sends logs over OTLP to Seq, Grafana, .NET Aspire, Datadog, Splunk, Elastic or any OpenTelemetry Collector.
 - New extension PoShLog.Sinks.Splunk.Hec 0.1.0: `Add-SinkSplunk` sends logs to a Splunk HTTP Event Collector, as JSON events or raw lines, and accepts the parameter names of the third-party PoShLog.Sinks.Splunk.
+- New extension PoShLog.Sinks.Syslog.Rfc5424 0.1.0: `Add-SinkSyslog` sends logs to a syslog server over UDP, TCP or TLS, as RFC 5424 messages with the properties as structured data, or as RFC 3164.
 - Any Serilog sink package can be used directly, without a PoShLog wrapper module (see `docs/guides/migration-v3.md`).
 
 ### Changes

@@ -67,10 +67,10 @@ foreach ($name in $modules.Keys) {
     }
     $cases += @{ Name = $name; Path = $manifest }
 }
-# The OpenTelemetry and Splunk HEC sinks are not published yet: always the in-repo builds. Each must load and deliver
+# The OpenTelemetry, Splunk HEC and Syslog sinks are not published yet: always the in-repo builds. Each must load and deliver
 # next to the Seq extension in either import order, the refreshed one (InRepo) and the published 1.0.0 that ships its own
 # older assemblies (Published); see docs/decisions/0012-otlp-sink-design.md.
-$unpublished = @('PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec')
+$unpublished = @('PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424')
 $seqCase = $cases | Where-Object Name -eq 'PoShLog.Sinks.Seq'
 $seqPaths = @()
 if ($Mode -eq 'InRepo') {

@@ -78,6 +78,13 @@ try {
             $config = $config | Add-SinkSyslogUdp -Hostname '127.0.0.1' -Port $port
             $delivery = 'udp'
         }
+        'PoShLog.Sinks.Syslog.Rfc5424' {
+            $udp = [Net.Sockets.UdpClient]::new([Net.IPEndPoint]::new([Net.IPAddress]::Loopback, 0))
+            $port = ([Net.IPEndPoint]$udp.Client.LocalEndPoint).Port
+            $received = $udp.ReceiveAsync()
+            $config = $config | Add-SinkSyslog -Hostname '127.0.0.1' -Port $port -BatchInterval 0.1
+            $delivery = 'udp'
+        }
         'PoShLog.Sinks.Splunk' {
             $listener = [CompatHttpListener]::new()
             $config = $config | Add-SinkSplunk -SplunkHost $listener.Url -EventCollectorToken 'compat-placeholder' -BatchIntervalSeconds 1
@@ -125,6 +132,7 @@ try {
         if ($body -notlike "*$marker*") { throw "$Name did not deliver the event to loopback within 30 seconds." }
         if ($Name -eq 'PoShLog.Sinks.OpenTelemetry' -and $listener.Paths.ToArray() -notcontains '/v1/logs') { throw 'OTLP/HTTP export did not use /v1/logs.' }
         if ($Name -eq 'PoShLog.Sinks.Splunk.Hec' -and $listener.Paths.ToArray() -notcontains '/services/collector/event') { throw 'Splunk HEC request did not use /services/collector/event.' }
+        if ($Name -eq 'PoShLog.Sinks.Syslog.Rfc5424' -and $body -notmatch '^<\d{1,3}>1 ') { throw 'Syslog datagram is not an RFC 5424 message.' }
     }
     if ($seqListener) {
         $deadline = [datetime]::UtcNow.AddSeconds(30)
