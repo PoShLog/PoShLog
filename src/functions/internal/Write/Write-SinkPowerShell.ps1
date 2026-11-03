@@ -14,13 +14,20 @@ function Write-SinkPowerShell {
 			Write-Debug -Message $RenderedMessage
 		}
 		Information { 
-			Write-Information -MessageData $RenderedMessage
+			# On 5.1 plain information records and the transcript disagree about visibility.
+			if ($InformationPreference -eq 'Continue') {
+				Write-Host -Object $RenderedMessage
+			}
+			elseif ($InformationPreference -notin 'SilentlyContinue', 'Ignore') {
+				Write-Information -MessageData $RenderedMessage
+			}
 		}
 		Warning { 
 			Write-Warning -Message $RenderedMessage
 		}
 		Default { 
-			Write-Information -MessageData $RenderedMessage -InformationAction 'Continue'
+			# PSHOST records are displayed and transcribed consistently on 5.1 and 7.
+			Write-Host -Object $RenderedMessage -ForegroundColor Red
 		}
 	}
 }

@@ -9,7 +9,8 @@ function Start-Logger {
 	.PARAMETER MinimumLevel
 		Configures the minimum level at which events will be passed to sinks. All messages with levels beneath this level will be ignored.
 	.PARAMETER Console
-		Setups Console sink. All messages will be writen to console host.
+		Sets up only the Console sink. It writes to the process console and is not captured by Start-Transcript.
+		Add -PowerShell to also write to PowerShell streams.
 	.PARAMETER PowerShell
 		Setups PowerShell console sink. All messages will be writen to powershell host.
 	.PARAMETER FilePath
@@ -64,12 +65,12 @@ function Start-Logger {
 			'Short' {
 				$LoggerConfig = New-Logger | Set-MinimumLevel -Value $MinimumLevel
 
-				# If file path was not passed we setup default console sink
-				if($PowerShell -or -not $PSBoundParameters.ContainsKey('FilePath')){
+				# Default to PowerShell only when no other sink was selected.
+				if($PowerShell -or (-not $Console -and -not $PSBoundParameters.ContainsKey('FilePath'))){
 					$LoggerConfig = $LoggerConfig | Add-SinkPowerShell
 				}
 
-				if($PSBoundParameters.ContainsKey('Console')){
+				if($Console){
 					$LoggerConfig = $LoggerConfig | Add-SinkConsole
 				}
 

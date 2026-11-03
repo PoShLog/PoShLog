@@ -3,7 +3,8 @@ function Add-SinkConsole {
 	.SYNOPSIS
 		Writes log events to console host
 	.DESCRIPTION
-		Writes log events to console host
+		Writes log events to the process console. Start-Transcript does not capture this sink.
+		Use Add-SinkPowerShell for PowerShell streams and transcript support.
 	.PARAMETER LoggerConfig
 		Instance of LoggerConfiguration
 	.PARAMETER RestrictedToMinimumLevel

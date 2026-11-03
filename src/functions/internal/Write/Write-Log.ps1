@@ -28,6 +28,18 @@ function Write-Log {
 		[switch]$PassThru
 	)
 
+	# Select-Object calculated values can carry a PSObject wrapper. Serilog reflects
+	# over that wrapper when destructuring, recursively expanding its ETS members.
+	# Copy the argument array so callers keep their values; preserve custom objects' ETS properties.
+	if ($null -ne $PropertyValues) {
+		$PropertyValues = [object[]]$PropertyValues.Clone()
+		for ($i = 0; $i -lt $PropertyValues.Length; $i++) {
+			if ($null -ne $PropertyValues[$i] -and $PropertyValues[$i].PSObject.BaseObject -isnot [System.Management.Automation.PSCustomObject]) {
+				$PropertyValues[$i] = $PropertyValues[$i].PSObject.BaseObject
+			}
+		}
+	}
+
 	# If ErrorRecord is available wrap it into RuntimeException
 	if($null -ne $ErrorRecord){
 

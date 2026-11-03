@@ -3,6 +3,18 @@
 This is the changelog of the **v2 line** (branch `release/2.x`), the script module for Windows PowerShell 5.1 and
 PowerShell 7. v3 keeps its own changelog on `master`.
 
+## 2.2.1 — 2026-11-03
+
+### Bug fixes
+- Calculated property values from `Select-Object` no longer recursively expand PowerShell wrapper members when
+  logged with `{@Property}` (#46). Formatting and `-PassThru` use the unwrapped value.
+- The PowerShell sink now transcribes Error and Fatal events as red host information records on Windows
+  PowerShell 5.1 as well as PowerShell 7. Enabled Information events use host information records too, while
+  hidden Information events are omitted from the transcript (#45).
+  The Console sink writes directly to the process console; use the PowerShell sink for transcript support.
+- `Start-Logger -Console` adds only the Console sink, avoiding duplicate output (#28). Add `-PowerShell` explicitly
+  to select both sinks; `Start-Logger` without sink options still defaults to the PowerShell sink.
+
 ## 2.2.0 — 2026-11-03
 
 ### Features
