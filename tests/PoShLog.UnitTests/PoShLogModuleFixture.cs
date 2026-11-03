@@ -27,7 +27,11 @@ public sealed class PoShLogModuleFixture
     public PowerShell CreateShell()
     {
         var initialSessionState = InitialSessionState.CreateDefault();
-        initialSessionState.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.Bypass;
+        if (OperatingSystem.IsWindows())
+        {
+            // Execution policy exists only on Windows; setting it elsewhere throws PlatformNotSupportedException.
+            initialSessionState.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.Bypass;
+        }
         var runspace = RunspaceFactory.CreateRunspace(initialSessionState);
         runspace.Open();
 

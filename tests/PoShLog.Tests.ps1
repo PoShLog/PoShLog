@@ -13,7 +13,7 @@ Describe "PoShLog-extended" {
 				New-Logger |
 				Set-MinimumLevel -Value Verbose |
 				Add-SinkPowerShell -OutputTemplate '[{Timestamp:HH:mm:ss}] {Message:lj}' |
-				Add-SinkFile -Path "$env:TEMP\testlog.log" |
+				Add-SinkFile -Path (Join-Path ([IO.Path]::GetTempPath()) 'testlog.log') |
 				Start-Logger
 			} | Should -Not -Throw
 		}
@@ -50,7 +50,7 @@ Describe "PoShLog-extended" {
 			{ Close-Logger } | Should -Not -Throw
 		}
 		AfterAll {
-			Remove-Item "$env:TEMP\testlog.log"
+			Remove-Item (Join-Path ([IO.Path]::GetTempPath()) 'testlog.log')
 		}
 	}
 
@@ -169,7 +169,7 @@ Describe "PoShLog-e2e" {
 
 	Context "File sink writes actual files" {
 		BeforeAll {
-			$script:logFilePath = "$env:TEMP\poshlog-e2e-test.log"
+			$script:logFilePath = (Join-Path ([IO.Path]::GetTempPath()) 'poshlog-e2e-test.log')
 			if (Test-Path $script:logFilePath) {
 				Remove-Item $script:logFilePath -Force
 			}
@@ -247,7 +247,7 @@ Describe "PoShLog-preview-cmdlets" {
 
 	Context "Get-CurrentLogFiles" {
 		BeforeAll {
-			$script:logFilePath = "$env:TEMP\poshlog-current-files-test.log"
+			$script:logFilePath = (Join-Path ([IO.Path]::GetTempPath()) 'poshlog-current-files-test.log')
 			if (Test-Path $script:logFilePath) {
 				Remove-Item $script:logFilePath -Force
 			}
@@ -258,7 +258,8 @@ Describe "PoShLog-preview-cmdlets" {
 		}
 		It "should return the active log file path" {
 			$files = Get-CurrentLogFiles
-			$files | Should -Contain $script:logFilePath
+			# Compare file names: a Windows runner's TEMP can be an 8.3 short path while Serilog reports the long one.
+			$files | ForEach-Object { Split-Path $_ -Leaf } | Should -Contain (Split-Path $script:logFilePath -Leaf)
 		}
 		AfterAll {
 			Close-Logger
@@ -298,7 +299,7 @@ Describe "PoShLog-preview-cmdlets" {
 
 	Context "Add-SinkLogger" {
 		BeforeAll {
-			$script:subLoggerLogFilePath = "$env:TEMP\poshlog-sub-logger-test.log"
+			$script:subLoggerLogFilePath = (Join-Path ([IO.Path]::GetTempPath()) 'poshlog-sub-logger-test.log')
 			if (Test-Path $script:subLoggerLogFilePath) {
 				Remove-Item $script:subLoggerLogFilePath -Force
 			}

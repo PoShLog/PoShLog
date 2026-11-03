@@ -67,9 +67,15 @@ foreach ($case in $cases) {
     } elseif ($process.ExitCode) {
         $failed += $case.Name
     }
-    Write-Output $stdout.GetAwaiter().GetResult()
+    $output = $stdout.GetAwaiter().GetResult()
     $errors = $stderr.GetAwaiter().GetResult()
+    Write-Output $output
     if ($errors) { Write-Output $errors }
+    if ($env:GITHUB_ACTIONS -eq 'true' -and $failed -contains $case.Name) {
+        # Annotations are readable through the public API; job logs need a signed-in user.
+        $detail = (($output + "`n" + $errors) -split "`r?`n" | Where-Object { $_.Trim() } | Select-Object -Last 15) -join '%0A'
+        Write-Output "::error title=Compatibility $($case.Name) ($Mode)::$detail"
+    }
     $process.Dispose()
 }
 if ($failed.Count) { throw "Compatibility failures: $($failed -join ', ')" }
