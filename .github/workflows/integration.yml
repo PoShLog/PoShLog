@@ -13,9 +13,6 @@ on:
     workflows: [Release]
     types: [completed]
   pull_request:
-  # Temporary: run on the v3 integration branch until master is approved; remove before merging to master.
-  push:
-    branches: [architect/v3-assess]
 
 permissions:
   contents: read
