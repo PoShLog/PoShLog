@@ -12,7 +12,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - New extension PoShLog.Sinks.OpenTelemetry 0.1.0: `Add-SinkOpenTelemetry` sends logs over OTLP to Seq, Grafana, .NET Aspire, Datadog, Splunk, Elastic or any OpenTelemetry Collector.
 - New extension PoShLog.Sinks.Splunk.Hec 0.1.0: `Add-SinkSplunk` sends logs to a Splunk HTTP Event Collector, as JSON events or raw lines, and accepts the parameter names of the third-party PoShLog.Sinks.Splunk.
 - New extension PoShLog.Sinks.Syslog.Rfc5424 0.1.0: `Add-SinkSyslog` sends logs to a syslog server over UDP, TCP or TLS, as RFC 5424 messages with the properties as structured data, or as RFC 3164.
-- Any Serilog sink package can be used directly, without a PoShLog wrapper module (see `docs/guides/migration-v3.md`).
+- Serilog 4 sink packages can be configured directly as an advanced route, with the constraints listed in `docs/guides/migration-v3.md`.
 
 ### Changes
 - Refresh Serilog to 4.4.0, Console to 6.1.1 and File to 7.0.0.
@@ -21,7 +21,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - Add CI compatibility checks for source builds and pinned published extensions.
 - Publish a selected module through the manual release workflow.
 - Requires PowerShell 7.4 or newer; Windows PowerShell 5.1 users stay on 2.x.
-- Documentation moved from the wiki into `docs/`, including a v2 → v3 migration guide.
+- Documentation moved from the wiki into `docs/`, including a v2 → v3 migration guide and one compatibility and install page (`docs/compatibility.md`) with the tested preview install, side-by-side and rollback commands.
 - Internal helpers `Add-PackageTypes` and `Test-PsCore` were never exported.
 - `{@Name}` logs a `[pscustomobject]` with its PowerShell properties only and a hashtable as a JSON object; cycles are written as `"[Circular]"`.
 - `Start-Logger -Console` no longer adds the PowerShell sink as well; add `-PowerShell` to get both.

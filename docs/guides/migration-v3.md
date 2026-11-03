@@ -33,7 +33,7 @@ PoShLog v3.0 requires PowerShell 7.4 or later. If you need PS 5.1 support, stay 
 
 v2 extension modules work with v3: the shared `Serilog.LoggerConfiguration` pipeline and default assembly load context remain the public contract (ADR 0003). PoShLog.Sinks.Seq 1.0.0 was verified delivering events to a local listener with v3.
 
-Seq, EventLog, Http and Enrichers have refreshed 2.0.0 builds under `extensions/`. Published versions and third-party extensions are tested in CI against freshly built Core. EventLog requires Windows. The third-party Elasticsearch module is Windows PowerShell only and ships its own Serilog.dll; use it with PoShLog 2.x on Windows PowerShell 5.1.
+Seq, EventLog, Http and Enrichers have refreshed 2.0.0 builds under `extensions/`; which version works with which PoShLog is on the [compatibility page](../compatibility.md). Published versions and third-party extensions are tested in CI against freshly built Core. EventLog requires Windows. The third-party Elasticsearch module is Windows PowerShell only and ships its own Serilog.dll; use it with PoShLog 2.x on Windows PowerShell 5.1.
 
 ### 3. Internal helpers
 
@@ -46,84 +46,52 @@ Seq, EventLog, Http and Enrichers have refreshed 2.0.0 builds under `extensions/
 
 ## Upgrading
 
-```powershell
-# Remove old version
-Remove-Module PoShLog -Force -ErrorAction SilentlyContinue
-Uninstall-Module PoShLog -AllVersions
+v2 and v3 install side by side; you do not need to uninstall v2 first.
 
-# Install v3.0
+```powershell
+# Install the v3 preview next to the version you have
 Install-Module PoShLog -AllowPrerelease
 
-# Verify
+# Verify (in a new session)
 Import-Module PoShLog
 Get-Module PoShLog | Select-Object Version, ModuleType
-# Should show: Version 3.0.0, ModuleType: Binary
+# Version 3.0.0, ModuleType Binary
 ```
+
+Scripts that must stay on v2 pin it with `#Requires -Modules @{ ModuleName = 'PoShLog'; RequiredVersion = '2.2.0' }`.
+To go back, uninstall only the preview. The exact commands, how extensions install during the preview, and how this was
+tested are on the [compatibility page](../compatibility.md).
 
 ---
 
-## Using Any Serilog Sink Without a Wrapper Module
+## Advanced: other Serilog sinks without a wrapper module
 
-With v3.0 you no longer need a dedicated PoShLog extension module for every sink. You can use **any Serilog sink NuGet package** directly:
+PoShLog 3 hands you a plain `Serilog.LoggerConfiguration`, so a Serilog sink package can be configured directly from
+PowerShell. This is an advanced route: prefer a PoShLog extension when one exists, because extensions are built and
+tested against Core ([sinks page](../sinks/README.md)).
 
-### Option 1: Load the DLL manually
+Constraints:
 
-```powershell
-# Download the sink package (one-time)
-# e.g., from NuGet: https://www.nuget.org/packages/Serilog.Sinks.Datadog.Logs
-
-# Load the assembly
-Add-Type -Path "C:\path\to\Serilog.Sinks.Datadog.Logs.dll"
-
-# Use the Serilog extension method directly
-$logger = New-Logger
-$config = $logger.WriteTo
-[Serilog.DatadogLogsExtensions]::DatadogLogs($config, "your-api-key")
-$logger | Start-Logger
-```
-
-### Option 2: Install via NuGet and load
+- **Serilog 4, no newer than Core's.** The sink must target Serilog 4.x at or below the version PoShLog ships
+  (4.4.0). Core loads Serilog, Serilog.Sinks.File and Serilog.Sinks.Console and nothing else
+  ([ADR 0011](../decisions/0011-core-does-not-load-assemblies-extensions-ship.md)).
+- **A .NET 8 compatible build** (`net8.0`, an older `net*` or `netstandard2.x` folder of the package).
+- **You load every dependency yourself**, in dependency order, before the sink assembly. One process holds one version
+  of an assembly: if another module already loaded an older copy, the first one loaded wins and the sink may fail.
+- **Not covered by PoShLog's tests.** Pin the package version you tested.
 
 ```powershell
-# Install NuGet package to a local folder
-dotnet add package Serilog.Sinks.Datadog.Logs --package-directory .\packages
+# The sink's DLLs (and their dependencies) are unpacked from its NuGet package into .\lib
+Get-ChildItem .\lib -Filter *.dll | ForEach-Object { Add-Type -Path $_.FullName }
 
-# Find and load the DLL
-$dll = Get-ChildItem .\packages -Filter "Serilog.Sinks.Datadog.Logs.dll" -Recurse | Select-Object -First 1
-Add-Type -Path $dll.FullName
-
-# Use it
-$logger = New-Logger
-[Serilog.DatadogLogsExtensions]::DatadogLogs($logger.WriteTo, "your-api-key")
-$logger | Start-Logger
+$config = New-Logger
+# Serilog sinks are extension methods on LoggerSinkConfiguration: call the static class the package defines.
+[Serilog.ExampleSinkLoggerConfigurationExtensions]::ExampleSink($config.WriteTo, 'https://logs.example.com') | Out-Null
+$config | Add-SinkConsole | Start-Logger
 ```
 
-### Option 3: Create a simple helper function
-
-```powershell
-function Add-SinkDatadog {
-    param(
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [Serilog.LoggerConfiguration]$LoggerConfig,
-
-        [Parameter(Mandatory)]
-        [string]$ApiKey,
-
-        [string]$Source = "powershell",
-        [string]$Service = "my-app"
-    )
-    process {
-        # Assumes Serilog.Sinks.Datadog.Logs.dll is loaded
-        [Serilog.DatadogLogsExtensions]::DatadogLogs(
-            $LoggerConfig.WriteTo, $ApiKey, $Source, $Service
-        )
-        $LoggerConfig
-    }
-}
-
-# Usage:
-New-Logger | Add-SinkDatadog -ApiKey "xxx" | Add-SinkConsole | Start-Logger
-```
+Wrap it in a small function with a `[Serilog.LoggerConfiguration]` pipeline parameter that returns the configuration,
+and it composes like any `Add-Sink*` cmdlet. [Creating a sink](creating-sink.md) shows the full pattern.
 
 ---
 
@@ -131,12 +99,17 @@ New-Logger | Add-SinkDatadog -ApiKey "xxx" | Add-SinkConsole | Start-Logger
 
 If you maintain a PoShLog extension module and want to support v3.0:
 
-1. **Update Serilog dependency** to 4.4.0+
-2. **Target net8.0** (or netstandard2.0 if you need broader compat — Serilog 4.x supports both)
-3. **Keep your module manifest minimum** at PoShLog 2.0.0 by GUID (one release can serve both lines):
-   ```powershell
-   RequiredModules = @(@{ ModuleName = 'PoShLog'; GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'; ModuleVersion = '2.0.0' })
-   ```
+1. **Reference Serilog 4.x**, no newer than the version Core ships (4.4.0).
+2. **Target net8.0** (or netstandard2.0 if you need broader compat — Serilog 4.x supports both).
+3. **Choose the PoShLog minimum by GUID:**
+   - A release that serves v2 and v3 keeps PoShLog `2.0.0` and the Serilog version v2 ships; the 1.0.x extensions
+     work this way ([ADR 0003](../decisions/0003-keep-the-v2-extension-contract.md)).
+   - A release that needs v3 (Serilog 4, PowerShell 7.4) requires PoShLog 3. While v3 is a prerelease, declare
+     `2.99.0` so package managers can resolve the preview
+     ([ADR 0016](../decisions/0016-extensions-require-poshlog-2-99-while-core-is-prerelease.md)):
+     ```powershell
+     RequiredModules = @(@{ ModuleName = 'PoShLog'; GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'; ModuleVersion = '2.99.0' })
+     ```
 4. **Test with PowerShell 7.4+**
 5. **Consider converting to a binary module** for better performance and type safety
 
@@ -156,7 +129,7 @@ If you maintain a PoShLog extension module and want to support v3.0:
 A: Yes. v3 preserves the v2 extension contract. PoShLog.Sinks.Seq 1.0.0 was verified shipping events on v3; CI tests pinned published extensions. Elasticsearch is Windows PowerShell only and stays on PoShLog 2.x.
 
 **Q: Will official extension modules be updated?**
-A: Yes — PoShLog.Enrichers, PoShLog.Sinks.Seq, PoShLog.Sinks.EventLog, etc. will receive v3.0-compatible updates.
+A: Yes. PoShLog.Enrichers, PoShLog.Sinks.Seq, PoShLog.Sinks.EventLog and PoShLog.Sinks.Http have 2.0.0 builds for v3; see the [compatibility page](../compatibility.md).
 
 **Q: My script uses Write-InfoLog, do I need to change anything?**
 A: No — all cmdlet names and parameters are unchanged. Just update the module version.

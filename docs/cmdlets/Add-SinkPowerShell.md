@@ -27,6 +27,13 @@ Each level goes to the stream PowerShell itself would use:
 
 Error and Fatal events are always shown and recorded by `Start-Transcript`, like `Write-Host` output. They are not written as PowerShell errors, so logging an error never stops a script that runs with `$ErrorActionPreference = 'Stop'` and never adds to `$Error`. They can still be redirected (`6>`) or captured (`-InformationVariable`). To hide them, pass `-InformationAction SilentlyContinue` to `Write-ErrorLog`/`Write-FatalLog`: an explicit `-InformationAction` is respected (issue #45, [ADR 0008](../decisions/0008-powershell-sink-streams.md)). All records carry the source `PoShLog`.
 
+**Hosts that assign a log level per stream.** Some hosts turn PowerShell streams into log levels; Azure Functions, for
+example, records the information stream as Information and the error stream as Error
+([Microsoft documentation](https://learn.microsoft.com/azure/azure-functions/functions-reference-powershell)). There,
+Error and Fatal events from this sink are therefore expected at Information level. Where the level matters, add a sink that
+sends it with the event, such as [OpenTelemetry](../sinks/Add-SinkOpenTelemetry.md), Seq or Splunk. This has not been
+verified in a Functions host yet.
+
 Use this sink rather than [`Add-SinkConsole`](Add-SinkConsole.md) when the output should end up in a transcript.
 
 > Implemented as the compiled `AddSinkPowerShellCommand` cmdlet class (`src/dotnet/Cmdlets/Sinks/AddSinkPowerShellCommand.cs`). Stream routing is handled via a thread-static "current cmdlet" context (`src/dotnet/Utils/PSCmdletContext.cs`) so log messages emitted by a `Write-*Log` cmdlet are written to that same cmdlet's PowerShell streams.
