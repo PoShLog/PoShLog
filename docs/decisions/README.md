@@ -23,3 +23,4 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0017](0017-extensions-require-poshlog-2-99-while-core-is-prerelease.md) | Extensions require PoShLog 2.99.0 while Core 3 is a prerelease | accepted |
 | [0018](0018-release-modules-by-tag.md) | Release modules by pushing a tag | accepted |
 | [0019](0019-extensions-ship-as-prereleases-during-the-core-3-preview.md) | Extensions ship as prereleases during the Core 3 preview | accepted |
+| [0020](0020-integration-tests-against-real-backends.md) | Integration tests against real backends | proposed |

@@ -1,0 +1,130 @@
+name: Integration
+
+on:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+    inputs:
+      source:
+        type: choice
+        options: [Gallery, InRepo]
+        default: Gallery
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+  pull_request:
+  # Temporary: validate both modes on this branch; architect removes this trigger before merge.
+  push:
+    branches: [architect/integration-tests]
+
+permissions:
+  contents: read
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: true
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  modes:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      sources: ${{ steps.select.outputs.sources }}
+    steps:
+      - id: select
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_SOURCE: ${{ inputs.source }}
+        run: |
+          $sources = switch ($env:EVENT_NAME) {
+            'push' { '["Gallery","InRepo"]' }
+            'pull_request' { '["InRepo"]' }
+            'workflow_dispatch' { ConvertTo-Json -Compress -InputObject @($env:INPUT_SOURCE) }
+            default { '["Gallery"]' }
+          }
+          "sources=$sources" >> $env:GITHUB_OUTPUT
+  linux:
+    needs: modes
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    strategy:
+      fail-fast: false
+      matrix:
+        source: ${{ fromJSON(needs.modes.outputs.sources) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Test the successful release commit rather than a later default-branch commit.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Start real backends
+        run: docker compose -f tests/integration/compose.yml up -d --wait --wait-timeout 600
+      - name: Run integration tests
+        env:
+          SOURCE: ${{ matrix.source }}
+          WAIT_FOR_GALLERY: ${{ github.event_name == 'workflow_run' }}
+        run: |
+          if ($PSVersionTable.PSVersion -lt [version]'7.4') { throw 'PowerShell 7.4+ required.' }
+          ./build/Invoke-IntegrationTests.ps1 -Source $env:SOURCE -Prerelease -WaitForGallery:($env:WAIT_FOR_GALLERY -eq 'true')
+      - name: Collect backend diagnostics
+        if: failure()
+        run: |
+          New-Item -ItemType Directory -Force TestResults/backend | Out-Null
+          docker compose -f tests/integration/compose.yml logs --no-color > TestResults/backend/compose.log
+          docker compose -f tests/integration/compose.yml ps -a > TestResults/backend/containers.txt
+          docker compose -f tests/integration/compose.yml cp collector:/output TestResults/backend/collector
+          docker compose -f tests/integration/compose.yml cp syslog:/output TestResults/backend/syslog
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: integration-linux-${{ matrix.source }}
+          path: TestResults/
+      - name: Stop backends and remove test data
+        if: always()
+        run: docker compose -f tests/integration/compose.yml down -v
+  eventlog:
+    needs: modes
+    runs-on: windows-latest
+    timeout-minutes: 19
+    strategy:
+      fail-fast: false
+      matrix:
+        source: ${{ fromJSON(needs.modes.outputs.sources) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Read back real Windows Event Log entries
+        env:
+          SOURCE: ${{ matrix.source }}
+          WAIT_FOR_GALLERY: ${{ github.event_name == 'workflow_run' }}
+        run: ./build/Invoke-IntegrationTests.ps1 -Source $env:SOURCE -Prerelease -Module PoShLog.Sinks.EventLog -WaitForGallery:($env:WAIT_FOR_GALLERY -eq 'true')
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: integration-eventlog-${{ matrix.source }}
+          path: TestResults/
+  windows-powershell-5-1:
+    needs: modes
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Stable Gallery v2, Seq 1.0.x, File and EventLog 1.0.x
+        shell: powershell
+        run: ./build/Invoke-LegacyIntegrationTests.ps1
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: integration-windows-powershell-5-1
+          path: TestResults/

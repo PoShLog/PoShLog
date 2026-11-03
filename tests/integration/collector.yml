@@ -1,0 +1,16 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+exporters:
+  file:
+    path: /output/logs.jsonl
+    flush_interval: 100ms
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      exporters: [file]

@@ -2,6 +2,11 @@
 
 All notable changes to PoShLog, newest first. Older releases: see the GitHub releases and `releaseNotes/` in the v2 history.
 
+## Unreleased
+
+### Changes
+- Add integration tests against real backends for Gallery releases, fresh builds and stable Windows PowerShell 5.1 modules.
+
 ## 3.0.0-preview2 — 2026-11-03
 
 Everything since PoShLog 2.x; 3.0.0-preview1 was published without its own section.
