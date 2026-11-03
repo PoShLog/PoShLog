@@ -17,7 +17,9 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - Requires PowerShell 7.4 or newer; Windows PowerShell 5.1 users stay on 2.x.
 - Documentation moved from the wiki into `docs/`, including a v2 → v3 migration guide.
 - Internal helpers `Add-PackageTypes` and `Test-PsCore` were never exported.
+- `{@Name}` logs a `[pscustomobject]` with its PowerShell properties only and a hashtable as a JSON object; cycles are written as `"[Circular]"`.
 
 ### Bug fixes
 - Preserve v2 extension compatibility and load shared Serilog dependencies at import.
 - Correct the migration guide and restore cmdlet indexes from the committed wiki.
+- Logging a `Select-Object` result or another PowerShell object with `{@Name}` no longer produces huge output or hangs (#46).

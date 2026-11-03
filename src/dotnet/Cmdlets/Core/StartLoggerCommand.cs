@@ -1,4 +1,5 @@
 using System.Management.Automation;
+using PoShLog.Core.Destructuring;
 using PoShLog.Core.Sinks;
 using PoShLog.Core.Sinks.Extensions;
 using Serilog;
@@ -83,6 +84,8 @@ namespace PoShLog.Core.Cmdlets.Core
 					LoggerConfig.WriteTo.File(FilePath, rollingInterval: FileRollingInterval);
 				}
 			}
+
+			LoggerConfig.Destructure.With(new PSObjectDestructuringPolicy());
 
 			var logger = LoggerConfig.CreateLogger();
 
