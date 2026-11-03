@@ -10,9 +10,14 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - Any Serilog sink package can be used directly, without a PoShLog wrapper module (see `docs/guides/migration-v3.md`).
 
 ### Changes
+- Refresh Serilog to 4.4.0, Console to 6.1.1 and File to 7.0.0.
+- Add Seq, EventLog, Http and Enrichers 1.1.0 under extensions/ with a shared build script.
+- Add CI compatibility checks for source builds and pinned published extensions.
+- Publish a selected module through the manual release workflow.
 - Requires PowerShell 7.4 or newer; Windows PowerShell 5.1 users stay on 2.x.
 - Documentation moved from the wiki into `docs/`, including a v2 → v3 migration guide.
-- `Add-PackageTypes` and `Test-PsCore` are removed.
+- Internal helpers `Add-PackageTypes` and `Test-PsCore` were never exported.
 
 ### Bug fixes
-- None recorded yet.
+- Preserve v2 extension compatibility and load shared Serilog dependencies at import.
+- Correct the migration guide and restore cmdlet indexes from the committed wiki.

@@ -21,3 +21,15 @@ You can see all Serilog (the C# library PoShLog is built upon) sinks [here](http
 * [**Add-SinkNotepad**](Add-SinkNotepad.md)
 * [**Add-SinkSeq**](https://github.com/PoShLog/PoShLog.Sinks.Seq)
 * [**Add-SinkSyslog**](https://github.com/gitbute/PoShLog.Sinks.Syslog)
+
+## Third-party sinks
+
+These modules are maintained separately. The pinned versions listed below are checked in CI against v3; install them separately.
+
+| Module | Maintainer | CI version | Platform |
+|---|---|---|---|
+| [PoShLog.Sinks.DataDog](https://www.powershellgallery.com/packages/PoShLog.Sinks.DataDog) | Chris Hunt | 0.1.1 | PowerShell Core |
+| [PoShLog.Sinks.ElmahIo](https://www.powershellgallery.com/packages/PoShLog.Sinks.ElmahIo) | elmah.io | 4.0.4 | PowerShell Core |
+| [PoShLog.Sinks.Splunk](https://www.powershellgallery.com/packages/PoShLog.Sinks.Splunk) | Mike Powell | 1.0.4 | PowerShell Core |
+| [PoShLog.Sinks.Syslog](https://www.powershellgallery.com/packages/PoShLog.Sinks.Syslog) | Michael Zimmerli | 1.0.0 | PowerShell Core |
+| [PoShLog.Sinks.Elasticsearch](https://github.com/mamidenn/PoShLog.Sinks.Elasticsearch) | mamidenn | Excluded | Windows PowerShell only; use PoShLog 2.x |

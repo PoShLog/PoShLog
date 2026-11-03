@@ -30,14 +30,14 @@ CompanyName = 'Tomas Bouda'
 Copyright = '(c) 2019 Tomas Bouda. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'PoShLog is powershell logging module. 
+Description = 'PoShLog is powershell logging module.
 PoShLog allows you to log structured event data into console, file and much more places easily.
 It is wrapper of great C# logging library Serilog - https://serilog.net/.
 
-For documentation check PoShLog wiki - https://github.com/PoShLog/PoShLog/wiki'
+For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/master/docs'
 
 # Minimum version of the PowerShell engine required by this module
-PowerShellVersion = '7.0'
+PowerShellVersion = '7.4'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -58,7 +58,7 @@ PowerShellVersion = '7.0'
 # RequiredModules = @()
 
 # Assemblies that must be loaded prior to importing this module
-# RequiredAssemblies = @()
+RequiredAssemblies = @('lib/Serilog.dll', 'lib/Serilog.Sinks.File.dll', 'lib/Serilog.Sinks.Console.dll')
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
 # ScriptsToProcess = @()
@@ -107,7 +107,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Log','Logging','Serilog','File','filelog','logfile','error-log','console','event','serilog-sink','serilog-for-powershell','wrapper','sinks','PSEdition_Desktop','PSEdition_Core','Windows','Linux','MacOS'
+        Tags = 'Log','Logging','Serilog','File','filelog','logfile','error-log','console','event','serilog-sink','serilog-for-powershell','wrapper','sinks','PSEdition_Core','Windows','Linux','MacOS'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/PoShLog/PoShLog/blob/master/LICENSE'
@@ -119,7 +119,7 @@ PrivateData = @{
         IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/master/images/icons/poshlog-icon-256.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/master/releaseNotes/v2.1.0.md'
+        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/master/CHANGELOG.md'
 
         # Prerelease string of this module
         # Prerelease = ''
@@ -141,4 +141,3 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
-

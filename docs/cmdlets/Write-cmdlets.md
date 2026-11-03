@@ -1,0 +1,6 @@
+* [**Write-VerboseLog**](Write-VerboseLog.md)
+* [**Write-DebugLog**](Write-DebugLog.md)
+* [**Write-InformationLog**](Write-InfoLog.md)
+* [**Write-WarningLog**](Write-WarningLog.md)
+* [**Write-ErrorLog**](Write-ErrorLog.md)
+* [**Write-FatalLog**](Write-FatalLog.md)
