@@ -37,9 +37,11 @@ jobs:
           Get-ChildItem extensions -Directory | ForEach-Object {
             ./build/Build-Extension.ps1 -Module $_.Name
           }
-      - name: Build the OpenTelemetry sink
-        # Published mode loads it next to the published Seq 1.0.0 (docs/decisions/0012-otlp-sink-design.md).
+      - name: Build the unpublished sinks
+        # Published mode loads them next to the published Seq 1.0.0 (docs/decisions/0012-otlp-sink-design.md).
         if: matrix.mode == 'Published'
-        run: ./build/Build-Extension.ps1 -Module PoShLog.Sinks.OpenTelemetry
+        run: |
+          ./build/Build-Extension.ps1 -Module PoShLog.Sinks.OpenTelemetry
+          ./build/Build-Extension.ps1 -Module PoShLog.Sinks.Splunk.Hec
       - name: Verify compatibility
         run: ./tests/compat/Invoke-Compatibility.ps1 -Mode '${{ matrix.mode }}'

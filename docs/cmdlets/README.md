@@ -25,6 +25,7 @@ PoShLog v3 is a compiled binary module. This index preserves the wiki's command 
 * **[Add-SinkPowerShell](Add-SinkPowerShell.md)** - Writes log events into PowerShell streams
 * **[Add-SinkFile](Add-SinkFile.md)** - Write log events to the specified file
 * **[Add-SinkExceptionless](../sinks/Add-SinkExceptionless.md)** - Write log events into [exceptionless.com](https://exceptionless.com/) **`EXTENSION`**
+* **[Add-SinkSplunk](../sinks/Add-SinkSplunk.md)** - Sends log events to a Splunk HTTP Event Collector **`EXTENSION`**
 * **[Add-SinkEventLog](../sinks/Add-SinkEventLog.md)** - Writes log events into Windows Event Log **`EXTENSION`**
 * **[Add-SinkElasticsearch](https://github.com/mamidenn/PoShLog.Sinks.Elasticsearch)** - Writes log messages to Elasticsearch [**`EXTENSION`**](https://github.com/mamidenn/PoShLog.Sinks.Elasticsearch)
 * **[Add-SinkSeq](https://github.com/PoShLog/PoShLog.Sinks.Seq)** - Writes log messages to Seq [**`EXTENSION`**](https://github.com/PoShLog/PoShLog.Sinks.Seq)

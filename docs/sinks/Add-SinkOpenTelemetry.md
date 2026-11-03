@@ -168,7 +168,7 @@ script and send OTLP to it; the collector holds the HEC token:
 New-Logger | Add-SinkOpenTelemetry -Endpoint 'http://localhost:4318' -ServiceName 'backup' | Start-Logger
 ```
 
-Without a collector, use a HEC sink instead (planned first-party module `PoShLog.Sinks.Splunk.Hec`, ADR 0009).
+Without a collector, use [Add-SinkSplunk](Add-SinkSplunk.md) (PoShLog.Sinks.Splunk.Hec), which writes to HEC directly.
 
 ### Elastic
 
@@ -219,6 +219,6 @@ New-Logger | Add-SinkOpenTelemetry | Start-Logger   # http://localhost:4318 by d
 | .NET Aspire | Native, the only route | - |
 | Grafana Loki / Cloud | Native (Loki 3, OTLP gateway) | - |
 | Datadog | Agent with OTLP ingest | No Agent on the machine: planned `PoShLog.Sinks.Datadog.Logs` (ADR 0009, later). |
-| Splunk | Collector with HEC exporter | No collector: planned `PoShLog.Sinks.Splunk.Hec`. |
+| Splunk | Collector with HEC exporter | No collector: [Add-SinkSplunk](Add-SinkSplunk.md). |
 | Elastic | APM Server, managed OTLP, EDOT Collector | Straight into data streams: planned `PoShLog.Sinks.Elastic`. |
 | Syslog | None | Always: planned `PoShLog.Sinks.Syslog.Rfc5424`. |
