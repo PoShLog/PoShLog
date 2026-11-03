@@ -2,13 +2,13 @@
 
 These instructions will get you a copy of PoShLog up and running.
 
-> **Note:** As of v3.0.0, PoShLog is a **compiled C# binary module** targeting **.NET 8** and requires **PowerShell 7.0+ (PowerShell Core)**. Windows PowerShell 5.1 / Desktop edition is **no longer supported**.
+> **Note:** As of v3.0.0, PoShLog is a **compiled C# binary module** targeting **.NET 8** and requires **PowerShell 7.4+**. Windows PowerShell 5.1 / Desktop edition is **no longer supported**.
 
 ## Prerequisites
 
-### PowerShell 7+
+### PowerShell 7.4+
 
-PoShLog requires [PowerShell 7 or later](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell). If you have the [.NET SDK](https://dotnet.microsoft.com/download) installed, you can install PowerShell as a .NET tool:
+PoShLog requires [PowerShell 7.4 or later](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell). If you have the [.NET SDK](https://dotnet.microsoft.com/download) installed, you can install PowerShell as a .NET tool:
 
 ```ps1
 dotnet tool install --global powershell
@@ -25,31 +25,23 @@ Alternatively, follow the official Microsoft installation instructions for your 
 
 ## Installation
 
-### Stable
-
-To install PoShLog, run the following from a `pwsh` prompt:
-
-```ps1
-Install-Module -Name PoShLog
-```
-
-Congratulations, you have successfully installed the PoShLog logging module 🚀
-
-### Preview
-
-To install a **non-stable** preview build (published automatically on every push to `master`), run:
+PoShLog 3 is in preview. From a `pwsh` prompt:
 
 ```ps1
 Install-Module -Name PoShLog -AllowPrerelease
 ```
 
-*Requires [PowerShellGet](https://www.powershellgallery.com/packages/PowerShellGet) 2.0+.*
+Without `-AllowPrerelease` you get the stable 2.2.0 instead. `Install-PSResource PoShLog -Prerelease` works too.
+Extension modules, side-by-side installs with v2 and going back are covered on the
+[compatibility page](compatibility.md).
+
+On Windows PowerShell 5.1, use the [v2 line](v2-or-v3.md): `Install-Module PoShLog -MaximumVersion 2.99`.
 
 ## What changed in v3.0.0 (binary module rewrite)
 
 * The module is now implemented as compiled C# `PSCmdlet`/`Cmdlet` classes (`PoShLog.Core.dll`) instead of PowerShell script functions.
 * Cmdlet names, parameters, aliases, and pipeline behavior are unchanged — existing scripts using PoShLog continue to work without modification.
-* Built on [Serilog](https://serilog.net/) 4.2.0.
-* Minimum supported PowerShell version is now **7.0**.
+* Built on [Serilog](https://serilog.net/) 4.4.0.
+* Minimum supported PowerShell version is now **7.4**.
 
 Continue to [Usage](usage.md).

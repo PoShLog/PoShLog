@@ -13,9 +13,10 @@ The build restores only from nuget.org, stages publish output, and copies runtim
 into lib/ while excluding Core's Serilog, File and Console assemblies. No binaries are committed.
 Stage-Module.ps1 assembles a publishable module under artifacts/ from these outputs.
 
-Each extension requires PoShLog >= 2.99.0 by GUID during the Core 3 preview (ADR 0017).
-The refreshed dependencies share Serilog 4 with v3 Core. PoShLog 2.x users stay on the
-older extensions. These refreshed releases require PowerShell 7.4+.
+Each imported extension requires PoShLog by GUID: the refreshed Seq, EventLog, Http and Enrichers 2.0.0 and the new
+OpenTelemetry, Splunk.Hec, Syslog.Rfc5424 and Elastic sinks require PoShLog 3 (ADR 0004), declared as 2.99.0 while Core 3 is a
+prerelease (ADR 0017). They share Serilog 4 with v3 Core and require PowerShell 7.4+. PoShLog 2.x users stay on the
+published 1.0.x versions. The full table is in docs/compatibility.md.
 
 ## Source provenance
 

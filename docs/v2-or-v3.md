@@ -12,7 +12,8 @@ PoShLog has two maintained lines ([ADR 0010](decisions/0010-v2-maintenance-line.
 
 ## Which one should I use?
 
-- **PowerShell 7.4 or newer:** use v3. `Install-Module PoShLog` installs it.
+- **PowerShell 7.4 or newer:** use v3. While v3 is a preview, install it with `Install-Module PoShLog -AllowPrerelease`;
+  without the switch you get 2.2.0.
 - **Windows PowerShell 5.1** (scheduled tasks, installers, servers without PowerShell 7): use v2 and pin it, so that
   an update never pulls in v3:
 
@@ -27,9 +28,11 @@ PoShLog has two maintained lines ([ADR 0010](decisions/0010-v2-maintenance-line.
   ([ADR 0003](decisions/0003-keep-the-v2-extension-contract.md)).
 - Extensions refreshed for v3 are built on Serilog 4 and are not expected to load on v2. On v2, stay on the
   extension's 1.0.x version.
-- PoShLog 2.x users stay on 1.0.x of PoShLog.Sinks.Seq, PoShLog.Sinks.EventLog, PoShLog.Sinks.Http and PoShLog.Enrichers; their 2.0.0 requires PoShLog 3.0.0 by GUID.
+- PoShLog 2.x users stay on 1.0.x of PoShLog.Sinks.Seq, PoShLog.Sinks.EventLog, PoShLog.Sinks.Http and PoShLog.Enrichers; their 2.0.0 requires PoShLog 3.
+- Which version works with which, and how to install the preview extensions: [compatibility page](compatibility.md).
 
 ## Moving from v2 to v3
 
-Install PowerShell 7.4+, then `Install-Module PoShLog -MinimumVersion 3.0.0`. Scripts keep their commands; the
+Install PowerShell 7.4+, then `Install-Module PoShLog -AllowPrerelease` (v2 stays installed next to it). Scripts keep
+their commands; the
 [migration guide](guides/migration-v3.md) lists the differences.
