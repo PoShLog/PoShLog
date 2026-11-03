@@ -54,7 +54,7 @@ New-Logger |
 
 ##### Example 4: Setup logger that logs into PowerShell only — short version
 
-Note that if you don't specify any sink (`-Console`, `-PowerShell` or `-FilePath 'C:\Log\...'`), a PowerShell sink is created by default.
+Note that if you don't specify any sink (`-Console`, `-PowerShell` or `-FilePath 'C:\Log\...'`), a PowerShell sink is created by default. `-Console` on its own adds only the console sink, so each event is printed once; add `-PowerShell` too if you also want the events in PowerShell streams (issue #28, [ADR 0008](../decisions/0008-powershell-sink-streams.md)).
 
 ```ps1
 Start-Logger

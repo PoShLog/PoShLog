@@ -20,8 +20,11 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - Documentation moved from the wiki into `docs/`, including a v2 → v3 migration guide.
 - Internal helpers `Add-PackageTypes` and `Test-PsCore` were never exported.
 - `{@Name}` logs a `[pscustomobject]` with its PowerShell properties only and a hashtable as a JSON object; cycles are written as `"[Circular]"`.
+- `Start-Logger -Console` no longer adds the PowerShell sink as well; add `-PowerShell` to get both.
 
 ### Bug fixes
 - Preserve v2 extension compatibility and load shared Serilog dependencies at import.
 - Correct the migration guide and restore cmdlet indexes from the committed wiki.
 - Logging a `Select-Object` result or another PowerShell object with `{@Name}` no longer produces huge output or hangs (#46).
+- Error and Fatal events from the PowerShell sink are shown again and recorded by `Start-Transcript`, like in v2 (#45).
+- `Start-Logger -Console` printed every event twice (#28).

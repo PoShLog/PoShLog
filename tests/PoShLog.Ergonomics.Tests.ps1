@@ -1,5 +1,5 @@
 #Requires -Version 7.4
-# Structured logging of PowerShell objects: issues #46, #34 and #48 (ADRs 0005-0007).
+# Structured logging of PowerShell objects: issues #46, #34, #48, #45 and #28 (ADRs 0005-0008).
 
 BeforeAll {
 	$script:manifest = (Resolve-Path "$PSScriptRoot\..\src\PoShLog.psd1").Path
@@ -105,5 +105,38 @@ Describe 'Get-CompactFormatter (#48)' {
 		$event = Get-Content $log | ConvertFrom-Json
 		$event.'@m' | Should -Be 'Hello "World"'
 		$event.'@i' | Should -Match '^[0-9a-f]{8}$'
+	}
+}
+
+Describe 'Console and transcript (#45, #28)' {
+	It 'writes warning, error and fatal events to the console and the transcript alike' {
+		$transcript = Join-Path $TestDrive 'transcript.txt'
+		$console = Invoke-ChildPwsh @"
+Start-Transcript -Path '$transcript' | Out-Null
+New-Logger | Set-MinimumLevel -Value Verbose | Add-SinkPowerShell | Start-Logger
+Write-InfoLog 'hidden-info-marker'
+Write-WarningLog 'warning-marker'
+Write-ErrorLog 'error-marker'
+Write-FatalLog 'fatal-marker'
+Close-Logger
+Stop-Transcript | Out-Null
+"@
+		$transcribed = Get-Content $transcript -Raw
+
+		foreach ($marker in 'warning-marker', 'error-marker', 'fatal-marker') {
+			($console -join "`n") | Should -BeLike "*$marker*"
+			$transcribed | Should -BeLike "*$marker*"
+		}
+		($console -join "`n") | Should -Not -BeLike '*hidden-info-marker*'
+		$transcribed | Should -Not -BeLike '*hidden-info-marker*'
+	}
+
+	It 'prints each event once with Start-Logger -Console' {
+		$console = Invoke-ChildPwsh @"
+Start-Logger -Console
+Write-WarningLog 'once-marker'
+Close-Logger
+"@
+		@($console | Where-Object { $_ -like '*once-marker*' }).Count | Should -Be 1
 	}
 }

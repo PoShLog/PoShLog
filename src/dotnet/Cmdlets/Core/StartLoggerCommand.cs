@@ -68,8 +68,9 @@ namespace PoShLog.Core.Cmdlets.Core
 
 				var filePathBound = MyInvocation.BoundParameters.ContainsKey(nameof(FilePath));
 
-				// If file path was not passed we setup default PowerShell sink
-				if (PowerShell.IsPresent || !filePathBound)
+				// The PowerShell sink is the default only when no other sink was asked for; -Console alone used to
+				// add both and print every event twice (issue #28, docs/decisions/0008-powershell-sink-streams.md).
+				if (PowerShell.IsPresent || (!filePathBound && !Console.IsPresent))
 				{
 					LoggerConfig.WriteTo.PowerShell(PowerShellSinkWriter.Write);
 				}
