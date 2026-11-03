@@ -1,174 +1,164 @@
-[![icon](https://github.com/PoShLog/PoShLog/blob/master/images/icons/poshlog-icon-64.png?raw=true)](https://github.com/PoShLog/PoShLog)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
+    <img alt="PoShLog: structured logging for PowerShell, built on Serilog" src="docs/assets/banner-light.svg" width="760">
+  </picture>
+</p>
 
-# PoShLog
+<p align="center">
+  <a href="https://github.com/PoShLog/PoShLog/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/PoShLog/PoShLog/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://www.powershellgallery.com/packages/PoShLog/"><img alt="PowerShell Gallery version" src="https://img.shields.io/powershellgallery/v/PoShLog?include_prereleases&label=PowerShell%20Gallery"></a>
+  <a href="https://www.powershellgallery.com/packages/PoShLog/"><img alt="PowerShell Gallery downloads" src="https://img.shields.io/powershellgallery/dt/PoShLog?label=downloads"></a>
+  <a href="docs/v2-or-v3.md"><img alt="PowerShell 7.4+" src="https://img.shields.io/badge/PowerShell-7.4%2B-5391FE"></a>
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/github/license/PoShLog/PoShLog"></a>
+  <a href="https://discord.gg/FVdVxuw"><img alt="Discord" src="https://img.shields.io/discord/693754316305072199?color=orange&label=discord"></a>
+</p>
 
-[![psgallery](https://img.shields.io/powershellgallery/v/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![psgallery](https://img.shields.io/powershellgallery/dt/poshlog.svg)](https://www.powershellgallery.com/packages/PoShLog/) [![Discord](https://img.shields.io/discord/693754316305072199?color=orange&label=discord)](https://discord.gg/FVdVxuw) [![CI](https://github.com/PoShLog/PoShLog/actions/workflows/ci.yml/badge.svg)](https://github.com/PoShLog/PoShLog/actions/workflows/ci.yml) [![Support](https://img.shields.io/badge/%24-Support-blueviolet)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GRARVRTVNEUHS)
+<p align="center">
+  <b>Write structured log events from PowerShell to the console, files, Seq, OpenTelemetry, Splunk, syslog and more.</b>
+</p>
 
->Serilog for powershell
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#sinks">Sinks</a> ·
+  <a href="#documentation">Documentation</a> ·
+  <a href="docs/v2-or-v3.md">v2 or v3?</a> ·
+  <a href="CHANGELOG.md">Changelog</a>
+</p>
 
-PoShLog is a cross-platform PowerShell logging module. PoShLog allows you to log structured event data into **console**, **file** and much more [places](docs/sinks/README.md) easily.
-It's built upon the great C# logging library [Serilog](https://serilog.net/) (v4.2.0).
+> [!NOTE]
+> **PoShLog 3 is in preview.** It is a compiled module for PowerShell 7.4+ on Windows, Linux and macOS. Install it with
+> `-AllowPrerelease`. On Windows PowerShell 5.1, use the maintained [v2 line](docs/v2-or-v3.md).
 
-As of **v3.0.0**, PoShLog is a **compiled C# binary module** (`.NET 8`) — all cmdlets are implemented as compiled `PSCmdlet`/`Cmdlet` classes rather than PowerShell script functions, for better performance and startup time. Cmdlet names, parameters, aliases, and pipeline behavior are unchanged from previous versions. **Requires PowerShell 7.0+ (PowerShell Core)** — Windows PowerShell 5.1 / Desktop edition is no longer supported.
+## Why PoShLog
 
-## Key Features
+- **Structured, not just text.** Messages are [templates](docs/usage.md): `{Count}` stays a number that Seq, Splunk or
+  any log backend can filter and chart.
+- **One logger, many destinations.** Send the same events to the console, a rolling file and a log server, each with
+  its own minimum level and format.
+- **Built on [Serilog](https://serilog.net/) 4.** You get its levels, enrichers and formatters, and any Serilog sink
+  package can be used directly ([migration guide](docs/guides/migration-v3.md)).
+- **Fast and familiar.** A compiled binary module with the same cmdlet names and parameters as v2.
 
-* [x] Structured log event data
-* [x] Clean and easy to use [API](docs/cmdlets/README.md)
-* [x] Cross-platform
-* [x] Compiled C# binary module (.NET 8)
-* [x] Easily extensible
+## Quick start
 
-## Getting started
+```powershell
+Install-Module PoShLog -AllowPrerelease
 
-If you are familiar with PowerShell, skip to [Installation](#installation) section. For more detailed installation instructions check out [Getting started](docs/getting-started.md).
+Start-Logger -Console -FilePath './logs/app.log'
 
-### Installation
+Write-InfoLog 'Copied {Count} files to {Target}' -PropertyValues 42, 'D:\Backup'
 
-To install PoShLog, run following snippet from powershell:
-
-```ps1
-Install-Module PoShLog
+Close-Logger
 ```
 
-PoShLog 3 needs PowerShell 7.4 or newer. On Windows PowerShell 5.1 use the maintained v2 line; see [v2 or v3?](docs/v2-or-v3.md).
+![Console output of the quick start, and the same event as structured data](docs/assets/quick-start-console.svg)
 
-## Usage
+Need more control? Build the logger as a pipeline: one minimum level, several sinks, each with its own settings.
 
-Setup logger using pipeline fluent API and write some log messages(*in this case into file and console*):
-
-```ps1
-Import-Module PoShLog
-
-# Create new logger
-# This is where you customize, when and how to log
+```powershell
 New-Logger |
-    Set-MinimumLevel -Value Verbose | # You can change this value later to filter log messages
-    # Here you can add as many sinks as you want - see https://github.com/PoShLog/PoShLog/wiki/Sinks for all available sinks
-    Add-SinkConsole |   # Tell logger to write log messages to console
-    Add-SinkFile -Path 'C:\Data\my_awesome.log' | # Tell logger to write log messages into file
+    Set-MinimumLevel -Value Verbose |
+    Add-SinkConsole |
+    Add-SinkFile -Path './logs/app-.log' -RollingInterval Day |
+    Add-SinkSeq -ServerUrl 'http://localhost:5341' |    # Install-Module PoShLog.Sinks.Seq
     Start-Logger
 
-# Test all log levels
-Write-VerboseLog 'Test verbose message'
-Write-DebugLog 'Test debug message'
-Write-InfoLog 'Test info message'
-Write-WarningLog 'Test warning message'
-Write-ErrorLog 'Test error message'
-Write-FatalLog 'Test fatal message'
+Write-VerboseLog 'Starting backup of {Path}' -PropertyValues 'C:\Data'
+Write-WarningLog 'Disk {Drive} is {Percent}% full' -PropertyValues 'D:', 91
+Write-ErrorLog 'Backup failed' -ErrorRecord $Error[0]
 
 Close-Logger
 ```
 
-![poshlog_example_fullversion](images/poshlog_example_fullversion.png)
+## How it works
 
-[*For detailed documentation see docs*](docs/getting-started.md)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/how-it-works-dark.svg">
+  <img alt="A script writes a message template; PoShLog, on the Serilog pipeline, sends the event to every configured sink" src="docs/assets/how-it-works-light.svg">
+</picture>
 
-You can(*and you should*) log formatted data:
+## Sinks
 
-```ps1
-Write-InfoLog 'Current date and time is {DateTime}' -PropertyValues (Get-Date)
+Console, File and the PowerShell streams are built into PoShLog. Everything else is a small extension module you
+install next to it.
 
-# Some example data
-$position = @{
-    Latitude = 25
-    Longitude = 134
-}
-$elapsedMs = 34
+| Destination | Module | Install | Docs |
+|---|---|---|---|
+| Console, File, PowerShell streams | PoShLog | built in | [Add-SinkConsole](docs/cmdlets/Add-SinkConsole.md), [Add-SinkFile](docs/cmdlets/Add-SinkFile.md), [Add-SinkPowerShell](docs/cmdlets/Add-SinkPowerShell.md) |
+| OpenTelemetry (OTLP): Grafana, .NET Aspire, Datadog, Elastic, any Collector | PoShLog.Sinks.OpenTelemetry | `Install-Module PoShLog.Sinks.OpenTelemetry` | [Add-SinkOpenTelemetry](docs/sinks/Add-SinkOpenTelemetry.md) |
+| Seq | PoShLog.Sinks.Seq | `Install-Module PoShLog.Sinks.Seq` | [Add-SinkSeq](extensions/PoShLog.Sinks.Seq/README.md) |
+| Splunk HTTP Event Collector | PoShLog.Sinks.Splunk.Hec | `Install-Module PoShLog.Sinks.Splunk.Hec` | [Add-SinkSplunk](docs/sinks/Add-SinkSplunk.md) |
+| Syslog (RFC 5424 / 3164 over UDP, TCP, TLS) | PoShLog.Sinks.Syslog.Rfc5424 | `Install-Module PoShLog.Sinks.Syslog.Rfc5424` | [Add-SinkSyslog](docs/sinks/Add-SinkSyslog.md) |
+| HTTP endpoints | PoShLog.Sinks.Http | `Install-Module PoShLog.Sinks.Http` | [Add-SinkHttp](extensions/PoShLog.Sinks.Http/README.md) |
+| Windows Event Log | PoShLog.Sinks.EventLog | `Install-Module PoShLog.Sinks.EventLog` | [Add-SinkEventLog](docs/sinks/Add-SinkEventLog.md) |
+| Enrichers: environment, process, exception details | PoShLog.Enrichers | `Install-Module PoShLog.Enrichers` | [Enrichers](docs/enrichers/README.md) |
 
-Write-InfoLog 'Processed {@Position} in {Elapsed:000} ms.' -PropertyValues $position, $elapsedMs
-```
+While PoShLog 3 is in preview, add `-AllowPrerelease` to these commands as well. Third-party modules and other Serilog
+sinks are listed on the [sinks page](docs/sinks/README.md).
 
-![poshlog_example_simplest_console](images/poshlog_example_structured_data.png)
+## v2 or v3?
 
-Fluent API is too bulky? You don't need extra sinks? Use short setup version(*logs into console and [file](poshlog_example_simplest_file.png)*):
+| | PoShLog 3 (preview) | PoShLog 2 |
+|---|---|---|
+| PowerShell | 7.4+ on Windows, Linux, macOS | Windows PowerShell 5.1 and PowerShell 7 |
+| Module | compiled, Serilog 4 | script module, Serilog 2 |
+| Install | `Install-Module PoShLog -AllowPrerelease` | `Install-Module PoShLog -MaximumVersion 2.99` |
+| Status | new features | bug fixes and Serilog updates |
 
-```ps1
-# Create and start new logger
-Start-Logger -FilePath 'C:\Data\my_awesome.log' -Console
+Moving a script over? Read [v2 or v3?](docs/v2-or-v3.md) and the [migration guide](docs/guides/migration-v3.md).
 
-Write-InfoLog 'Hurrray, my first log message!'
+## Documentation
 
-# Don't forget to close the logger
-Close-Logger
-```
-
-![poshlog_example_simplest_console](images/poshlog_example_simplest_console.png)
-
-### Extendability
-
-PoShLog is extensible just like Serilog. All available extensions can be found [here](docs/guides/extension-modules.md).
-
-### Documentation
-
-These examples are just to get you started fast. For more detailed documentation please check the [docs](docs/getting-started.md):
-
-* [Getting started](docs/getting-started.md)
-* [Usage](docs/usage.md)
-* [Log event levels](docs/log-event-levels.md)
-* [Cmdlets reference](docs/cmdlets/README.md)
-* [Sinks](docs/sinks/README.md)
-* [Enrichers](docs/enrichers/README.md)
-* [Guides](docs/guides/for-developers.md) (creating a sink, extension modules, contributing)
+- [Getting started](docs/getting-started.md) and [usage](docs/usage.md)
+- [Log event levels](docs/log-event-levels.md)
+- [Cmdlet reference](docs/cmdlets/README.md)
+- [Sinks](docs/sinks/README.md) and [enrichers](docs/enrichers/README.md)
+- [Capturing output](docs/guides/capturing-output.md) of existing scripts
+- [Extension modules](docs/guides/extension-modules.md) and [creating a sink](docs/guides/creating-sink.md)
+- [Architectural decisions](docs/decisions/README.md)
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome. For bigger changes, please open an [issue](https://github.com/PoShLog/PoShLog/issues) or a
+[discussion](https://github.com/PoShLog/PoShLog/discussions) first. [Good first issues](https://github.com/PoShLog/PoShLog/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+are a nice place to start, and the [developer guide](docs/guides/for-developers.md) explains the layout.
+
+### Building locally
+
+You need the [.NET 8 SDK](https://dotnet.microsoft.com/download) (or newer) and
+[PowerShell 7.4+](https://learn.microsoft.com/powershell/scripting/install/installing-powershell).
+
+```powershell
+dotnet build PoShLog.sln
+dotnet publish src/dotnet/PoShLog.Core.csproj -o src/lib
+dotnet test PoShLog.sln
+Invoke-Pester ./tests
+
+Import-Module ./src/PoShLog.psd1
+Start-Logger -Console
+Write-InfoLog 'Hello from PoShLog!'
+Close-Logger
+```
 
 ### Show your support
 
-* :star: Star the PoShLog repository. This is the least you can do to support this project.
-* :thumbsup: Give us some feedback or suggest features using [Discussions](https://github.com/PoShLog/PoShLog/discussions) or [discord](https://discord.gg/FVdVxuw)
-* :mag_right: Test PoShLog and raise [issues](https://github.com/PoShLog/PoShLog/issues)
-* Contribute :rocket: you can start with [good first issues](https://github.com/PoShLog/PoShLog/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+- ⭐ Star the repository. It is the simplest way to help the project.
+- 💬 Share feedback and ideas in [Discussions](https://github.com/PoShLog/PoShLog/discussions) or on [Discord](https://discord.gg/FVdVxuw).
+- 🐞 Try the preview and [report issues](https://github.com/PoShLog/PoShLog/issues).
 
-### Contributors
+## Authors and contributors
 
-* [Michael Zimmerli](https://github.com/gitbute)
-* [Martin Dennhardt](https://github.com/mamidenn)
-* [Brady Shober](https://github.com/BradyShober)
-* [Chris Hunt](https://github.com/cdhunt)
-
-### Building Locally
-
-PoShLog is a compiled .NET 8 binary module. To build and test it locally:
-
-1. Install the [.NET 8 SDK](https://dotnet.microsoft.com/download) and [PowerShell 7+](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell).
-
-2. Build the solution
-
-        dotnet build PoShLog.sln
-
-3. Publish the compiled module into `src/lib`
-
-        dotnet publish src/dotnet/PoShLog.Core.csproj -o src/lib
-
-4. Import and test the module
-
-        Import-Module ./src/PoShLog.psd1
-        Start-Logger -Console
-        Write-InfoLog 'Hello from PoShLog!'
-        Close-Logger
-
-5. Run the tests
-
-        dotnet test tests/PoShLog.UnitTests/PoShLog.UnitTests.csproj
-        Invoke-Pester ./tests/PoShLog.Tests.ps1
-
-## Authors
-
-* [**Tomáš Bouda**](http://tomasbouda.cz)
-
-## Release Notes
-
-* [v2.1.1](releaseNotes/v2.1.1.md)
-* [v2.1.0](releaseNotes/v2.1.0.md)
+Created and maintained by [**Tomáš Bouda**](http://tomasbouda.cz), with contributions from
+[Michael Zimmerli](https://github.com/gitbute), Martin Dennhardt,
+[Brady Shober](https://github.com/BradyShober) and [Chris Hunt](https://github.com/cdhunt).
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+PoShLog is licensed under the [MIT License](LICENSE). The logo and graphics in [docs/assets](docs/assets) are part of
+this project and covered by the same license.
 
 ## Credits
 
-* Serilog - [serilog.net](https://serilog.net/)
-* Icon made by [Smashicons](https://smashicons.com/) from [www.flaticon.com](https://www.flaticon.com/).
+- [Serilog](https://serilog.net/), the logging library PoShLog is built on.
+- The earlier icon in `images/icons` was made by [Smashicons](https://smashicons.com/) from [www.flaticon.com](https://www.flaticon.com/).

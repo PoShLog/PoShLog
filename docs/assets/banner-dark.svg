@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 320" width="1280" height="320">
+  <title>PoShLog: structured logging for PowerShell</title>
+  <style>
+    .word { font: 700 104px "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; fill: #F0F6FC; }
+    .tag { font: 400 34px "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; fill: #9198A1; }
+    .chip { font: 600 20px "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace; fill: #BAC8FF; }
+    .chipbg { fill: #1C2142; stroke: #364FC7; }
+  </style>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3B5BDB"/>
+      <stop offset="1" stop-color="#7048E8"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(150 64) scale(0.75)">
+    <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+    <g fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M86 50 C64 50 62 62 62 82 L62 110 C62 121 56 128 44 128 C56 128 62 135 62 146 L62 174 C62 194 64 206 86 206"/>
+      <path d="M170 50 C192 50 194 62 194 82 L194 110 C194 121 200 128 212 128 C200 128 194 135 194 146 L194 174 C194 194 192 206 170 206"/>
+    </g>
+    <g stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" opacity="0.95">
+      <line x1="112" y1="86" x2="164" y2="86"/>
+      <line x1="112" y1="114" x2="156" y2="114"/>
+      <line x1="112" y1="142" x2="164" y2="142"/>
+      <line x1="112" y1="170" x2="146" y2="170"/>
+    </g>
+    <circle cx="94" cy="86" r="8" fill="#A5D8FF"/>
+    <circle cx="94" cy="114" r="8" fill="#69DB7C"/>
+    <circle cx="94" cy="142" r="8" fill="#FFD43B"/>
+    <circle cx="94" cy="170" r="8" fill="#FF8787"/>
+  </g>
+  <text class="word" x="380" y="150">PoShLog</text>
+  <text class="tag" x="384" y="204">Structured logging for PowerShell, built on Serilog</text>
+  <g transform="translate(384 230)">
+    <rect class="chipbg" width="230" height="40" rx="20"/>
+    <text class="chip" x="115" y="27" text-anchor="middle">PowerShell 7.4+</text>
+    <rect class="chipbg" x="246" width="210" height="40" rx="20"/>
+    <text class="chip" x="351" y="27" text-anchor="middle">cross-platform</text>
+    <rect class="chipbg" x="472" width="150" height="40" rx="20"/>
+    <text class="chip" x="547" y="27" text-anchor="middle">Serilog 4</text>
+  </g>
+</svg>
