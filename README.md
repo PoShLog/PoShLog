@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <b>Write structured log events from PowerShell to the console, files, Seq, OpenTelemetry, Splunk, syslog and more.</b>
+  <b>Write structured log events from PowerShell to the console, files, Seq, OpenTelemetry, Elasticsearch, Splunk, syslog and more.</b>
 </p>
 
 <p align="center">
@@ -90,6 +90,7 @@ install next to it.
 | Seq | PoShLog.Sinks.Seq | `Install-Module PoShLog.Sinks.Seq` | [Add-SinkSeq](extensions/PoShLog.Sinks.Seq/README.md) |
 | Splunk HTTP Event Collector | PoShLog.Sinks.Splunk.Hec | `Install-Module PoShLog.Sinks.Splunk.Hec` | [Add-SinkSplunk](docs/sinks/Add-SinkSplunk.md) |
 | Syslog (RFC 5424 / 3164 over UDP, TCP, TLS) | PoShLog.Sinks.Syslog.Rfc5424 | `Install-Module PoShLog.Sinks.Syslog.Rfc5424` | [Add-SinkSyslog](docs/sinks/Add-SinkSyslog.md) |
+| Elasticsearch and Elastic Cloud (data streams, ECS) | PoShLog.Sinks.Elastic | `Install-Module PoShLog.Sinks.Elastic` | [Add-SinkElasticsearch](docs/sinks/Add-SinkElasticsearch.md) |
 | HTTP endpoints | PoShLog.Sinks.Http | `Install-Module PoShLog.Sinks.Http` | [Add-SinkHttp](extensions/PoShLog.Sinks.Http/README.md) |
 | Windows Event Log | PoShLog.Sinks.EventLog | `Install-Module PoShLog.Sinks.EventLog` | [Add-SinkEventLog](docs/sinks/Add-SinkEventLog.md) |
 | Enrichers: environment, process, exception details | PoShLog.Enrichers | `Install-Module PoShLog.Enrichers` | [Enrichers](docs/enrichers/README.md) |
