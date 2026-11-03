@@ -95,8 +95,18 @@ install next to it.
 | Windows Event Log | PoShLog.Sinks.EventLog | `Install-Module PoShLog.Sinks.EventLog` | [Add-SinkEventLog](docs/sinks/Add-SinkEventLog.md) |
 | Enrichers: environment, process, exception details | PoShLog.Enrichers | `Install-Module PoShLog.Enrichers` | [Enrichers](docs/enrichers/README.md) |
 
-While PoShLog 3 is in preview, install the extensions with `Install-PSResource <module> -Prerelease`
-([compatibility page](docs/compatibility.md)). Third-party modules and other Serilog
+PoShLog can list and install its extensions itself. `Install-PoShLogExtension` adds `-Prerelease` while PoShLog 3 is
+in preview, so you do not have to:
+
+```powershell
+Get-PoShLogExtension | Format-Table      # name, kind, version, installed version, commands
+Get-PoShLogExtension -Online             # adds the latest version in the Gallery
+Install-PoShLogExtension PoShLog.Sinks.Seq
+```
+
+Without it, install the extensions with `Install-PSResource <module> -Prerelease` while PoShLog 3 is in preview
+([compatibility page](docs/compatibility.md), [Get-PoShLogExtension](docs/cmdlets/Get-PoShLogExtension.md),
+[Install-PoShLogExtension](docs/cmdlets/Install-PoShLogExtension.md)). Third-party modules and other Serilog
 sinks are listed on the [sinks page](docs/sinks/README.md).
 
 ## v2 or v3?

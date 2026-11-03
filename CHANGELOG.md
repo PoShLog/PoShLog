@@ -2,6 +2,18 @@
 
 All notable changes to PoShLog, newest first. Older releases: see the GitHub releases and `releaseNotes/` in the v2 history.
 
+## Unreleased
+
+### Features
+- New `Get-PoShLogExtension` lists the first-party extensions with what they do, their commands and the installed version; `-Online` adds the latest Gallery version.
+- New `Install-PoShLogExtension` installs an extension with `Install-PSResource`, adding `-Prerelease` while PoShLog is a prerelease; supports `-WhatIf`, `-Scope` and non-interactive use.
+
+### Changes
+- PoShLog.Enrichers lists its functions in `FunctionsToExport`, and every extension manifest describes the extension in one line.
+
+### Bug fixes
+- None.
+
 ## 3.0.0-preview2 — 2026-11-03
 
 Everything since PoShLog 2.x; 3.0.0-preview1 was published without its own section.

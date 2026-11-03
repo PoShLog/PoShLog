@@ -31,7 +31,7 @@ Copyright = '(c) 2019 Tomas Bouda. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PoShLog.Sinks.Http is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
-It contains sink that writes log messages using HTTP POST over the network.
+Sends log events to an HTTP endpoint with POST.
 
 For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
 

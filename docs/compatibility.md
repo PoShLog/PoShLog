@@ -51,7 +51,13 @@ Install-Module PoShLog -AllowPrerelease
 
 # Preview extensions (2.0.0 and the new sinks): use PSResourceGet.
 Install-PSResource PoShLog.Sinks.OpenTelemetry -Prerelease
+# or let PoShLog pick the prerelease rule (ADR 0021)
+Install-PoShLogExtension PoShLog.Sinks.OpenTelemetry
 ```
+
+- [`Get-PoShLogExtension`](cmdlets/Get-PoShLogExtension.md) lists the extensions that belong to the installed PoShLog
+  build with their versions; [`Install-PoShLogExtension`](cmdlets/Install-PoShLogExtension.md) installs them through
+  `Install-PSResource` with `-Prerelease` while PoShLog is a prerelease.
 
 - `Install-PSResource` ships with PowerShell 7.4 and newer. The extension command was tested with PSResourceGet 1.2.0;
   if an older version cannot resolve the PoShLog dependency, update it with

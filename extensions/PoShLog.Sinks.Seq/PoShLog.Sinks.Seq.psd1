@@ -31,7 +31,7 @@ Copyright = '(c) 2019 Tomas Bouda. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PoShLog.Sinks.Seq is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
-It contains sink that publishes log messages to Seq - https://datalust.co/seq
+Sends log events to Seq (https://datalust.co/seq).
 
 For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
 

@@ -27,4 +27,10 @@
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- ADR 0021: the extension catalogue is the manifests of the same commit, read by Get-PoShLogExtension. -->
+    <EmbeddedResource Include="../../extensions/*/*.psd1" LogicalName="PoShLog.Catalog.Extensions.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../PoShLog.psd1" LogicalName="PoShLog.Catalog.PoShLog.psd1" />
+  </ItemGroup>
+
 </Project>

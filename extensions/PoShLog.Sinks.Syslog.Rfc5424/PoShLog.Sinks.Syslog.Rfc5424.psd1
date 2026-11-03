@@ -23,7 +23,7 @@ Copyright = '(c) 2026 Tomas Bouda. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PoShLog.Sinks.Syslog.Rfc5424 is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
-It contains sink that sends log messages to a syslog server over UDP, TCP or TLS, as RFC 5424 or RFC 3164 messages.
+Sends log events to a syslog server over UDP, TCP or TLS, as RFC 5424 or RFC 3164 messages.
 
 For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
 

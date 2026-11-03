@@ -80,6 +80,11 @@ jobs:
           # Stage-Module invokes Build-Extension for each selected extension.
           ./build/Test-PackageInstall.ps1
 
+      - name: Test Install-PoShLogExtension in a clean home
+        if: runner.os == 'Linux'
+        # Uses the PSResourceGet 1.1+ ensured by the previous step; 1.0.x mis-parses dotted names in a local repository.
+        run: ./build/Test-ExtensionInstall.ps1
+
       - name: Install Pester
         run: |
           # PSResourceGet ships with PowerShell 7.4+; retry because the Gallery fails intermittently.

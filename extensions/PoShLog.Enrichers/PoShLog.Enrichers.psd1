@@ -31,7 +31,7 @@ Copyright = '(c) 2019 Tomas Bouda. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PoShLog.Enrichers is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
-It contains lot of helpful enricher methods, useful when enriching log messages.
+Enrichers that add the environment, the process ID and name, and exception details to log events.
 
 For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
 
@@ -72,7 +72,7 @@ RequiredModules = @(@{ModuleName = 'PoShLog'; GUID = '6eabf344-4f00-4cc0-95d4-d3
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = '*'
+FunctionsToExport = 'Add-EnrichWithEnvironment', 'Add-EnrichWithExceptionDetails', 'Add-EnrichWithProcessId', 'Add-EnrichWithProcessName'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'

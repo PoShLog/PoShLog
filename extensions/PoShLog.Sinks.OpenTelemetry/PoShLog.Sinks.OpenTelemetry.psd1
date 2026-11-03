@@ -23,7 +23,7 @@ Copyright = '(c) 2026 Tomas Bouda. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PoShLog.Sinks.OpenTelemetry is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
-It contains sink that sends log messages over OTLP (HTTP/protobuf or gRPC) to an OpenTelemetry Collector or any backend with an OTLP intake: Seq, Grafana, .NET Aspire, Datadog, Splunk, Elastic.
+Sends log events over OTLP (HTTP/protobuf or gRPC) to an OpenTelemetry Collector or any OTLP intake: Seq, Grafana, .NET Aspire, Datadog, Splunk, Elastic.
 
 For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
 

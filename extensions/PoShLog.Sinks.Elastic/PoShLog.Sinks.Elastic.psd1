@@ -23,7 +23,7 @@ Copyright = '(c) 2026 Tomas Bouda. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PoShLog.Sinks.Elastic is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
-It contains sink that sends log messages to Elasticsearch or Elastic Cloud data streams, as Elastic Common Schema (ECS) documents.
+Sends log events to Elasticsearch or Elastic Cloud data streams as Elastic Common Schema (ECS) documents.
 
 For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
 

@@ -62,6 +62,8 @@ PoShLog v3 is a compiled binary module. This index preserves the wiki's command 
 ## Helpers
 
 * **[Convert-LogFunctions](Convert-LogFunctions.md)** - Converts Write commands in a script into PoShLog commands.
+* **[Get-PoShLogExtension](Get-PoShLogExtension.md)** - Lists the first-party extensions, their commands and the installed version
+* **[Install-PoShLogExtension](Install-PoShLogExtension.md)** - Installs first-party extensions, as prereleases while PoShLog is one
 
 The v3 commands Add-SinkLogger, Get-CurrentLogFiles, Set-DefaultMessageFormatter, Enable-SelfLog and Disable-SelfLog also expose PowerShell help through Get-Help.
 

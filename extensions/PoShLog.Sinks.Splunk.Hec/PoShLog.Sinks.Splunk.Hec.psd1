@@ -23,7 +23,7 @@ Copyright = '(c) 2026 Tomas Bouda. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PoShLog.Sinks.Splunk.Hec is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
-It contains sink that sends log messages to a Splunk HTTP Event Collector (HEC), as Splunk JSON events or raw text lines.
+Sends log events to a Splunk HTTP Event Collector (HEC), as JSON events or raw text lines.
 
 For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
 
