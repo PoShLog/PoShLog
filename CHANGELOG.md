@@ -3,7 +3,7 @@
 This is the changelog of the **v2 line** (branch `release/2.x`), the script module for Windows PowerShell 5.1 and
 PowerShell 7. v3 keeps its own changelog on `master`.
 
-## 2.2.1 — 2026-11-03
+## 2.3.0 — 2026-11-03
 
 ### Features
 - `Add-SinkConsole -Formatter` accepts an `ITextFormatter` such as `Get-JsonFormatter` for structured console
