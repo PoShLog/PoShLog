@@ -40,7 +40,7 @@ The names are checked for availability and confirmed by Tomáš before the first
 
 **Note (2026-11-03):** Tomáš confirmed `PoShLog.Sinks.OpenTelemetry`, `PoShLog.Sinks.Splunk.Hec` and
 `PoShLog.Sinks.Syslog.Rfc5424`; the PowerShell Gallery feed listed none of the three as taken that day. Publishing
-still needs his separate approval. `PoShLog.Sinks.Elastic` is not confirmed yet.
+still needs his separate approval. He confirmed `PoShLog.Sinks.Elastic` the same day (also free on the feed).
 
 ## Alternatives considered
 
