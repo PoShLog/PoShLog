@@ -13,9 +13,9 @@ on:
     workflows: [Release]
     types: [completed]
   pull_request:
-  # Temporary: validate both modes on this branch; architect removes this trigger before merge.
+  # Temporary: run on the v3 integration branch until master is approved; remove before merging to master.
   push:
-    branches: [architect/integration-tests]
+    branches: [architect/v3-assess]
 
 permissions:
   contents: read
