@@ -3,7 +3,7 @@
 This is the changelog of the **v2 line** (branch `release/2.x`), the script module for Windows PowerShell 5.1 and
 PowerShell 7. v3 keeps its own changelog on `master`.
 
-## 2.2.0 — unreleased
+## 2.2.0 — 2026-11-03
 
 ### Features
 - `Add-SinkLogger` writes events to another logger (sub-logger).

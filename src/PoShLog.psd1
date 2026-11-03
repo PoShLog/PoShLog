@@ -120,10 +120,10 @@ PrivateData = @{
         IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/master/images/icons/poshlog-icon-256.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/master/releaseNotes/v2.2.0.md'
+        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/release/2.x/CHANGELOG.md'
 
         # Prerelease string of this module
-        Prerelease = 'preview1'
+        # Prerelease = ''
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         # RequireLicenseAcceptance = $false
