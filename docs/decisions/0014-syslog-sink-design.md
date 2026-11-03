@@ -1,6 +1,6 @@
 # 0014 — The Syslog sink: the package's formatters, our own transports
 
-- **Status:** proposed
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 - **Builds on:** [0009](0009-first-party-sinks-third-party-check-non-blocking.md) (name and scope),
   [0011](0011-core-does-not-load-assemblies-extensions-ship.md), [0012](0012-otlp-sink-design.md) (module layout),
