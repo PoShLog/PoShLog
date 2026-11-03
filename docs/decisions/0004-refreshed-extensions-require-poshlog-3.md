@@ -1,6 +1,6 @@
 # 0004 — Refreshed extensions require PoShLog 3
 
-- **Status:** proposed
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 - **Amends:** [0001](0001-binary-module-net8-powershell-7-4.md) (Serilog major rule),
   [0002](0002-sinks-and-enrichers-in-v3.md) (`RequiredModules` of refreshed modules)
