@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — unreleased
+## 0.1.0-preview2 — 2026-11-03
 
 ### Features
 - New `Add-SinkOpenTelemetry` sends log events over OTLP (HTTP/protobuf or gRPC) to an OpenTelemetry Collector, Seq,

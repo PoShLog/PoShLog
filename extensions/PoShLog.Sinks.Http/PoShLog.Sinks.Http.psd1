@@ -33,7 +33,7 @@ Copyright = '(c) 2019 Tomas Bouda. All rights reserved.'
 Description = 'PoShLog.Sinks.Http is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
 It contains sink that writes log messages using HTTP POST over the network.
 
-For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/master/docs'
+For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '7.4'
@@ -104,16 +104,16 @@ PrivateData = @{
         LicenseUri = 'https://github.com/PoShLog/PoShLog.Sinks.Http/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/PoShLog/PoShLog/tree/master/extensions/PoShLog.Sinks.Http'
+        ProjectUri = 'https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/extensions/PoShLog.Sinks.Http'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/master/images/icons/poshlog-icon-sink-256.png'
+        IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/v3.0.0-preview2/docs/assets/icon.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/master/extensions/PoShLog.Sinks.Http/CHANGELOG.md'
+        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview2/extensions/PoShLog.Sinks.Http/CHANGELOG.md'
 
         # Prerelease string of this module
-        # Prerelease = ''
+        Prerelease = 'preview2'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         # RequireLicenseAcceptance = $false

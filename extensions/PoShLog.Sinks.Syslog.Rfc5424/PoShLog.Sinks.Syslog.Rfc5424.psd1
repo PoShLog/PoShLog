@@ -25,7 +25,7 @@ Copyright = '(c) 2026 Tomas Bouda. All rights reserved.'
 Description = 'PoShLog.Sinks.Syslog.Rfc5424 is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
 It contains sink that sends log messages to a syslog server over UDP, TCP or TLS, as RFC 5424 or RFC 3164 messages.
 
-For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/master/docs'
+For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '7.4'
@@ -54,16 +54,19 @@ PrivateData = @{
         Tags = 'syslog','rfc5424','rfc3164','rsyslog','syslog-ng','Log','Logging','Serilog','serilog-sink','serilog-for-powershell','wrapper','sinks','PSEdition_Core','Windows','Linux','MacOS'
 
         # A URL to the license for this module.
-        LicenseUri = 'https://github.com/PoShLog/PoShLog/blob/master/extensions/PoShLog.Sinks.Syslog.Rfc5424/LICENSE'
+        LicenseUri = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview2/extensions/PoShLog.Sinks.Syslog.Rfc5424/LICENSE'
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/PoShLog/PoShLog/tree/master/extensions/PoShLog.Sinks.Syslog.Rfc5424'
+        ProjectUri = 'https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/extensions/PoShLog.Sinks.Syslog.Rfc5424'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/master/images/icons/poshlog-icon-sink-256.png'
+        IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/v3.0.0-preview2/docs/assets/icon.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/master/extensions/PoShLog.Sinks.Syslog.Rfc5424/CHANGELOG.md'
+        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview2/extensions/PoShLog.Sinks.Syslog.Rfc5424/CHANGELOG.md'
+        # Prerelease string of this module
+        Prerelease = 'preview2'
+
 
     } # End of PSData hashtable
 

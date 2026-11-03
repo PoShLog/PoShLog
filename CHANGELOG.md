@@ -2,7 +2,9 @@
 
 All notable changes to PoShLog, newest first. Older releases: see the GitHub releases and `releaseNotes/` in the v2 history.
 
-## 3.0.0 — unreleased
+## 3.0.0-preview2 — 2026-11-03
+
+Everything since PoShLog 2.x; 3.0.0-preview1 was published without its own section.
 
 ### Features
 - PoShLog is now a compiled binary module on Serilog 4 (faster import, no `Add-Type` assembly juggling).
@@ -18,13 +20,13 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 
 ### Changes
 - Require PoShLog 2.99.0 in extensions during the Core 3 preview so prerelease dependencies resolve.
-- Publish prereleases through the release workflow with PSResourceGet and dependency validation.
+- Releases are published by pushing a tag: `v3.*` publishes PoShLog, `<Module>/v<version>` one extension; prereleases go out with PSResourceGet and dependency validation.
+- Extensions are published as prereleases (`preview2`) while PoShLog 3 is a prerelease; install them with `Install-PSResource <module> -Prerelease`.
 - Add an Ubuntu PowerShell 7.4 Pester CI leg and a macOS module/file-logging smoke check.
 - Refresh Serilog to 4.4.0, Console to 6.1.1 and File to 7.0.0.
 - Add Seq, EventLog, Http and Enrichers 2.0.0 under extensions/ with a shared build script.
 - Refreshed Seq, EventLog, Http and Enrichers 2.0.0 reuse same/newer loaded dependencies and reject older copies with a clear import error (2.x users stay on 1.0.x).
 - Add CI compatibility checks for source builds and pinned published extensions.
-- Publish a selected module through the manual release workflow.
 - Requires PowerShell 7.4 or newer; Windows PowerShell 5.1 users stay on 2.x.
 - Documentation moved from the wiki into `docs/`, including a v2 → v3 migration guide and one compatibility and install page (`docs/compatibility.md`) with the tested preview install, side-by-side and rollback commands.
 - Internal helpers `Add-PackageTypes` and `Test-PsCore` were never exported.

@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — unreleased
+## 0.1.0-preview2 — 2026-11-03
 
 ### Features
 - New `Add-SinkSyslog` sends log events to a syslog server over UDP, TCP or TLS (`-Protocol Udp|Tcp|TcpTls`).

@@ -9,7 +9,7 @@ pages link here instead of repeating it. Background: [v2 or v3?](v2-or-v3.md),
 
 | | PoShLog 3 | PoShLog 2 |
 |---|---|---|
-| Latest on the PowerShell Gallery | 3.0.0-preview1 (prerelease) | 2.2.0 |
+| Latest on the PowerShell Gallery | 3.0.0-preview2 (prerelease) | 2.2.0 |
 | PowerShell | 7.4+ on Windows, Linux, macOS | Windows PowerShell 5.1 and PowerShell 7 |
 | Serilog | 4.4.0 | 2.x |
 | Install | `Install-PSResource PoShLog -Prerelease` or `Install-Module PoShLog -AllowPrerelease` | `Install-Module PoShLog -MaximumVersion 2.99` |
@@ -21,18 +21,20 @@ pages link here instead of repeating it. Background: [v2 or v3?](v2-or-v3.md),
 
 | Module | With PoShLog 2 | With PoShLog 3 | Requires PoShLog |
 |---|---|---|---|
-| PoShLog.Sinks.Seq | 1.0.0 | 1.0.0, or 2.0.0 (not published yet) | 1.0.0: 2.0.0+ · 2.0.0: 3 |
-| PoShLog.Sinks.EventLog (Windows) | 1.0.0 | 1.0.0, or 2.0.0 (not published yet) | 1.0.0: 2.0.0+ · 2.0.0: 3 |
-| PoShLog.Sinks.Http | 1.0.1 | 1.0.1, or 2.0.0 (not published yet) | 1.0.1: 2.0.0+ · 2.0.0: 3 |
-| PoShLog.Enrichers | 1.0.0 | 1.0.0, or 2.0.0 (not published yet) | 1.0.0: 2.0.0+ · 2.0.0: 3 |
-| PoShLog.Sinks.OpenTelemetry | — | 0.1.0 (not published yet) | 3 |
-| PoShLog.Sinks.Splunk.Hec | — | 0.1.0 (not published yet) | 3 |
-| PoShLog.Sinks.Syslog.Rfc5424 | — | 0.1.0 (not published yet) | 3 |
-| PoShLog.Sinks.Elastic | — | 0.1.0 (not published yet) | 3 |
+| PoShLog.Sinks.Seq | 1.0.0 | 1.0.0, or 2.0.0-preview2 | 1.0.0: 2.0.0+ · 2.0.0-preview2: 3 |
+| PoShLog.Sinks.EventLog (Windows) | 1.0.0 | 1.0.0, or 2.0.0-preview2 | 1.0.0: 2.0.0+ · 2.0.0-preview2: 3 |
+| PoShLog.Sinks.Http | 1.0.1 | 1.0.1, or 2.0.0-preview2 | 1.0.1: 2.0.0+ · 2.0.0-preview2: 3 |
+| PoShLog.Enrichers | 1.0.0 | 1.0.0, or 2.0.0-preview2 | 1.0.0: 2.0.0+ · 2.0.0-preview2: 3 |
+| PoShLog.Sinks.OpenTelemetry | — | 0.1.0-preview2 | 3 |
+| PoShLog.Sinks.Splunk.Hec | — | 0.1.0-preview2 | 3 |
+| PoShLog.Sinks.Syslog.Rfc5424 | — | 0.1.0-preview2 | 3 |
+| PoShLog.Sinks.Elastic | — | 0.1.0-preview2 | 3 |
 
 - The published 1.0.x extensions keep working on PoShLog 3. CI checks them against every Core build (the
   `Published` compatibility mode, [ADR 0003](decisions/0003-keep-the-v2-extension-contract.md)).
-- Versions 2.0.0 and the new sinks need PowerShell 7.4 and PoShLog 3. On PoShLog 2, stay on 1.0.x.
+- Versions 2.0.0 and the new sinks need PowerShell 7.4 and PoShLog 3. On PoShLog 2, stay on 1.0.x. While PoShLog 3 is
+  a prerelease they are prereleases too ([ADR 0019](decisions/0019-extensions-ship-as-prereleases-during-the-core-3-preview.md)),
+  so `Install-Module <extension>` keeps installing the 1.0.x line.
 - "Requires PoShLog 3" is declared as `2.99.0` by GUID while PoShLog 3 is a prerelease, so that package managers can
   resolve the preview ([ADR 0017](decisions/0017-extensions-require-poshlog-2-99-while-core-is-prerelease.md)). No
   PoShLog 2 release reaches 2.99.
@@ -79,9 +81,9 @@ A script that must keep running on v2 pins it:
 To go back, remove only the preview:
 
 ```powershell
-Uninstall-Module PoShLog -RequiredVersion 3.0.0-preview1 -AllowPrerelease
+Uninstall-Module PoShLog -RequiredVersion 3.0.0-preview2 -AllowPrerelease
 # or
-Uninstall-PSResource PoShLog -Version 3.0.0-preview1 -Prerelease
+Uninstall-PSResource PoShLog -Version 3.0.0-preview2 -Prerelease
 ```
 
 One PowerShell session holds one PoShLog version. Start a new session to switch.
@@ -97,6 +99,9 @@ with no modules installed beforehand:
 - From a local repository with the preview2 packages (Core 3.0.0-preview2, Seq 2.0.0-preview2,
   OpenTelemetry 0.1.0): publish with the dependency check, install the extensions with PSResourceGet 1.2.0, import them,
   and log one event. `build/Test-PackageInstall.ps1` repeats this check in CI.
+- From a local repository with Core 3.0.0-preview2: a stable extension with the 2.99.0 floor installs with
+  `Install-PSResource` but fails with `Install-Module` ("Unable to find dependent module(s)"); a prerelease extension is
+  not offered by either without `-Prerelease` ([ADR 0019](decisions/0019-extensions-ship-as-prereleases-during-the-core-3-preview.md)).
 
 Not verified yet: the preview extensions on the real Gallery (they are not published) and macOS installs. The first
 preview2 publish confirms the Gallery case.

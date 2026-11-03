@@ -1,6 +1,9 @@
 # Changelog
 
-## 2.0.0 — unreleased
+## 2.0.0-preview2 — 2026-11-03
+
+### Features
+- No new features: this release brings the module to PoShLog 3 and Serilog 4.
 
 ### Changes
 - Build from the PoShLog monorepo with refreshed Serilog 4 dependencies.
