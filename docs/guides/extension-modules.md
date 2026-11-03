@@ -5,7 +5,8 @@ PoShLog is extensible, just like Serilog. To add more cmdlets, install one of th
 * [**PoShLog.Enrichers**](https://github.com/PoShLog/PoShLog.Enrichers) - Helpful enricher methods for adding more properties to log messages.
 * [**PoShLog.Sinks.Exceptionless**](https://github.com/PoShLog/PoShLog.Sinks.Exceptionless) - Publishes log messages to [Exceptionless.com](https://exceptionless.com/).
 * [**PoShLog.Sinks.EventLog**](https://github.com/PoShLog/PoShLog.Sinks.EventLog) - Publishes log messages to Windows Event Log.
-* [**PoShLog.Sinks.Syslog**](https://github.com/gitbute/PoShLog.Sinks.Syslog) - Publishes log messages to syslog servers.
+* [**PoShLog.Sinks.Syslog.Rfc5424**](../sinks/Add-SinkSyslog.md) - Publishes log messages to syslog servers over UDP, TCP or TLS.
+* [**PoShLog.Sinks.Syslog**](https://github.com/gitbute/PoShLog.Sinks.Syslog) - Another author's syslog sink; import only one of the two.
 * [**PoShLog.Sinks.Elasticsearch**](https://github.com/mamidenn/PoShLog.Sinks.Elasticsearch) - Publishes log messages to Elasticsearch.
 * [**PoShLog.Sinks.Seq**](https://github.com/PoShLog/PoShLog.Sinks.Seq) - Publishes log messages to [Seq](https://datalust.co/seq).
 * [**PoShLog.Sinks.MSSqlServer**](https://github.com/PoShLog/PoShLog.Sinks.MSSqlServer) - Writes log messages into a MSSQL server database.

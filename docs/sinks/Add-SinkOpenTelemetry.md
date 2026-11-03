@@ -221,4 +221,4 @@ New-Logger | Add-SinkOpenTelemetry | Start-Logger   # http://localhost:4318 by d
 | Datadog | Agent with OTLP ingest | No Agent on the machine: planned `PoShLog.Sinks.Datadog.Logs` (ADR 0009, later). |
 | Splunk | Collector with HEC exporter | No collector: [Add-SinkSplunk](Add-SinkSplunk.md). |
 | Elastic | APM Server, managed OTLP, EDOT Collector | Straight into data streams: planned `PoShLog.Sinks.Elastic`. |
-| Syslog | None | Always: planned `PoShLog.Sinks.Syslog.Rfc5424`. |
+| Syslog | None | Always: [Add-SinkSyslog](Add-SinkSyslog.md). |
