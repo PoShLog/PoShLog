@@ -1,0 +1,70 @@
+name: poshlog-integration
+services:
+  seq:
+    image: datalust/seq:2025.2
+    environment:
+      ACCEPT_EULA: Y
+      SEQ_FIRSTRUN_NOAUTHENTICATION: 'True'
+    ports: ['127.0.0.1:5341:80']
+    healthcheck:
+      test: ['CMD', 'curl', '-fs', 'http://localhost:80/health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  collector:
+    image: otel/opentelemetry-collector-contrib:0.123.0
+    user: '0:0'
+    command: ['--config=/etc/otelcol/config.yaml']
+    ports: ['127.0.0.1:4318:4318', '127.0.0.1:4317:4317']
+    volumes:
+      - ./collector.yml:/etc/otelcol/config.yaml:ro
+      - collector-output:/output
+  splunk:
+    image: splunk/splunk:9.4.2
+    environment:
+      SPLUNK_START_ARGS: --accept-license
+      SPLUNK_GENERAL_TERMS: --accept-sgt-current-at-splunk-com
+      # Dummy credentials for this disposable, loopback-only instance.
+      SPLUNK_PASSWORD: Integration-Only-123!
+      SPLUNK_HEC_TOKEN: 11111111-2222-3333-4444-555555555555
+    ports: ['127.0.0.1:8088:8088', '127.0.0.1:8089:8089']
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -fk https://localhost:8088/services/collector/health && curl -fk -u admin:Integration-Only-123! https://localhost:8089/services/server/info']
+      interval: 10s
+      timeout: 10s
+      start_period: 120s
+      retries: 48
+  syslog:
+    image: balabit/syslog-ng:4.8.3
+    entrypoint: ['/bin/sh', '-ec']
+    command:
+      - >-
+        mkdir -p /certs /output;
+        openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj /CN=localhost
+        -addext subjectAltName=DNS:localhost,IP:127.0.0.1
+        -keyout /certs/server.key -out /certs/server.crt 2>/dev/null;
+        exec syslog-ng -F -f /etc/syslog-ng/syslog-ng.conf
+    ports: ['127.0.0.1:514:514/udp', '127.0.0.1:601:601', '127.0.0.1:6514:6514']
+    volumes:
+      - ./syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf:ro
+      - syslog-output:/output
+    healthcheck:
+      test: ['CMD', 'syslog-ng-ctl', 'stats']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: 'false'
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    ports: ['127.0.0.1:9200:9200']
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -fs http://localhost:9200/_cluster/health?wait_for_status=yellow']
+      interval: 5s
+      timeout: 5s
+      retries: 60
+volumes:
+  collector-output:
+  syslog-output:

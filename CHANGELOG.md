@@ -13,6 +13,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 
 ### Changes
 - PoShLog.Enrichers lists its functions in `FunctionsToExport`, and every extension manifest describes the extension in one line.
+- Add integration tests against real backends for Gallery releases, fresh builds and stable Windows PowerShell 5.1 modules (ADR 0020).
 - Error invocation enrichment keeps command names, script paths and line numbers, but no longer logs argument values and source text (`BoundParameters`, `UnboundArguments`, `Line`, `PositionMessage`, `DisplayScriptPosition`), in text and structured output (ADR 0023).
 
 ### Bug fixes
