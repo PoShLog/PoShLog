@@ -1,6 +1,16 @@
 name: Release
 
+# Pushing a tag publishes one module from the tagged commit (ADR 0018):
+#   v3.0.0-preview2               -> PoShLog
+#   PoShLog.Sinks.Seq/v2.0.0-preview2 -> that extension
+# The version must match ModuleVersion (+ Prerelease) in the module's manifest, and the module's CHANGELOG must have a
+# section for it. Publish PoShLog first: extensions are published with the dependency check against the Gallery.
+# workflow_dispatch does the same once this file is on the default branch.
 on:
+  push:
+    tags:
+      - 'v3.*'
+      - 'PoShLog.*/v*'
   workflow_dispatch:
     inputs:
       module:
@@ -43,19 +53,32 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      - name: Validate selection
+      - name: Resolve and validate module and version
         env:
-          RELEASE_MODULE: ${{ inputs.module }}
-          RELEASE_VERSION: ${{ inputs.version }}
+          INPUT_MODULE: ${{ inputs.module }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
+          if ($env:GITHUB_EVENT_NAME -eq 'push') {
+            if ($env:GITHUB_REF_NAME -cmatch '^v(?<version>.+)\z') {
+              $module = 'PoShLog'; $version = $Matches.version
+            } elseif ($env:GITHUB_REF_NAME -cmatch '^(?<module>PoShLog\.[A-Za-z0-9.]+)/v(?<version>.+)\z') {
+              $module = $Matches.module; $version = $Matches.version
+            } else { throw "Unrecognised release tag: $env:GITHUB_REF_NAME" }
+          } else {
+            $module = $env:INPUT_MODULE; $version = $env:INPUT_VERSION
+          }
           $allowed = @('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic')
-          if ($env:RELEASE_MODULE -notin $allowed) { throw 'Unknown module.' }
-          if ($env:RELEASE_VERSION -cnotmatch '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+)?\z') { throw 'Invalid version.' }
-          $directory = if ($env:RELEASE_MODULE -eq 'PoShLog') { 'src' } else { "extensions/$env:RELEASE_MODULE" }
-          $manifest = Import-PowerShellDataFile "$directory/$env:RELEASE_MODULE.psd1"
-          $version = [string]$manifest.ModuleVersion
-          if ($manifest.PrivateData.PSData.Prerelease) { $version += '-' + $manifest.PrivateData.PSData.Prerelease }
-          if ($version -cne $env:RELEASE_VERSION) { throw 'Version must match the committed manifest.' }
+          if ($module -cnotin $allowed) { throw "Unknown module: $module" }
+          if ($version -cnotmatch '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+)?\z') { throw "Invalid version: $version" }
+          $directory = if ($module -eq 'PoShLog') { 'src' } else { "extensions/$module" }
+          $manifest = Import-PowerShellDataFile "$directory/$module.psd1"
+          $expected = [string]$manifest.ModuleVersion
+          if ($manifest.PrivateData.PSData.Prerelease) { $expected += '-' + $manifest.PrivateData.PSData.Prerelease }
+          if ($expected -cne $version) { throw "Version $version does not match the committed manifest ($expected)." }
+          $changelog = if ($module -eq 'PoShLog') { 'CHANGELOG.md' } else { "$directory/CHANGELOG.md" }
+          if (-not (Select-String -Path $changelog -SimpleMatch "## $version ")) { throw "$changelog has no section for $version." }
+          "RELEASE_MODULE=$module" >> $env:GITHUB_ENV
+          "Publishing $module $version"
       - name: Build and test Core
         run: |
           dotnet build PoShLog.sln -c Release --configfile build/nuget.config
@@ -72,8 +95,6 @@ jobs:
           $result = Invoke-Pester -Path ./tests -PassThru
           if ($result.FailedCount -gt 0 -or $result.PassedCount -eq 0) { throw 'Pester failed.' }
       - name: Stage selected module
-        env:
-          RELEASE_MODULE: ${{ inputs.module }}
         run: |
           ./build/Stage-Module.ps1 -Module $env:RELEASE_MODULE
           if ($env:RELEASE_MODULE -ne 'PoShLog') {
@@ -87,7 +108,6 @@ jobs:
           Import-Module Microsoft.PowerShell.PSResourceGet -MinimumVersion 1.1.0 -Force -ErrorAction Stop
       - name: Publish selected module
         env:
-          RELEASE_MODULE: ${{ inputs.module }}
           PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
         run: |
           Import-Module Microsoft.PowerShell.PSResourceGet -MinimumVersion 1.1.0 -ErrorAction Stop
