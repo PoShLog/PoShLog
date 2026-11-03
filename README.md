@@ -128,6 +128,8 @@ Moving a script over? Read [v2 or v3?](docs/v2-or-v3.md) and the [migration guid
 - [Cmdlet reference](docs/cmdlets/README.md)
 - [Sinks](docs/sinks/README.md) and [enrichers](docs/enrichers/README.md)
 - [Capturing output](docs/guides/capturing-output.md) of existing scripts
+- Migrating from [PoShLog 2](docs/guides/migration-v3.md), [Write-Host and transcripts](docs/guides/migration-write-host.md) or [PSFramework](docs/guides/migration-psframework.md)
+- [FAQ and troubleshooting](docs/guides/faq.md)
 - [Recipes](docs/recipes/README.md): scheduled scripts, GitHub Actions, Pester tests
 - [Extension modules](docs/guides/extension-modules.md) and [creating a sink](docs/guides/creating-sink.md)
 - [Architectural decisions](docs/decisions/README.md)

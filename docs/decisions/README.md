@@ -24,3 +24,4 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0018](0018-release-modules-by-tag.md) | Release modules by pushing a tag | accepted |
 | [0019](0019-extensions-ship-as-prereleases-during-the-core-3-preview.md) | Extensions ship as prereleases during the Core 3 preview | accepted |
 | [0021](0021-extension-catalog-in-core.md) | Core lists and installs its extensions from a catalogue built into the assembly | proposed |
+| [0022](0022-documentation-website.md) | A Starlight documentation website built from docs/, served from the PoShLog.github.io org site | proposed |

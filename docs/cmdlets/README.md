@@ -24,12 +24,14 @@ PoShLog v3 is a compiled binary module. This index preserves the wiki's command 
 * **[Add-SinkConsole](Add-SinkConsole.md)** - Writes log events to console host
 * **[Add-SinkPowerShell](Add-SinkPowerShell.md)** - Writes log events into PowerShell streams
 * **[Add-SinkFile](Add-SinkFile.md)** - Write log events to the specified file
+* **[Add-SinkLogger](Add-SinkLogger.md)** - Writes log events to a sub-logger with its own filter, enrichers and sinks
 * **[Add-SinkExceptionless](../sinks/Add-SinkExceptionless.md)** - Write log events into [exceptionless.com](https://exceptionless.com/) **`EXTENSION`**
 * **[Add-SinkSplunk](../sinks/Add-SinkSplunk.md)** - Sends log events to a Splunk HTTP Event Collector **`EXTENSION`**
 * **[Add-SinkSyslog](../sinks/Add-SinkSyslog.md)** - Sends log events to a syslog server over UDP, TCP or TLS **`EXTENSION`**
 * **[Add-SinkEventLog](../sinks/Add-SinkEventLog.md)** - Writes log events into Windows Event Log **`EXTENSION`**
 * **[Add-SinkElasticsearch](../sinks/Add-SinkElasticsearch.md)** - Sends log events to Elasticsearch or Elastic Cloud data streams **`EXTENSION`**
-* **[Add-SinkSeq](https://github.com/PoShLog/PoShLog.Sinks.Seq)** - Writes log messages to Seq [**`EXTENSION`**](https://github.com/PoShLog/PoShLog.Sinks.Seq)
+* **[Add-SinkSeq](../../extensions/PoShLog.Sinks.Seq/README.md)** - Writes log messages to Seq **`EXTENSION`**
+* **[Add-SinkHttp](../../extensions/PoShLog.Sinks.Http/README.md)** - Sends log events to an HTTP endpoint **`EXTENSION`**
 * **[Add-SinkOpenTelemetry](../sinks/Add-SinkOpenTelemetry.md)** - Sends log events over OTLP to an OpenTelemetry Collector or backend **`EXTENSION`**
 * **[Add-SinkMSSqlServer](../sinks/Add-SinkMSSqlServer.md)** - Writes log messages into MSSQL server database [**`EXTENSION`**](https://github.com/PoShLog/PoShLog.Sinks.MSSqlServer)
 
@@ -58,13 +60,15 @@ PoShLog v3 is a compiled binary module. This index preserves the wiki's command 
 
 * **[Get-JsonFormatter](Get-JsonFormatter.md)** - Returns new instance of `Serilog.Formatting.Json.JsonFormatter`
 * **[Get-CompactFormatter](Get-CompactFormatter.md)** - Returns a formatter that writes the Compact Log Event Format (CLEF)
+* **[Set-DefaultMessageFormatter](Set-DefaultMessageFormatter.md)** - Sets the template of the text the Write cmdlets return with `-PassThru`
 
 ## Helpers
 
 * **[Convert-LogFunctions](Convert-LogFunctions.md)** - Converts Write commands in a script into PoShLog commands.
+* **[Get-CurrentLogFiles](Get-CurrentLogFiles.md)** - Returns the paths of the files the logger currently writes to
+* **[Enable-SelfLog](Enable-SelfLog.md)** - Shows Serilog's internal errors, for example a sink that cannot reach its server
+* **[Disable-SelfLog](Disable-SelfLog.md)** - Turns the self log off again
 * **[Get-PoShLogExtension](Get-PoShLogExtension.md)** - Lists the first-party extensions, their commands and the installed version
 * **[Install-PoShLogExtension](Install-PoShLogExtension.md)** - Installs first-party extensions, as prereleases while PoShLog is one
-
-The v3 commands Add-SinkLogger, Get-CurrentLogFiles, Set-DefaultMessageFormatter, Enable-SelfLog and Disable-SelfLog also expose PowerShell help through Get-Help.
 
 See also [write cmdlets](Write-cmdlets.md) and the [v3 migration guide](../guides/migration-v3.md).

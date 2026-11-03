@@ -1,0 +1,11 @@
+/* PoShLog accent: the indigo of the icon, defined for both themes. */
+:root {
+	--sl-color-accent-low: #1e1a4d;
+	--sl-color-accent: #6c63f0;
+	--sl-color-accent-high: #d4d1fc;
+}
+:root[data-theme='light'] {
+	--sl-color-accent-low: #e0defc;
+	--sl-color-accent: #4a3fd6;
+	--sl-color-accent-high: #1f1863;
+}

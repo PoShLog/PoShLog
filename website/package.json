@@ -1,0 +1,20 @@
+{
+  "name": "poshlog-website",
+  "private": true,
+  "type": "module",
+  "description": "The PoShLog documentation website (ADR 0022). Content comes from ../docs.",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "sync": "node scripts/sync-docs.mjs",
+    "dev": "node scripts/sync-docs.mjs && astro dev",
+    "build": "node scripts/sync-docs.mjs && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "0.42.8",
+    "astro": "7.4.5",
+    "sharp": "0.35.5"
+  }
+}

@@ -7,6 +7,9 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 ### Features
 - New `Get-PoShLogExtension` lists the first-party extensions with what they do, their commands and the installed version; `-Online` adds the latest Gallery version.
 - New `Install-PoShLogExtension` installs an extension with `Install-PSResource`, adding `-Prerelease` while PoShLog is a prerelease; supports `-WhatIf`, `-Scope` and non-interactive use.
+- A documentation website (`website/`, Starlight) built from `docs/`, with search, light and dark themes and the build version in the footer; it is not published yet.
+- Reference pages for `Add-SinkLogger`, `Get-CurrentLogFiles`, `Set-DefaultMessageFormatter`, `Enable-SelfLog` and `Disable-SelfLog`.
+- Guides for moving from `Write-Host` and transcripts or from PSFramework, and an FAQ with troubleshooting.
 
 ### Changes
 - PoShLog.Enrichers lists its functions in `FunctionsToExport`, and every extension manifest describes the extension in one line.
