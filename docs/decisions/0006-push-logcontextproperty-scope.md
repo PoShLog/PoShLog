@@ -1,6 +1,6 @@
 # 0006 — Push-LogContextProperty scopes with a script block or a bookmark
 
-- **Status:** proposed
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 
 ## Context

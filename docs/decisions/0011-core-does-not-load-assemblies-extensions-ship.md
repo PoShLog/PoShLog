@@ -1,6 +1,6 @@
 # 0011 — Core does not load assemblies that published extensions ship
 
-- **Status:** proposed
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 - **Amends:** [0003](0003-keep-the-v2-extension-contract.md) ("a newer one satisfies older references")
 

@@ -1,6 +1,6 @@
 # 0007 — Core writes CLEF with its own formatter
 
-- **Status:** proposed
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 
 ## Context

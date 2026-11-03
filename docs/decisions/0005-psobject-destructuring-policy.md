@@ -1,6 +1,6 @@
 # 0005 — Destructure PowerShell objects as PowerShell users see them
 
-- **Status:** proposed
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 
 ## Context
