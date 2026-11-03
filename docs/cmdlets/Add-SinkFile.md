@@ -305,3 +305,10 @@ Optionally enables hooking into log file lifecycle events.
 | Default value: | $null |
 | Accept pipeline input: | False |
 | Accept wildcard characters: | False |
+
+## PowerShell paths (v3)
+
+`-Path` is resolved against the PowerShell FileSystem location at configuration time,
+including custom PSDrives. Native absolute paths stay unchanged; non-FileSystem
+providers are rejected. Both the text and formatter parameter sets use this behavior.
+See [file path examples](../guides/relative-file-paths.md).

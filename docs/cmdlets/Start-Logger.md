@@ -175,3 +175,8 @@ Assigns the created and output logger into the static property `[Serilog.Log]::L
 | Default value: | False |
 | Accept pipeline input: | False |
 | Accept wildcard characters: | False |
+
+## Relative file paths (v3)
+
+Short-form `-FilePath` uses the current PowerShell FileSystem location, just like
+`Add-SinkFile -Path`. See [file paths](../guides/relative-file-paths.md).

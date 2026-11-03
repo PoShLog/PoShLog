@@ -4,6 +4,7 @@ using PoShLog.Core.Sinks;
 using PoShLog.Core.Sinks.Extensions;
 using Serilog;
 using Serilog.Events;
+using PoShLog.Core.Utils;
 
 namespace PoShLog.Core.Cmdlets.Core
 {
@@ -26,7 +27,9 @@ namespace PoShLog.Core.Cmdlets.Core
 		[Parameter(Mandatory = false, ParameterSetName = "Short")]
 		public SwitchParameter PowerShell { get; set; }
 
+		/// <summary>FileSystem path resolved against the current PowerShell location.</summary>
 		[Parameter(Mandatory = false, ParameterSetName = "Short")]
+		[ValidateNotNullOrEmpty]
 		public string FilePath { get; set; }
 
 		[Parameter(Mandatory = false, ParameterSetName = "Short")]
@@ -82,7 +85,7 @@ namespace PoShLog.Core.Cmdlets.Core
 
 				if (filePathBound)
 				{
-					LoggerConfig.WriteTo.File(FilePath, rollingInterval: FileRollingInterval);
+					LoggerConfig.WriteTo.File(ProviderFilePath.Resolve(SessionState, FilePath), rollingInterval: FileRollingInterval);
 				}
 			}
 

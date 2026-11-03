@@ -17,6 +17,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - Error invocation enrichment keeps command names, script paths and line numbers, but no longer logs argument values and source text (`BoundParameters`, `UnboundArguments`, `Line`, `PositionMessage`, `DisplayScriptPosition`), in text and structured output (ADR 0023).
 
 ### Bug fixes
+- Resolve `Add-SinkFile -Path` and `Start-Logger -FilePath` against the current PowerShell FileSystem location, including PSDrives (#41).
 - All seven `Write-*Log` commands emit error-only events with an empty message template, including `-PassThru`.
 - Accept constructed `ErrorRecord` instances without invocation metadata.
 
