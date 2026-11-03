@@ -150,3 +150,11 @@ The theme to apply to the styled output. If not specified, uses `Serilog.Sinks.S
 | Default value: | None |
 | Accept pipeline input: | False |
 | Accept wildcard characters: | False |
+
+## Custom token themes (v3)
+
+Use [New-ConsoleTheme](New-ConsoleTheme.md) to build ANSI or System color themes
+from PowerShell hashtables. Themes distinguish message text, string/number arguments,
+levels and other token types. Optional `-ApplyThemeToRedirectedOutput` forces theme
+application when output is redirected; use an ANSI theme for compatible consumers.
+This switch belongs to the text parameter set. `-Formatter` output does not use `-Theme`.

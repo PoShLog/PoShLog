@@ -30,3 +30,4 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0026](0026-powershell-file-paths.md) | Resolve file sink paths through the PowerShell provider | Proposed |
 | [0027](0027-conditional-sublogger-expressions.md) | Filter sublogger routing with Serilog expressions | Proposed |
 | [0028](0028-json-logger-configuration.md) | Load a Serilog JSON configuration snapshot | Proposed |
+| [0029](0029-custom-console-token-themes.md) | Build custom Serilog console token themes | Proposed |

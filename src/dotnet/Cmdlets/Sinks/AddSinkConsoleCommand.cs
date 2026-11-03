@@ -36,6 +36,10 @@ namespace PoShLog.Core.Cmdlets.Sinks
 		[Parameter(Mandatory = false)]
 		public ConsoleTheme Theme { get; set; }
 
+		/// <summary>Apply the selected theme even when console output is redirected.</summary>
+		[Parameter(ParameterSetName = "Default")]
+		public SwitchParameter ApplyThemeToRedirectedOutput { get; set; }
+
 		[Parameter(Mandatory = false, ParameterSetName = "Formatter")]
 		public ITextFormatter Formatter { get; set; }
 
@@ -57,7 +61,8 @@ namespace PoShLog.Core.Cmdlets.Sinks
 						formatProvider: FormatProvider,
 						levelSwitch: LevelSwitch,
 						standardErrorFromLevel: StandardErrorFromLevel,
-						theme: Theme);
+						theme: Theme,
+						applyThemeToRedirectedOutput: ApplyThemeToRedirectedOutput.IsPresent);
 					break;
 			}
 

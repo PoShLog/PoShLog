@@ -86,7 +86,7 @@ CmdletsToExport = 'Write-DebugLog', 'Write-ErrorLog', 'Write-FatalLog', 'Write-I
                'Get-CurrentLogFiles', 'Set-DefaultMessageFormatter',
                'Enable-SelfLog', 'Disable-SelfLog',
                'Push-LogContextProperty', 'Get-CompactFormatter',
-               'Get-PoShLogExtension', 'Install-PoShLogExtension'
+               'Get-PoShLogExtension', 'Install-PoShLogExtension', 'New-ConsoleTheme'
 
 # Variables to export from this module
 # VariablesToExport = @()

@@ -73,6 +73,10 @@ PoShLog v3 is a compiled binary module. This index preserves the wiki's command 
 
 See also [write cmdlets](Write-cmdlets.md) and the [v3 migration guide](../guides/migration-v3.md).
 
+## Console themes
+
+* **[New-ConsoleTheme](New-ConsoleTheme.md)** - Builds an ANSI or System color theme for console tokens.
+
 ## Configuration guides
 
 * [Relative file paths](../guides/relative-file-paths.md)
