@@ -1,6 +1,8 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('InRepo', 'Published')]
+    # InRepo: extensions built from this repo. Published: our own published extensions (blocking).
+    # ThirdParty: other authors' published sinks, a non-blocking check (ADR 0009).
+    [ValidateSet('InRepo', 'Published', 'ThirdParty')]
     [string]$Mode = 'InRepo',
     [string]$GalleryPath = (Join-Path $PSScriptRoot '../../.compat/gallery')
 )
@@ -12,17 +14,21 @@ $modules = [ordered]@{
     'PoShLog.Sinks.EventLog' = '1.0.0'
     'PoShLog.Sinks.Http' = '1.0.1'
 }
+$fromGallery = $Mode -ne 'InRepo'
+if ($fromGallery -and $env:GITHUB_ACTIONS -ne 'true') {
+    throw 'Published extensions may only be downloaded and executed in GitHub Actions.'
+}
 if ($Mode -eq 'Published') {
-    if ($env:GITHUB_ACTIONS -ne 'true') {
-        throw 'Published extensions may only be downloaded and executed in GitHub Actions.'
-    }
     $modules['PoShLog.Sinks.Exceptionless'] = '1.0.0'
+}
+if ($Mode -eq 'ThirdParty') {
+    $modules = [ordered]@{}
     $modules['PoShLog.Sinks.Syslog'] = '1.0.0'
     $modules['PoShLog.Sinks.DataDog'] = '0.1.1'
     $modules['PoShLog.Sinks.ElmahIo'] = '4.0.4'
     $modules['PoShLog.Sinks.Splunk'] = '1.0.4'
-    New-Item -ItemType Directory -Force $GalleryPath | Out-Null
 }
+if ($fromGallery) { New-Item -ItemType Directory -Force $GalleryPath | Out-Null }
 # Published modules that cannot load on a platform with any PoShLog version (their own defect, not a v3 break).
 $knownBroken = @{
     'PoShLog.Sinks.DataDog' = @{
@@ -36,13 +42,13 @@ foreach ($name in $modules.Keys) {
         Write-Output "SKIP $name (Windows only)"
         continue
     }
-    $reason = if ($Mode -eq 'Published' -and $knownBroken.ContainsKey($name)) { $knownBroken[$name][$platform] }
+    $reason = if ($fromGallery -and $knownBroken.ContainsKey($name)) { $knownBroken[$name][$platform] }
     if ($reason) {
         Write-Output "SKIP $name (known broken on ${platform}: $reason)"
         if ($env:GITHUB_ACTIONS -eq 'true') { Write-Output "::warning title=Compatibility $name skipped on ${platform}::$reason" }
         continue
     }
-    if ($Mode -eq 'Published') {
+    if ($fromGallery) {
         # Save exact versions without dependencies, so Gallery cannot substitute an older Core.
         $version = $modules[$name]
         $directory = Join-Path $GalleryPath "$name/$version"

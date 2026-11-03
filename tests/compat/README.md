@@ -12,22 +12,23 @@ file sink receives the unique event. Seq and Http must also deliver that event t
 on loopback. Enrichers must add environment and process properties. EventLog is Windows-only
 and builds its sink configuration without creating an event source or writing to the log.
 
-Published mode is restricted to GitHub Actions. It downloads exact package versions without
-resolving Gallery dependencies, then explicitly imports freshly built Core first. The reusable
-compat.yml workflow runs InRepo and Published on Windows and Linux. CI and the manual release
-workflow both depend on it; any download, import, configuration or delivery failure fails the job.
+Published and ThirdParty modes are restricted to GitHub Actions. They download exact package
+versions without resolving Gallery dependencies, then explicitly import freshly built Core first.
+The reusable compat.yml workflow runs all three modes on Windows and Linux. InRepo and Published
+(our own published extensions) block CI and the manual release workflow. ThirdParty (other
+authors' sinks) runs with continue-on-error: failures are annotated but gate nothing (ADR 0009).
 
-| Published module | Version | Assertion |
+| Published module (mode) | Version | Assertion |
 |---|---|---|
-| PoShLog.Enrichers | 1.0.0 | Enriched event in file |
-| PoShLog.Sinks.Seq | 1.0.0 | Event at loopback HTTP listener |
-| PoShLog.Sinks.EventLog | 1.0.0 | Import and sink configuration, Windows only |
-| PoShLog.Sinks.Http | 1.0.1 | Event at loopback HTTP listener |
-| PoShLog.Sinks.Exceptionless | 1.0.0 | Event at loopback HTTP listener |
-| PoShLog.Sinks.Syslog | 1.0.0 | Event at loopback UDP listener |
-| PoShLog.Sinks.DataDog | 0.1.1 | Event at loopback HTTP listener; skipped on Linux (RootModule case mismatch in its manifest, fails with any PoShLog version) |
-| PoShLog.Sinks.ElmahIo | 4.0.4 | Import and sink configuration; wrapper has no endpoint override |
-| PoShLog.Sinks.Splunk | 1.0.4 | Event at loopback HTTP listener |
+| PoShLog.Enrichers (Published) | 1.0.0 | Enriched event in file |
+| PoShLog.Sinks.Seq (Published) | 1.0.0 | Event at loopback HTTP listener |
+| PoShLog.Sinks.EventLog (Published) | 1.0.0 | Import and sink configuration, Windows only |
+| PoShLog.Sinks.Http (Published) | 1.0.1 | Event at loopback HTTP listener |
+| PoShLog.Sinks.Exceptionless (Published) | 1.0.0 | Event at loopback HTTP listener |
+| PoShLog.Sinks.Syslog (ThirdParty) | 1.0.0 | Event at loopback UDP listener |
+| PoShLog.Sinks.DataDog (ThirdParty) | 0.1.1 | Event at loopback HTTP listener; skipped on Linux (RootModule case mismatch in its manifest, fails with any PoShLog version) |
+| PoShLog.Sinks.ElmahIo (ThirdParty) | 4.0.4 | Import and sink configuration; wrapper has no endpoint override |
+| PoShLog.Sinks.Splunk (ThirdParty) | 1.0.4 | Event at loopback HTTP listener |
 
 No real credentials are used. Cloud endpoints are not contacted. Only processes and listeners
 created by the suite are closed. The driver imposes a per-module timeout; delivery assertions

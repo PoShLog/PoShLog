@@ -15,11 +15,13 @@ jobs:
     name: Extensions (${{ matrix.os }}, ${{ matrix.mode }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
+    # Other authors' sinks are a non-blocking check (ADR 0009): failures are annotated, releases are not gated.
+    continue-on-error: ${{ matrix.mode == 'ThirdParty' }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        mode: [InRepo, Published]
+        mode: [InRepo, Published, ThirdParty]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4

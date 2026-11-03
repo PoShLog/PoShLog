@@ -1,6 +1,6 @@
 # 0003 — v3 keeps the v2 extension contract
 
-- **Status:** accepted (Tomáš, 2026-11-03)
+- **Status:** accepted (Tomáš, 2026-11-03); amended by [0009](0009-first-party-sinks-third-party-check-non-blocking.md), [0010](0010-v2-maintenance-line.md)
 - **Date:** 2026-11-03
 
 ## Context

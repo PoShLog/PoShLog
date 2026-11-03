@@ -50,6 +50,11 @@ public sealed class CompatHttpListener : IDisposable
                     context.Response.Close();
                 }
                 catch (Exception) when (!_listener.IsListening) { break; }
+                catch (Exception)
+                {
+                    // A client that drops its connection mid-request (a sink flushing on shutdown) must not end the
+                    // loop: the next request still has to be served. Delivery is asserted from Bodies, not here.
+                }
             }
         });
     }
@@ -58,6 +63,13 @@ public sealed class CompatHttpListener : IDisposable
     {
         _listener.Stop();
         _listener.Close();
-        _worker.GetAwaiter().GetResult();
+        try
+        {
+            _worker.GetAwaiter().GetResult();
+        }
+        catch (Exception)
+        {
+            // Teardown only: a pending GetContextAsync or response write aborted by Stop() is expected.
+        }
     }
 }
