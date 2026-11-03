@@ -6,6 +6,7 @@ Writes log events to another logger, a sub-logger, where they are processed furt
 Add-SinkLogger
     -LoggerConfig <LoggerConfiguration>
     -Logger <ILogger>
+    [-Filter <string>]
     [-RestrictedToMinimumLevel <LogEventLevel>]
     [<CommonParameters>]
 ```
@@ -92,3 +93,13 @@ The minimum level of the events passed to the sub-logger.
 ## Outputs
 
 `Serilog.LoggerConfiguration`, so the pipeline can continue.
+
+## Conditional routing (v3)
+
+Optional `-Filter <string>` accepts a Serilog expression, for example
+`-Filter 'Send = true'`. Only events evaluating to Boolean true reach this sublogger;
+other sinks are unaffected. It composes with `-RestrictedToMinimumLevel` and the
+parent and child minimum levels. Invalid expressions fail during configuration.
+The string is compiled once and needs no PowerShell runspace during logging.
+The caller retains ownership of `-Logger` and must dispose it after closing the parent.
+See [conditional sinks](../guides/conditional-sinks.md) for a complete example.

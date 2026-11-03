@@ -1,6 +1,7 @@
 using System.Management.Automation;
 using Serilog;
 using Serilog.Events;
+using PoShLog.Core.Utils;
 
 namespace PoShLog.Core.Cmdlets.Sinks
 {
@@ -20,14 +21,26 @@ namespace PoShLog.Core.Cmdlets.Sinks
 		[Parameter(Mandatory = true)]
 		public ILogger Logger { get; set; }
 
+		/// <summary>A Serilog expression; only events evaluating to true reach this sublogger.</summary>
+		[Parameter]
+		[ValidateNotNullOrEmpty]
+		public string Filter { get; set; }
+
 		[Parameter(Mandatory = false)]
 		public LogEventLevel RestrictedToMinimumLevel { get; set; } = LogEventLevel.Verbose;
 
 		protected override void ProcessRecord()
 		{
-			LoggerConfig.WriteTo.Logger(
-				Logger,
-				restrictedToMinimumLevel: RestrictedToMinimumLevel);
+			if (Filter != null)
+			{
+				// Compile during configuration. Evaluation uses no PowerShell runspace on logging threads.
+				LoggerConfig.WriteTo.Conditional(ExpressionFilter.Compile(Filter),
+					writeTo => writeTo.Logger(Logger, restrictedToMinimumLevel: RestrictedToMinimumLevel));
+			}
+			else
+			{
+				LoggerConfig.WriteTo.Logger(Logger, restrictedToMinimumLevel: RestrictedToMinimumLevel);
+			}
 
 			WriteObject(LoggerConfig);
 		}
