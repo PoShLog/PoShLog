@@ -11,6 +11,10 @@ PowerShell 7. v3 keeps its own changelog on `master`.
   remain available in the default parameter set.
 
 ### Bug fixes
+- `Convert-LogFunctions` now uses the PowerShell AST, leaves strings, comments and `Write-Error` untouched,
+  and skips calls that require manual migration. It reports proposed changes, supports `-WhatIf`/`-Confirm`,
+  backs up the original to `.bak` (requires `-Force` to replace a backup), and preserves Unicode encoding,
+  BOM and line endings. Parse errors, invalid encoding and files changed during inspection are refused.
 - Calculated property values from `Select-Object` no longer recursively expand PowerShell wrapper members when
   logged with `{@Property}` (#46). Formatting and `-PassThru` use the unwrapped value.
 - The PowerShell sink now transcribes Error and Fatal events as red host information records on Windows
