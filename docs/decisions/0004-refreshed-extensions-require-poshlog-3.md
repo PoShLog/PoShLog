@@ -29,6 +29,10 @@ assemblies no newer than the ones Core ships. ADR 0001's Serilog-major rule appl
 only; published third-party and v2-era extensions are governed by ADR 0003. Users who stay on PoShLog 2.x keep the
 extension's 1.0.x version.
 
+**Note (2026-11-03):** Tomáš decided that the refreshed PoShLog.Sinks.Seq, PoShLog.Sinks.EventLog,
+PoShLog.Sinks.Http and PoShLog.Enrichers ship as **2.0.0**: requiring PowerShell 7.4 and PoShLog 3 is a breaking
+change. PoShLog 2.x users stay on their 1.0.x line.
+
 ## Alternatives considered
 
 - **Keep `RequiredModules` 2.0.0 (ADR 0002 as written).** One version for both lines, but on PowerShell 7 with

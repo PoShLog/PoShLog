@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0 — unreleased
+## 2.0.0 — unreleased
 
 ### Changes
 - Build from the PoShLog monorepo with refreshed Serilog 4 dependencies.
