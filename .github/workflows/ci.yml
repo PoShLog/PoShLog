@@ -135,9 +135,14 @@ jobs:
       - name: Publish Core
         run: dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
       - name: Install PowerShell 7.4
-        run: dotnet tool install PowerShell --version '7.4.*' --tool-path ./.tools/powershell74
+        shell: bash
+        run: |
+          # A relative tool path in a custom shell resolves against the dotnet root, so install to an absolute
+          # path and put it first on PATH; the next step checks that it really runs 7.4.
+          dotnet tool install PowerShell --version '7.4.*' --tool-path "$RUNNER_TEMP/powershell74"
+          echo "$RUNNER_TEMP/powershell74" >> "$GITHUB_PATH"
       - name: Install Pester and run suite under PowerShell 7.4
-        shell: './.tools/powershell74/pwsh -NoLogo -NoProfile -File {0}'
+        shell: 'pwsh -NoLogo -NoProfile -File {0}'
         run: |
           $ErrorActionPreference = 'Stop'
           $PSVersionTable.PSVersion
