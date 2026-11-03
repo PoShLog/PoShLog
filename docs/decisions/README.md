@@ -15,3 +15,4 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0009](0009-first-party-sinks-third-party-check-non-blocking.md) | First-party sinks; other authors' sinks are a non-blocking check | accepted |
 | [0010](0010-v2-maintenance-line.md) | v2 stays a maintained line for Windows PowerShell 5.1 | accepted |
 | [0011](0011-core-does-not-load-assemblies-extensions-ship.md) | Core does not load assemblies that published extensions ship | proposed |
+| [0012](0012-otlp-sink-design.md) | The OpenTelemetry sink: a compiled cmdlet, OTLP/HTTP by default, parameters before environment | proposed |

@@ -8,12 +8,12 @@ dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib --configfile
 ./tests/compat/Invoke-Compatibility.ps1 -Mode InRepo
 ```
 
-Run Build-Extension.ps1 for each of the four module directories before the compatibility suite.
+Run Build-Extension.ps1 for each of the five module directories before the compatibility suite.
 The build restores only from nuget.org, stages publish output, and copies runtime dependencies
 into lib/ while excluding Core's Serilog, File and Console assemblies. No binaries are committed.
 Stage-Module.ps1 assembles a publishable module under artifacts/ from these outputs.
 
-Each extension requires PoShLog >= 2.0.0 by GUID. The refreshed dependencies share Serilog 4
+Each imported extension requires PoShLog >= 2.0.0 by GUID; PoShLog.Sinks.OpenTelemetry is new and requires 3.0.0 (ADR 0004). The refreshed dependencies share Serilog 4
 with v3 Core; the minimum preserves the v2 manifest contract, but does not guarantee that
 every new sink package supports every v2 runtime. These refreshed releases require PowerShell 7.4+.
 
@@ -33,3 +33,6 @@ Get-ApiKeyHttpClient command and the published binary module's GUID from Metadat
 Its Add-SinkHttp wrapper uses Serilog 4 batching to preserve QueueLimit as an event count;
 Http 9's own queue limit is in bytes. Its client also retains the earlier HttpContent overload.
 Seq retains the Compact parameter through the new payload formatter API.
+
+PoShLog.Sinks.OpenTelemetry was written here, not imported. Its cmdlet is compiled from Dependencies.csproj, and its
+psm1 reuses Protobuf and gRPC assemblies another module already loaded (ADR 0012).

@@ -19,6 +19,7 @@ You can see all Serilog (the C# library PoShLog is built upon) sinks [here](http
 * [**Add-SinkExceptionless**](Add-SinkExceptionless.md)
 * [**Add-SinkMSSqlServer**](Add-SinkMSSqlServer.md)
 * [**Add-SinkNotepad**](Add-SinkNotepad.md)
+* [**Add-SinkOpenTelemetry**](Add-SinkOpenTelemetry.md) - OTLP to Seq, Grafana, Aspire, Datadog, Splunk, Elastic or any OpenTelemetry Collector
 * [**Add-SinkSeq**](https://github.com/PoShLog/PoShLog.Sinks.Seq)
 * [**Add-SinkSyslog**](https://github.com/gitbute/PoShLog.Sinks.Syslog)
 
