@@ -1,5 +1,5 @@
 #Requires -Version 7.4
-# Structured logging of PowerShell objects: issues #46 and #48 (ADRs 0005 and 0007).
+# Structured logging of PowerShell objects: issues #46, #34 and #48 (ADRs 0005-0007).
 
 BeforeAll {
 	$script:manifest = (Resolve-Path "$PSScriptRoot\..\src\PoShLog.psd1").Path
@@ -49,6 +49,35 @@ Describe 'PSObject destructuring (#46)' {
 		Close-Logger
 
 		Get-Content $script:log -Raw | Should -BeLike '*Processed {"Latitude":25,"Longitude":134}*'
+	}
+}
+
+Describe 'Push-LogContextProperty (#34)' {
+	BeforeEach {
+		$script:log = Join-Path $TestDrive "context-$([guid]::NewGuid()).log"
+		New-Logger | Add-EnrichFromLogContext | Add-SinkFile -Path $script:log -Formatter (Get-CompactFormatter) | Start-Logger
+	}
+	AfterEach { Close-Logger }
+
+	It 'adds the property inside the script block and removes it afterwards' {
+		Push-LogContextProperty -Name RunId -Value 42 -ScriptBlock { Write-InfoLog 'inside' }
+		Write-InfoLog 'outside'
+		Close-Logger
+
+		$events = Get-Content $script:log | ConvertFrom-Json
+		$events[0].RunId | Should -Be 42
+		$events[1].PSObject.Properties.Name | Should -Not -Contain 'RunId'
+	}
+
+	It 'returns a bookmark that removes the property when disposed' {
+		$bookmark = Push-LogContextProperty Job nightly
+		try { Write-InfoLog 'with job' } finally { $bookmark.Dispose() }
+		Write-InfoLog 'without job'
+		Close-Logger
+
+		$events = Get-Content $script:log | ConvertFrom-Json
+		$events[0].Job | Should -Be 'nightly'
+		$events[1].PSObject.Properties.Name | Should -Not -Contain 'Job'
 	}
 }
 

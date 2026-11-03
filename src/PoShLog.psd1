@@ -85,7 +85,7 @@ CmdletsToExport = 'Write-DebugLog', 'Write-ErrorLog', 'Write-FatalLog', 'Write-I
                'Add-SinkConsole', 'Add-SinkFile', 'Add-SinkPowerShell', 'Add-SinkLogger',
                'Get-CurrentLogFiles', 'Set-DefaultMessageFormatter',
                'Enable-SelfLog', 'Disable-SelfLog',
-               'Get-CompactFormatter'
+               'Push-LogContextProperty', 'Get-CompactFormatter'
 
 # Variables to export from this module
 # VariablesToExport = @()

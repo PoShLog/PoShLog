@@ -9,4 +9,5 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0003](0003-keep-the-v2-extension-contract.md) | v3 keeps the v2 extension contract | accepted |
 | [0004](0004-refreshed-extensions-require-poshlog-3.md) | Refreshed extensions require PoShLog 3 | proposed |
 | [0005](0005-psobject-destructuring-policy.md) | Destructure PowerShell objects as PowerShell users see them | proposed |
+| [0006](0006-push-logcontextproperty-scope.md) | Push-LogContextProperty scopes with a script block or a bookmark | proposed |
 | [0007](0007-clef-formatter-in-core.md) | Core writes CLEF with its own formatter | proposed |

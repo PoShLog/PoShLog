@@ -138,7 +138,7 @@ Write-InfoLog 'Checked {@Service}' -PropertyValues $service
 - An object that refers back to itself is cut with `"[Circular]"`, and nesting stops at 10 levels.
 - Other .NET objects (`Get-Item`, `Get-Service` without `Select-Object`) are logged with all their public properties, which can be a lot. Select the properties you need, or lower the depth with `$config.Destructure.ToMaximumDepth(3)` on the configuration from `New-Logger`.
 
-The rules are in [ADR 0005](decisions/0005-psobject-destructuring-policy.md).
+To add the same property to every event in a block of code, see [`Push-LogContextProperty`](cmdlets/Push-LogContextProperty.md). The rules are in [ADR 0005](decisions/0005-psobject-destructuring-policy.md).
 
 ## Close logger
 
