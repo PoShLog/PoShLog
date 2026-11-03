@@ -1,6 +1,6 @@
 # 0001 — v3 is a binary module on net8.0 for PowerShell 7.4+
 
-- **Status:** proposed (awaiting Tomáš)
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 
 ## Context

@@ -1,6 +1,6 @@
 # 0003 — v3 keeps the v2 extension contract
 
-- **Status:** proposed (awaiting Tomáš)
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 
 ## Context

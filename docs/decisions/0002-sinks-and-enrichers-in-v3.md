@@ -1,6 +1,6 @@
 # 0002 — Which sinks and enrichers v3 keeps
 
-- **Status:** proposed (awaiting Tomáš)
+- **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 
 ## Context
