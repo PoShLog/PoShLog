@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://poshlog.github.io
+    about: Browse the PoShLog documentation.
+  - name: Questions
+    url: https://github.com/PoShLog/PoShLog/discussions
+    about: Ask a question in GitHub Discussions.
+  - name: Choosing v2 or v3
+    url: https://github.com/PoShLog/PoShLog/blob/master/docs/v2-or-v3.md
+    about: Find the right PoShLog version for your PowerShell environment.

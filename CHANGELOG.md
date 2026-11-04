@@ -8,6 +8,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - No new features.
 
 ### Changes
+- Add GitHub issue forms and a pull request template to help contributors provide triage details.
 - `Add-SinkLogger -Filter` and JSON `ByIncludingOnly`/`ByExcluding` filters use an expression engine built into PoShLog. The module no longer ships a separate Serilog.Expressions.dll, so filters cannot conflict with other modules that load their own copy (ADR 0032).
 - The module now includes the Apache-2.0 licence and a notice for the incorporated Serilog.Expressions.
 
