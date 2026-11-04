@@ -65,11 +65,21 @@ PowerShell references are compile-only for each target. The package never ships 
 - One Serilog identity and the `LoggerConfiguration` pipeline contract (ADR 0003) are preserved.
 - No changes to `powershell.exe.config`, the GAC or machine-wide binding policy.
 - No global binding redirects and no "first DLL wins" resolver.
-- An `AssemblyResolve` handler, if one is needed, answers only for assembly names that PoShLog ships in its own
-  Desktop folder, and only with a version at least as high as the one requested. It must not substitute another
-  module's assembly or a lower version.
+- The loader registers one `AssemblyResolve` handler. It is compiled code in Core's Desktop build, not a script block.
+  It answers only for the assemblies Core owns and shares: Serilog, Serilog.Sinks.File, Serilog.Sinks.Console and the
+  out-of-band System.* packages Core ships on Desktop (Tomáš, 2026-11-04).
+  - For such a name it returns the copy already loaded from Core's Desktop folder, or loads that copy, and only when
+    that copy's version is greater than or equal to the requested version.
+  - Every other request and every lower version stays unresolved. The handler never substitutes another module's
+    assembly, so there is still no "first DLL wins".
+  - This is what lets the published v2-era extensions (1.x Seq, Http, Enrichers, EventLog, Exceptionless and others)
+    run with v3 Core on Desktop. On .NET Framework a strong-named reference to an older Serilog does not roll forward to
+    the loaded Serilog 4 the way it does on .NET.
 - Core owns the shared out-of-band System.* packages on Desktop. Desktop extension builds do not ship their own copies
   (in the spirit of ADR 0011).
+- **Loader guards.** The loader stops with a clear error, before it loads any Core assembly, when:
+  - PoShLog 2.x is already loaded in the session;
+  - another module has already loaded a Serilog older than Core's.
 
 **Desktop feature set, phase 1.**
 
@@ -118,6 +128,8 @@ preferably compile-time only. They do not replace runtime isolation or coexisten
 - Clean-process import-order tests run both orders (PoShLog first and other module first) with the other first-party
   extensions and with pinned versions of Az, PnP.PowerShell and PSFramework. A synthetic DI fixture does not replace
   them.
+- The `powershell.exe` job also runs the Published compat suite (`tests/compat`) with the published 1.x extensions in
+  both import orders, plus the two loader guard cases (PoShLog 2.x loaded first, an older Serilog loaded first).
 - The modern suite, the PowerShell 7.4 minimum-host check and the later PowerShell versions stay green.
 - Each target's resolved transitive packages are recorded, and the shipping files are inspected. Compilation alone
   does not establish support.
@@ -140,6 +152,13 @@ preferably compile-time only. They do not replace runtime isolation or coexisten
 
 - One source tree serves both editions, but the first Desktop release has explicit feature limits. Docs and release
   notes do not advertise full parity or promise coexistence with arbitrary third-party assembly versions.
+- ADR 0003's assumption that a newer Serilog satisfies older references holds on PowerShell 7 (.NET) only. On Desktop
+  it is provided by the resolver above and by nothing else.
+- **Upgrade path.** Once a stable v3 supports Desktop, `Update-Module PoShLog` moves Windows PowerShell users from 2.3
+  to v3 together with its breaking changes. That release needs:
+  - a migration guide;
+  - a CHANGELOG entry that announces Desktop support as a major change;
+  - documentation of pinning v2 with `-RequiredVersion 2.3.0`.
 - The packaging and the manifest change shape (a script loader as `RootModule`). The release and integration
   workflows must stage and test both folders.
 - After this decision is accepted, `release/2.x` takes bug and security fixes only. Its current baseline is 2.3.0.
