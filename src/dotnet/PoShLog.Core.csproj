@@ -41,5 +41,8 @@
           Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <Import Project="ShadeExpressions.targets" />
+  <PropertyGroup>
+    <!-- ADR 0032: the ILRepack package imports this file instead of its default merge-everything target. -->
+    <ILRepackTargetsFile>$(MSBuildProjectDirectory)/ShadeExpressions.targets</ILRepackTargetsFile>
+  </PropertyGroup>
 </Project>

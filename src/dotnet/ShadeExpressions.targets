@@ -1,8 +1,6 @@
 <Project>
-  <PropertyGroup>
-    <!-- Disable the package's automatic merge: only Expressions belongs in Core. -->
-    <ILRepackTargetsFile>$(MSBuildThisFileDirectory)RepackDisabled.targets</ILRepackTargetsFile>
-  </PropertyGroup>
+  <!-- Imported by ILRepack.Lib.MSBuild.Task through ILRepackTargetsFile (PoShLog.Core.csproj); its presence turns off
+       the package's default Release target, which would merge every output assembly, Serilog included. -->
   <Target Name="ShadeExpressionEngine" AfterTargets="Build">
     <ItemGroup>
       <!-- Always use the original compiler output, including incremental builds. -->

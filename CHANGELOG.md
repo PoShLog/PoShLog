@@ -2,10 +2,17 @@
 
 All notable changes to PoShLog, newest first. Older releases: see the GitHub releases and `releaseNotes/` in the v2 history.
 
-## 3.0.0-preview4 — Unreleased
+## Unreleased
+
+### Features
+- No new features.
 
 ### Changes
-- `-Filter` no longer loads a separate Serilog.Expressions assembly, which avoids conflicts with other modules (ADR 0032).
+- `Add-SinkLogger -Filter` and JSON `ByIncludingOnly`/`ByExcluding` filters use an expression engine built into PoShLog. The module no longer ships a separate Serilog.Expressions.dll, so filters cannot conflict with other modules that load their own copy (ADR 0032).
+- The module now includes the Apache-2.0 licence and a notice for the incorporated Serilog.Expressions.
+
+### Bug fixes
+- None.
 
 ## 3.0.0-preview3 — 2026-11-04
 
