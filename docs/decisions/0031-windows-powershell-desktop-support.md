@@ -80,12 +80,29 @@ PowerShell references are compile-only for each target. The package never ships 
   they fail with a clear "not supported on Windows PowerShell" error and never load Serilog.Expressions into the shared
   AppDomain.
 - MSSqlServer stays PowerShell 7.4+ only and keeps its private `AssemblyLoadContext`. A Desktop SQL implementation
-  needs a separate design and decision.
+  needs a separate design and decision (see phase 2).
 - Core goes first. Enrichers, Seq, EventLog, Splunk.Hec and Http follow once Core loads cleanly, each after its own
   Desktop runtime tests pass. Elastic, OpenTelemetry (HTTP/protobuf only; no gRPC claim) and Syslog (needs a tested
   Framework implementation of connection timeouts, TLS validation and transport disposal) come later.
 - The extension catalog (ADR 0021) and the docs mark which extensions support Desktop. An extension's manifest adds
   `Desktop` only when its Desktop build ships.
+
+**Own code before isolation** (Tomáš, 2026-11-04). When a dependency would risk assembly collisions on Desktop, first
+evaluate replacing that piece with PoShLog's own code on inbox .NET Framework APIs or on assemblies Core already
+shares. Small code of our own cannot conflict, and isolation without an `AssemblyLoadContext` is fragile. Isolating or
+shading the dependency comes second, and the record for that feature says why our own code was not enough.
+
+**Desktop feature set, phase 2 (routes under validation).** Each feature below gets its own ADR after its spike. Until
+that ADR is accepted, the phase 1 "not supported" error stays.
+
+- **`Add-SinkLogger -Filter` (spike A).** Preferred route: shade Serilog.Expressions into a PoShLog assembly with
+  ILRepack `/internalize`, so that its public types disappear. Its public `Serilog.LoggerSinkConfigurationExtensions`
+  would otherwise shadow the type of the same name in Exceptionless 1.0.0, which is why it is isolated today
+  (ADR 0027). Fallback: an exact-version resolver that answers only for the Serilog.Expressions build PoShLog ships.
+- **MSSqlServer (spike B).** Preferred route: PoShLog's own Desktop sink on the inbox `System.Data.SqlClient`. It
+  writes with `SqlBulkCopy` through Serilog batching and authenticates with a SQL login, Windows integrated security
+  or an AccessToken. Fallback: an out-of-process worker. Shading Microsoft.Data.SqlClient is rejected: it brings about
+  60 assemblies and a native SNI.
 
 Polyfills (for example Meziantou.Polyfill or small helpers) are allowed only for demonstrated gaps, pinned, and
 preferably compile-time only. They do not replace runtime isolation or coexistence tests.
