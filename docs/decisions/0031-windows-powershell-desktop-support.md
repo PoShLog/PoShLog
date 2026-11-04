@@ -2,8 +2,8 @@
 
 - **Status:** Proposed
 - **Date:** 2026-11-04
-- **Amends:** [0001](0001-binary-module-net8-powershell-7-4.md)
-  (add a Desktop build without changing the PowerShell 7.4 floor for Core hosts),
+- **Amends:** [0033](0033-net10-powershell-7-6.md), which superseded 0001
+  (add a Desktop build without changing the PowerShell 7.6 floor for Core hosts),
   [0003](0003-keep-the-v2-extension-contract.md)
   (define the Desktop compatibility boundary),
   [0010](0010-v2-maintenance-line.md)
@@ -37,28 +37,33 @@ though:
 - `JsonLoggerConfiguration` discovers configuration methods by filtering `AppDomain` assemblies through
   `AssemblyLoadContext.Default`; that filter has no Desktop equivalent.
 
-PowerShell 7.4, 7.5 and 7.6 run on .NET 8, 9 and 10. Replacing net8.0 with net10.0 would exclude supported hosts.
+Since ADR 0033 (2026-11-04) the Core build targets net10.0 and PowerShell 7.6+: PowerShell 7.4 and 7.5 reach end of
+support with .NET 8 and 9 on 2026-11-10. The contributor raised the same point.
 
 ## Decision
 
-Maintain one v3 source tree that builds **net472** and **net8.0**.
+Maintain one v3 source tree that builds **net472** and **net10.0** (`<TargetFrameworks>net472;net10.0</TargetFrameworks>`).
 
 - The supported Desktop host is Windows PowerShell 5.1 on .NET Framework 4.7.2 or later (4.8/4.8.1 recommended).
-  An actual 4.6.2 runtime is out of scope; supporting it needs its own runtime test and a new record.
-- net8.0 stays the build for PowerShell 7.4+. Both targets are concrete external constraints on the global net10.0
-  default and are stated in the project files.
+  An actual 4.6.2 runtime is out of scope; supporting it needs its own runtime test and a new record. The contributor
+  confirmed net472 over net462 (2026-11-04).
+- net10.0 is the build for PowerShell 7.6+ (ADR 0033). net472 is a concrete external constraint on the global
+  net10.0 default (Windows PowerShell runs only on .NET Framework) and is stated in the project files.
 
 **Packaging.** Each target lives in its own folder (`lib/Desktop`, `lib/Core` or per-TFM names). The manifest declares
-`CompatiblePSEditions = 'Desktop', 'Core'` and `PowerShellVersion = '5.1'`; its `RootModule` becomes a small
-script loader compatible with 5.1, following the EventLog 1.0.x edition loader. The loader:
+`CompatiblePSEditions = 'Desktop', 'Core'` and `PowerShellVersion = '5.1'`. A manifest cannot branch on `$PSEdition`,
+so its `RootModule` becomes a small script loader, `PoShLog.psm1`, compatible with 5.1, as in PoShLog 2.x and the
+EventLog 1.0.x edition loader. The loader:
 
 - selects the build by `$PSEdition`;
 - checks the .NET Framework floor on Desktop;
-- rejects Core hosts older than 7.4 with a clear message;
+- rejects Core hosts older than 7.6 with a clear message;
 - imports the selected binary module and re-exports exactly its commands, aliases and the existing exports;
 - never loads assemblies from both folders.
 
-PowerShell references are compile-only for each target. The package never ships System.Management.Automation.
+PowerShell references are compile-only and per target: `Microsoft.PowerShell.5.1.ReferenceAssemblies` for net472 and
+System.Management.Automation 7.6 (`Microsoft.PowerShell.SDK` 7.6.x, as on master) for net10.0. Not
+PowerShellStandard.Library. The package never ships System.Management.Automation.
 
 **Assembly resolution on Desktop.**
 
@@ -89,7 +94,7 @@ PowerShell references are compile-only for each target. The package never ships 
 - Not supported: expression filters (`Add-SinkLogger -Filter`, expression-based JSON `Filter` entries). On Desktop
   they fail with a clear "not supported on Windows PowerShell" error and never load Serilog.Expressions into the shared
   AppDomain.
-- MSSqlServer stays PowerShell 7.4+ only and keeps its private `AssemblyLoadContext`. A Desktop SQL implementation
+- MSSqlServer stays PowerShell 7.6+ only and keeps its private `AssemblyLoadContext`. A Desktop SQL implementation
   needs a separate design and decision (see phase 2).
 - Core goes first. Enrichers, Seq, EventLog, Splunk.Hec and Http follow once Core loads cleanly, each after its own
   Desktop runtime tests pass. Elastic, OpenTelemetry (HTTP/protobuf only; no gRPC claim) and Syslog (needs a tested
@@ -130,17 +135,22 @@ preferably compile-time only. They do not replace runtime isolation or coexisten
   them.
 - The `powershell.exe` job also runs the Published compat suite (`tests/compat`) with the published 1.x extensions in
   both import orders, plus the two loader guard cases (PoShLog 2.x loaded first, an older Serilog loaded first).
-- The modern suite, the PowerShell 7.4 minimum-host check and the later PowerShell versions stay green.
+- The modern suite, the PowerShell 7.6 minimum-host check and the later PowerShell versions stay green.
 - Each target's resolved transitive packages are recorded, and the shipping files are inspected. Compilation alone
   does not establish support.
 
 ## Alternatives considered
 
-- **net462 + net8.0:** plausible, but it adds a legacy runtime commitment and .NET Standard consumption risk without a
-  demonstrated need.
+- **net462 + net10.0:** plausible, but it adds a legacy runtime commitment and .NET Standard consumption risk without a
+  demonstrated need; the contributor also prefers net472.
 - **netstandard2.0 only:** cannot hold the current modern isolation design in the same assembly and does not remove
   Desktop testing.
-- **net472 + net10.0:** excludes PowerShell 7.4 and 7.5.
+- **net472 + net8.0:** the first version of this record, kept for PowerShell 7.4 and 7.5. ADR 0033 moved Core to
+  net10.0 because those hosts and .NET 8 leave support on 2026-11-10.
+- **PowerShellStandard.Library as the one PowerShell reference:** a single package for both targets, but it fixes the
+  API at the PowerShell Standard 5.1 surface for the net10.0 build too. Per-target reference assemblies keep each
+  build honest about its host.
+- **A manifest-only edition switch:** a manifest cannot choose `RootModule` by `$PSEdition`, hence the script loader.
 - **Load Expressions and the SQL dependencies into the shared AppDomain:** gives up the existing coexistence
   protections.
 - **Global binding redirects or a permissive resolver:** changes behaviour for other modules in the same process.
