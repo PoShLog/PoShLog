@@ -23,4 +23,3 @@ if ($Module -eq 'PoShLog') {
     Copy-Item $files $destination -Recurse
 }
 Write-Output "Staged $Module -> $destination"
-

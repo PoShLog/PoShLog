@@ -3,6 +3,7 @@ using System.Management.Automation;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Loader;
+using System.Text.Json;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -76,9 +77,21 @@ internal sealed class SinkLoadContext : AssemblyLoadContext
     internal string WorkerPath { get; } = Path.Combine(Path.GetDirectoryName(typeof(SinkLoadContext).Assembly.Location)!,
         "private", "PoShLog.Sinks.MSSqlServer.Worker.dll");
     private readonly AssemblyDependencyResolver resolver;
+    private readonly HashSet<string> packageAssemblies = new(StringComparer.OrdinalIgnoreCase);
 
     internal SinkLoadContext() : base("PoShLog.Sinks.MSSqlServer", isCollectible: false)
-        => resolver = new AssemblyDependencyResolver(WorkerPath);
+    {
+        resolver = new AssemblyDependencyResolver(WorkerPath);
+        using var dependencies = JsonDocument.Parse(File.ReadAllText(Path.ChangeExtension(WorkerPath, ".deps.json")));
+        foreach (var target in dependencies.RootElement.GetProperty("targets").EnumerateObject())
+        foreach (var library in target.Value.EnumerateObject())
+        foreach (var group in library.Value.EnumerateObject().Where(p => p.Name is "runtime" or "runtimeTargets"))
+        foreach (var asset in group.Value.EnumerateObject())
+        {
+            if (asset.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                packageAssemblies.Add(Path.GetFileNameWithoutExtension(asset.Name));
+        }
+    }
 
     protected override Assembly? Load(AssemblyName name)
     {
@@ -88,12 +101,17 @@ internal sealed class SinkLoadContext : AssemblyLoadContext
         if (name.Name == "System.Diagnostics.DiagnosticSource") return typeof(System.Diagnostics.Activity).Assembly;
         var path = resolver.ResolveAssemblyToPath(name);
         if (path != null) return LoadFromAssemblyPath(path);
+        if (packageAssemblies.Contains(name.Name!))
+            throw MissingDependency(name);
         if (name.Name == "netstandard" || name.Name == "mscorlib" || name.Name == "System" ||
             name.Name!.StartsWith("System.", StringComparison.Ordinal) ||
             name.Name.StartsWith("Microsoft.Win32.", StringComparison.Ordinal)) return null;
         // Do not silently bind a missing private package to an unrelated module's assembly.
-        throw new FileNotFoundException($"Missing private MSSqlServer dependency: {name.Name}. Rebuild or reinstall the module.");
+        throw MissingDependency(name);
     }
+
+    private static FileNotFoundException MissingDependency(AssemblyName name) =>
+        new($"Missing private MSSqlServer dependency: {name.Name}. Rebuild or reinstall the module.");
 
     protected override IntPtr LoadUnmanagedDll(string name)
     {

@@ -39,5 +39,3 @@ if ($Module -eq 'PoShLog.Sinks.MSSqlServer') {
     # Linux SqlClient uses managed SNI; no native Linux SNI package is required.
 }
 Write-Output "Built $Module -> $lib"
-
-

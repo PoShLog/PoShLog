@@ -28,6 +28,7 @@ SQL-specific options stay private. The manifest preserves the original module GU
 AssemblyDependencyResolver reads the worker's deps.json and selects platform implementations and native assets.
 Package dependencies resolve privately, including Microsoft.Extensions.*, Azure.Identity and SqlClient's Azure extension.
 Missing non-framework packages fail with a rebuild/reinstall diagnostic rather than binding to another module's packages.
+The deps.json package list also prevents missing package-supplied System.* DLLs from falling back to another module.
 Framework resolution is delegated to the runtime. Private DLLs are never Add-Typed into PowerShell's context.
 
 Pin Serilog.Sinks.MSSqlServer 10.0.0 and Microsoft.Data.SqlClient / Extensions.Azure 7.1.1. SqlClient 7 moved Azure auth

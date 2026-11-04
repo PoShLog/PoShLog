@@ -56,4 +56,34 @@ Describe 'Add-SinkMSSqlServer public contract' {
         @([Runtime.Loader.AssemblyLoadContext]::Default.Assemblies | Where-Object { $_.GetName().Name -eq 'Microsoft.Data.SqlClient' }).Count |
             Should -Be 0
     }
+
+    It 'fails clearly when a private System package is missing even if another module loaded it' {
+        $copy = Join-Path $TestDrive 'PoShLog.Sinks.MSSqlServer'
+        Copy-Item (Split-Path $module) $copy -Recurse
+        Remove-Item -LiteralPath "$copy/lib/private/System.Memory.Data.dll"
+        $corePath = "$root/src/PoShLog.psd1".Replace("'", "''")
+        $foreignPath = "$(Split-Path $module)/lib/private/System.Memory.Data.dll".Replace("'", "''")
+        $copyPath = "$copy/PoShLog.Sinks.MSSqlServer.psd1".Replace("'", "''")
+        $child = @"
+`$ErrorActionPreference = 'Stop'
+Import-Module '$corePath'
+`$null = [Runtime.Loader.AssemblyLoadContext]::Default.LoadFromAssemblyPath('$foreignPath')
+Import-Module '$copyPath'
+`$configuration = New-Logger | Add-SinkMSSqlServer -ConnectionString '$connection'
+`$configuration.CreateLogger().Dispose()
+`$context = [Runtime.Loader.AssemblyLoadContext]::All | Where-Object Name -eq 'PoShLog.Sinks.MSSqlServer'
+try { `$null = `$context.LoadFromAssemblyName([Reflection.AssemblyName]::new('System.Memory.Data')) }
+catch {
+    if (`$_.Exception.ToString().Contains('Missing private MSSqlServer dependency: System.Memory.Data')) {
+        'MISSING_DEPENDENCY_OK'
+        exit 0
+    }
+    throw
+}
+throw 'A missing private package silently bound to another module.'
+"@
+        $output = & (Join-Path $PSHOME 'pwsh') -NoProfile -Command $child
+        $LASTEXITCODE | Should -Be 0
+        $output | Should -Be 'MISSING_DEPENDENCY_OK'
+    }
 }
