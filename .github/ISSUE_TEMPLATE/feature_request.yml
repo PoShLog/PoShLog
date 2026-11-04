@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest an improvement to PoShLog.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+  - type: input
+    id: module
+    attributes:
+      label: Module concerned
+      description: Name the core or extension module, if known.
+    validations:
+      required: false

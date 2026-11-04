@@ -14,7 +14,7 @@
   <circle cx="30" cy="28" r="7" fill="#FF5F57"/>
   <circle cx="54" cy="28" r="7" fill="#FEBC2E"/>
   <circle cx="78" cy="28" r="7" fill="#28C840"/>
-  <text class="cap" x="1250" y="33" text-anchor="end">POWERSHELL 7.4</text>
+  <text class="cap" x="1250" y="33" text-anchor="end">POWERSHELL 7.6</text>
   <text x="32" y="86"><tspan class="ps">PS&gt; </tspan>Write-InfoLog <tspan class="str">'Copied {Count} files to {Target}'</tspan> -PropertyValues <tspan class="num">42</tspan>, <tspan class="str">'D:\Backup'</tspan></text>
   <text x="32" y="124"><tspan class="dim">[12:41:07 </tspan><tspan class="inf">INF</tspan><tspan class="dim">] </tspan>Copied <tspan class="num">42</tspan> files to <tspan class="str">"D:\Backup"</tspan></text>
   <line x1="32" y1="160" x2="1248" y2="160" stroke="#30363D" stroke-width="2"/>

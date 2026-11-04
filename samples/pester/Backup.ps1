@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 # The code under test: a function that logs through PoShLog's public commands.
 
 function Invoke-Backup {

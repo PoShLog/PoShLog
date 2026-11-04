@@ -8,6 +8,14 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot
 $source = if ($Module -eq 'PoShLog') { "$root/src" } else { "$root/extensions/$Module" }
+if ($Module -eq 'PoShLog') {
+    if (Test-Path "$source/lib/Serilog.Expressions.dll") {
+        throw 'Core must be published with internalized Expressions before staging.'
+    }
+    foreach ($notice in 'THIRD-PARTY-NOTICES.txt', 'Serilog.Expressions.LICENSE') {
+        if (!(Test-Path "$source/lib/$notice")) { throw "Missing incorporated Expressions notice: $notice" }
+    }
+}
 if ($Module -ne 'PoShLog') { & "$PSScriptRoot/Build-Extension.ps1" -Module $Module }
 $destination = Join-Path $Destination $Module
 if (Test-Path $destination) {

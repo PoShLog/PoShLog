@@ -1,7 +1,7 @@
 ### Dependencies
 
 This cmdlet requires the extension module [PoShLog.Sinks.Syslog.Rfc5424](../../extensions/PoShLog.Sinks.Syslog.Rfc5424/README.md)
-(PowerShell 7.4+, PoShLog 3.0.0+).
+(PowerShell 7.6+, PoShLog 3.0.0+).
 
 ```ps1
 Install-Module PoShLog.Sinks.Syslog.Rfc5424

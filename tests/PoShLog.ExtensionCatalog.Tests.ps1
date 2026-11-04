@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 # Get-PoShLogExtension and Install-PoShLogExtension against the module as users import it (ADR 0021).
 
 BeforeAll {

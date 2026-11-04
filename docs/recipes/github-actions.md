@@ -53,7 +53,7 @@ jobs:
           if-no-files-found: warn
 ```
 
-- The hosted runners have PowerShell 7.4+ and PSResourceGet. Pin the PoShLog version so that a new release does not
+- The hosted runners have PowerShell 7.6+ and PSResourceGet. Pin the PoShLog version so that a new release does not
   change a build on its own; see [Compatibility and installation](../compatibility.md).
 - The log goes to `RUNNER_TEMP`, outside the checkout, so it is never committed or picked up by other steps.
 - `if: always()` runs the last two steps also when the check fails, which is when the log matters most.

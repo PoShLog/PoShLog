@@ -28,7 +28,7 @@ authors' sinks) runs with continue-on-error: failures are annotated but gate not
 | PoShLog.Sinks.Splunk.Hec (InRepo build, both modes) | 0.1.0 | Event at loopback HEC `/services/collector/event`; also next to Seq, like OpenTelemetry |
 | PoShLog.Sinks.Syslog.Rfc5424 (InRepo build, both modes) | 0.1.0 | RFC 5424 datagram at loopback UDP listener; also next to Seq, like OpenTelemetry |
 | PoShLog.Sinks.Elastic (InRepo build, both modes) | 0.1.0 | Bulk request at loopback `/logs-poshlog-default/_bulk` (the listener answers the `HEAD /` product check); also next to Seq, like OpenTelemetry |
-| PoShLog.Sinks.Exceptionless (Published) | 1.0.0 | Event at loopback HTTP listener |
+| PoShLog.Sinks.Exceptionless (Published) | 1.0.0 | Event at loopback HTTP listener; also delivery through `Add-SinkLogger -Filter` and exclusion of a nonmatching event, with filter compilation before and after extension import in fresh processes |
 | PoShLog.Sinks.Syslog (ThirdParty) | 1.0.0 | Event at loopback UDP listener |
 | PoShLog.Sinks.DataDog (ThirdParty) | 0.1.1 | Event at loopback HTTP listener; skipped on Linux (RootModule case mismatch in its manifest, fails with any PoShLog version) |
 | PoShLog.Sinks.ElmahIo (ThirdParty) | 4.0.4 | Import and sink configuration; wrapper has no endpoint override |
@@ -36,6 +36,10 @@ authors' sinks) runs with continue-on-error: failures are annotated but gate not
 
 Each case runs with its own .compat/<marker> folder as the working directory: Seq 1.0.0 passes an empty buffer
 file name, ships durably and writes -YYYYMMDD.json and .bookmark there.
+
+For a local InRepo check with an already extracted Exceptionless 1.0.0 package, pass
+`-LegacyExceptionlessPath <path/to/PoShLog.Sinks.Exceptionless.psd1>`. Published mode always runs
+both filter/import orders in blocking CI on Windows and Linux; it does not need this parameter.
 
 No real credentials are used. Cloud endpoints are not contacted. Only processes and listeners
 created by the suite are closed. The driver imposes a per-module timeout; delivery assertions

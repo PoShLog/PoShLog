@@ -2,6 +2,19 @@
 
 All notable changes to PoShLog, newest first. Older releases: see the GitHub releases and `releaseNotes/` in the v2 history.
 
+## Unreleased
+
+### Features
+- No new features.
+
+### Changes
+- `Add-SinkLogger -Filter` and JSON `ByIncludingOnly`/`ByExcluding` filters use an expression engine built into PoShLog. The module no longer ships a separate Serilog.Expressions.dll, so filters cannot conflict with other modules that load their own copy (ADR 0032).
+- **Breaking:** PoShLog 3 and its extensions now require PowerShell 7.6 or newer and are built for .NET 10 (ADR 0033). PowerShell 7.4 and 7.5 reach end of support with .NET 8 and 9 on 2026-11-10. On 7.4, 7.5 or Windows PowerShell 5.1, stay on PoShLog 2.x (`Install-Module PoShLog -MaximumVersion 2.99`) or move to PowerShell 7.6.
+- The module now includes the Apache-2.0 licence and a notice for the incorporated Serilog.Expressions.
+
+### Bug fixes
+- None.
+
 ## 3.0.0-preview3 — 2026-11-04
 
 ### Features

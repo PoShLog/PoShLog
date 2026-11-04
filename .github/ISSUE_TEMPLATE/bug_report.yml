@@ -1,0 +1,102 @@
+name: Bug report
+description: Report a problem with PoShLog or one of its extensions.
+labels: [bug]
+body:
+  - type: dropdown
+    id: poshlog-line
+    attributes:
+      label: PoShLog version line
+      options:
+        - v3
+        - v2
+    validations:
+      required: true
+  - type: input
+    id: poshlog-version
+    attributes:
+      label: Exact PoShLog version
+      description: Get it with (Get-Module PoShLog).Version.
+      placeholder: 3.0.0-preview3
+    validations:
+      required: true
+  - type: dropdown
+    id: affected-module
+    attributes:
+      label: Affected module
+      options:
+        - PoShLog (core)
+        - PoShLog.Enrichers
+        - PoShLog.Sinks.Elastic
+        - PoShLog.Sinks.EventLog
+        - PoShLog.Sinks.Http
+        - PoShLog.Sinks.MSSqlServer
+        - PoShLog.Sinks.OpenTelemetry
+        - PoShLog.Sinks.Seq
+        - PoShLog.Sinks.Splunk.Hec
+        - PoShLog.Sinks.Syslog.Rfc5424
+        - Other / not sure
+    validations:
+      required: true
+  - type: textarea
+    id: module-versions
+    attributes:
+      label: Installed PoShLog module versions
+      description: Paste the output of Get-Module PoShLog*.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: powershell
+    attributes:
+      label: PowerShell version and edition
+      description: Paste $PSVersionTable.PSVersion and $PSVersionTable.PSEdition.
+    validations:
+      required: true
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating system
+      placeholder: Windows 11, Ubuntu 24.04, macOS 15
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction script
+      render: powershell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: error-output
+    attributes:
+      label: Error output
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: loaded-modules
+    attributes:
+      label: Other loaded modules (assembly conflicts)
+      description: If the error suggests an assembly conflict, paste Get-Module output for the other relevant modules.
+      render: shell
+    validations:
+      required: false
+  - type: checkboxes
+    id: existing-issues
+    attributes:
+      label: Existing issues
+      options:
+        - label: I searched existing issues for this problem.
+          required: true

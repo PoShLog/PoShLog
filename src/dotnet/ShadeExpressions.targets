@@ -1,0 +1,26 @@
+<Project>
+  <!-- Imported by ILRepack.Lib.MSBuild.Task through ILRepackTargetsFile (PoShLog.Core.csproj); its presence turns off
+       the package's default Release target, which would merge every output assembly, Serilog included. -->
+  <Target Name="ShadeExpressionEngine" AfterTargets="Build">
+    <ItemGroup>
+      <!-- Always use the original compiler output, including incremental builds. -->
+      <ExpressionMerge Include="$(IntermediateOutputPath)$(TargetFileName)" />
+      <ExpressionMerge Include="@(ReferencePath)" Condition="'%(Filename)' == 'Serilog.Expressions'" />
+      <MergeSearch Include="@(ReferencePath->'%(RootDir)%(Directory)')" />
+    </ItemGroup>
+    <ILRepack InputAssemblies="@(ExpressionMerge)" OutputFile="$(TargetPath)"
+              Internalize="true" Parallel="true" TargetKind="Dll" LibraryPath="@(MergeSearch)" />
+    <!-- Remove a stale assembly when upgrading an existing output directory. -->
+    <Delete Files="$(TargetDir)Serilog.Expressions.dll" />
+  </Target>
+  <Target Name="PublishShadedCore" AfterTargets="ComputeFilesToPublish">
+    <!-- The SDK otherwise publishes the unmerged intermediate compiler output. -->
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(RelativePath)' == '$(TargetFileName)'" />
+      <ResolvedFileToPublish Include="$(TargetPath)" RelativePath="$(TargetFileName)" CopyToPublishDirectory="Always" />
+    </ItemGroup>
+  </Target>
+  <Target Name="RemovePublishedExpressionAssembly" AfterTargets="Publish">
+    <Delete Files="$(PublishDir)Serilog.Expressions.dll" />
+  </Target>
+</Project>

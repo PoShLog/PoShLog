@@ -37,17 +37,21 @@ public class ConditionalLoggerTests(PoShLogModuleFixture fixture) : PoShLogTestB
     {
         Invoke("$child = New-Logger | Start-Logger -PassThru; try { New-Logger | Add-SinkLogger -Logger $child -Filter 'Send = (' -ErrorAction Stop } finally { $child.Dispose() }", allowErrors: true);
         Assert.NotNull(LastException);
-        Assert.Contains("expression", LastException!.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Invalid Serilog filter expression.", LastException!.Message);
     }
 
     [Fact]
-    public void ConditionalLogger_ExpressionAssemblyStaysOutsidePowerShellTypeLookup()
+    public void ConditionalLogger_ExpressionTypesAreInternalAndHiddenFromPowerShell()
     {
         Invoke("$child = New-Logger | Start-Logger -PassThru; New-Logger | Add-SinkLogger -Logger $child -Filter 'Send = true' | Start-Logger; Close-Logger; $child.Dispose()");
-        var expressions = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetName().Name == "Serilog.Expressions").ToArray();
-        Assert.NotEmpty(expressions);
-        Assert.All(expressions, assembly => Assert.NotSame(System.Runtime.Loader.AssemblyLoadContext.Default,
-            System.Runtime.Loader.AssemblyLoadContext.GetLoadContext(assembly)));
+        var core = typeof(PoShLog.Core.Formatting.CompactJsonFormatter).Assembly;
+        Assert.DoesNotContain(core.GetExportedTypes(), t => t.Namespace?.StartsWith("Serilog") == true);
+        var engine = core.GetType("Serilog.Expressions.SerilogExpression", throwOnError: true)!;
+        Assert.False(engine.IsVisible);
+        Assert.False(core.GetType("Serilog.LoggerSinkConfigurationExtensions", throwOnError: true)!.IsVisible);
+        Assert.DoesNotContain(AppDomain.CurrentDomain.GetAssemblies(), a => a.GetName().Name == "Serilog.Expressions");
+        Assert.DoesNotContain(Invoke("'Serilog.LoggerSinkConfigurationExtensions' -as [type]; 'Serilog.Expressions.SerilogExpression' -as [type]"),
+            value => value is not null);
     }
 
     [Fact]

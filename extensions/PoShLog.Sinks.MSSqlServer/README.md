@@ -1,7 +1,7 @@
 # PoShLog.Sinks.MSSqlServer
 
 Writes batched events to SQL Server and Azure SQL, with private SqlClient dependencies that coexist with other modules.
-Requires PowerShell 7.4+ and PoShLog 3; supports Windows x64 and Linux x64.
+Requires PowerShell 7.6+ and PoShLog 3; supports Windows x64 and Linux x64.
 
 ```powershell
 Install-PSResource PoShLog.Sinks.MSSqlServer -Prerelease

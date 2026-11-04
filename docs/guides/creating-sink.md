@@ -4,7 +4,7 @@ In PoShLog we use sinks to log messages into particular places. This page explai
 
 ## Project structure
 
-The core module (`src/dotnet/PoShLog.Core.csproj`) is a compiled net8.0 class library. A first-party sink is added as a new `PSCmdlet`/`Cmdlet` class under `src/dotnet/Cmdlets/Sinks/`, following the pattern of the existing sink cmdlets:
+The core module (`src/dotnet/PoShLog.Core.csproj`) is a compiled net10.0 class library. A first-party sink is added as a new `PSCmdlet`/`Cmdlet` class under `src/dotnet/Cmdlets/Sinks/`, following the pattern of the existing sink cmdlets:
 
 * `src/dotnet/Cmdlets/Sinks/AddSinkConsoleCommand.cs`
 * `src/dotnet/Cmdlets/Sinks/AddSinkFileCommand.cs`

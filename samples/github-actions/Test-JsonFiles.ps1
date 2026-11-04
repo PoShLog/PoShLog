@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 #Requires -Modules @{ ModuleName = 'PoShLog'; ModuleVersion = '3.0.0' }
 <#
 .SYNOPSIS

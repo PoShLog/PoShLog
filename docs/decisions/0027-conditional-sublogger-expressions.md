@@ -1,6 +1,6 @@
 # 0027 — Filter sublogger routing with Serilog expressions
 
-- **Status:** Proposed
+- **Status:** Superseded by [0032](0032-shade-serilog-expressions-into-core.md)
 - **Date:** 2026-11-03
 - **Amends:** [0011](0011-core-does-not-load-assemblies-extensions-ship.md) (Core now also loads Serilog.Expressions, isolated in its own load context)
 

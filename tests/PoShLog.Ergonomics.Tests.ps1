@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 # Structured logging of PowerShell objects: issues #46, #34, #48, #45 and #28 (ADRs 0005-0008).
 
 BeforeAll {
@@ -10,7 +10,7 @@ BeforeAll {
 	function Invoke-ChildPwsh([string]$Body) {
 		$script = Join-Path $TestDrive "child-$([guid]::NewGuid()).ps1"
 		Set-Content -Path $script -Value "Import-Module '$($script:manifest)'`n$Body"
-		# $PSHOME, not the process path: under a dotnet-tool pwsh (the PowerShell 7.4 CI job) the process is dotnet.
+		# $PSHOME, not the process path: under a dotnet-tool pwsh (the minimum PowerShell CI job) the process is dotnet.
 		$pwsh = Join-Path $PSHOME 'pwsh'
 		& $pwsh -NoProfile -NonInteractive -File $script 2>&1 | ForEach-Object { "$_" }
 	}

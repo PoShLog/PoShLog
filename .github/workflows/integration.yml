@@ -66,7 +66,7 @@ jobs:
           SOURCE: ${{ matrix.source }}
           WAIT_FOR_GALLERY: ${{ github.event_name == 'workflow_run' }}
         run: |
-          if ($PSVersionTable.PSVersion -lt [version]'7.4') { throw 'PowerShell 7.4+ required.' }
+          if ($PSVersionTable.PSVersion -lt [version]'7.6') { throw 'PowerShell 7.6+ required.' }
           # Ephemeral test credential lives only in this process and the disposable container.
           $env:MSSQL_SA_PASSWORD = 'Sql!' + [guid]::NewGuid().ToString('N') + 'a9'
           $env:POSHLOG_SQL_CONNECTION_STRING = "Server=127.0.0.1,1433;Database=master;User ID=sa;Password=$env:MSSQL_SA_PASSWORD;Encrypt=true;TrustServerCertificate=true"

@@ -1,0 +1,10 @@
+PoShLog.Core incorporates Serilog.Expressions 5.0.0 into its binary using ILRepack.
+Copyright Serilog Contributors. Licensed under the Apache License, Version 2.0.
+The license is supplied alongside this file as Serilog.Expressions.LICENSE.
+Upstream: https://github.com/serilog/serilog-expressions
+Source revision: a8f4a9ddc63cafba0d33fc52243ff4c203a1d9d1
+Modification: IL merging and internalization; the original assembly boundary and
+public visibility have changed. No upstream source files have been edited.
+The upstream revision has no NOTICE file (HTTP 404 checked 2026-11-04).
+These files must accompany any redistributed shaded binary. The repository's
+MIT license does not replace the incorporated component's Apache-2.0 license.

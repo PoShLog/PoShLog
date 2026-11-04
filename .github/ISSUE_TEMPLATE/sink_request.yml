@@ -1,0 +1,33 @@
+name: Sink request
+description: Request support for a logging destination.
+labels: [enhancement, Sink]
+body:
+  - type: input
+    id: target-system
+    attributes:
+      label: Target system
+    validations:
+      required: true
+  - type: input
+    id: sink-package
+    attributes:
+      label: Serilog sink package
+      description: Provide the package name and link, or say if none exists.
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Your use case
+    validations:
+      required: true
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: Would you be willing to contribute?
+      options:
+        - "Yes"
+        - Maybe
+        - "No"
+    validations:
+      required: true

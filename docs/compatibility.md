@@ -10,7 +10,7 @@ pages link here instead of repeating it. Background: [v2 or v3?](v2-or-v3.md),
 | | PoShLog 3 | PoShLog 2 |
 |---|---|---|
 | Latest on the PowerShell Gallery | 3.0.0-preview2 (prerelease) | 2.2.0 |
-| PowerShell | 7.4+ on Windows, Linux, macOS | Windows PowerShell 5.1 and PowerShell 7 |
+| PowerShell | 7.6+ on Windows, Linux, macOS (3.0.0-preview1 to preview3: 7.4+) | Windows PowerShell 5.1 and PowerShell 7 |
 | Serilog | 4.4.0 | 2.x |
 | Install | `Install-PSResource PoShLog -Prerelease` or `Install-Module PoShLog -AllowPrerelease` | `Install-Module PoShLog -MaximumVersion 2.99` |
 
@@ -32,7 +32,7 @@ pages link here instead of repeating it. Background: [v2 or v3?](v2-or-v3.md),
 
 - The published 1.0.x extensions keep working on PoShLog 3. CI checks them against every Core build (the
   `Published` compatibility mode, [ADR 0003](decisions/0003-keep-the-v2-extension-contract.md)).
-- Versions 2.0.0 and the new sinks need PowerShell 7.4 and PoShLog 3. On PoShLog 2, stay on 1.0.x. While PoShLog 3 is
+- Versions 2.0.0 and the new sinks need PowerShell 7.6 and PoShLog 3 (their preview2 and preview3 builds ran on 7.4+). On PoShLog 2, stay on 1.0.x. While PoShLog 3 is
   a prerelease they are prereleases too ([ADR 0019](decisions/0019-extensions-ship-as-prereleases-during-the-core-3-preview.md)),
   so `Install-Module <extension>` keeps installing the 1.0.x line.
 - "Requires PoShLog 3" is declared as `2.99.0` by GUID while PoShLog 3 is a prerelease, so that package managers can
@@ -97,7 +97,7 @@ One PowerShell session holds one PoShLog version. Start a new session to switch.
 ## How this was verified
 
 On 2026-11-03, each scenario ran in a new `mcr.microsoft.com/powershell:7.4-ubuntu-22.04` container (PowerShell 7.4.6),
-with no modules installed beforehand:
+with no modules installed beforehand. These runs predate the move to PowerShell 7.6 ([ADR 0033](decisions/0033-net10-powershell-7-6.md)) and cover the published previews:
 
 - From the PowerShell Gallery: both install commands for PoShLog 3.0.0-preview1, import and one logged event; the plain
   `Install-Module PoShLog` (2.2.0); Seq 1.0.0 next to the preview; 2.2.0 and the preview side by side, the

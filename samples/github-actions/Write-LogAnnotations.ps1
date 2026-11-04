@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 <#
 .SYNOPSIS
     Turns the Warning, Error and Fatal events of a CLEF log file into GitHub Actions annotations, and writes a count per

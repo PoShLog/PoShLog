@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 # Runs every recipe sample in a new pwsh process against the staged PoShLog package. Start it with
 # build/Test-Recipes.ps1, which stages the package and sets POSHLOG_RECIPES_MODULES.
 

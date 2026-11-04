@@ -3,8 +3,8 @@
 These opt-in Pester 5 tests verify delivery of Information, Warning and Error events (including an ErrorRecord),
 their rendered messages and structured properties. Ordinary CI discovery does not activate them.
 
-Requirements: Docker with Linux containers, PowerShell 7.4+, .NET SDK 10 (InRepo; builds the existing net8.0
-module for the PowerShell 7.4 host), and access to PSGallery/NuGet. Allow about 6 GB RAM for the containers.
+Requirements: Docker with Linux containers, PowerShell 7.6+, .NET SDK 10 (InRepo; builds the net10.0
+module for the PowerShell 7.6 host), and access to PSGallery/NuGet. Allow about 6 GB RAM for the containers.
 
 ```powershell
 docker compose -f tests/integration/compose.yml up -d --wait

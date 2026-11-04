@@ -1,0 +1,16 @@
+name: Documentation
+description: Report something missing or incorrect in the documentation.
+labels: [documentation]
+body:
+  - type: input
+    id: page-url
+    attributes:
+      label: Documentation page URL
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is wrong or missing?
+    validations:
+      required: true

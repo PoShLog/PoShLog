@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Features
+- No new features.
+
+### Changes
+- Requires PowerShell 7.6 or newer and is built for .NET 10 (ADR 0033). This is a breaking change on PowerShell 7.4 and 7.5: stay on the previous version there, or on PoShLog 2.x with the 1.0.x extensions.
+
+### Bug fixes
+- None.
+
 ## 2.0.0-preview3 — 2026-11-04
 
 ### Features

@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
       - name: Publish Core
         run: |
           dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib --configfile build/nuget.config

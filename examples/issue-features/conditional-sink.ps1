@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path "$PSScriptRoot/../..").Path
 Import-Module "$root/src/PoShLog.psd1"

@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 # PoShLog.Sinks.Splunk.Hec end to end: the module as shipped (psd1, psm1, lib) against a loopback HEC stand-in.
 
 BeforeAll {

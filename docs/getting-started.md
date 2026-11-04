@@ -2,13 +2,13 @@
 
 These instructions will get you a copy of PoShLog up and running.
 
-> **Note:** As of v3.0.0, PoShLog is a **compiled C# binary module** targeting **.NET 8** and requires **PowerShell 7.4+**. Windows PowerShell 5.1 / Desktop edition is **no longer supported**.
+> **Note:** As of v3.0.0, PoShLog is a **compiled C# binary module** targeting **.NET 10** and requires **PowerShell 7.6+**. Windows PowerShell 5.1 / Desktop edition is **no longer supported**.
 
 ## Prerequisites
 
-### PowerShell 7.4+
+### PowerShell 7.6+
 
-PoShLog requires [PowerShell 7.4 or later](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell). If you have the [.NET SDK](https://dotnet.microsoft.com/download) installed, you can install PowerShell as a .NET tool:
+PoShLog requires [PowerShell 7.6 or later](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell). If you have the [.NET SDK](https://dotnet.microsoft.com/download) installed, you can install PowerShell as a .NET tool:
 
 ```ps1
 dotnet tool install --global powershell
@@ -42,7 +42,7 @@ On Windows PowerShell 5.1, use the [v2 line](v2-or-v3.md): `Install-Module PoShL
 * The module is now implemented as compiled C# `PSCmdlet`/`Cmdlet` classes (`PoShLog.Core.dll`) instead of PowerShell script functions.
 * Cmdlet names, parameters, aliases, and pipeline behavior are unchanged — existing scripts using PoShLog continue to work without modification.
 * Built on [Serilog](https://serilog.net/) 4.4.0.
-* Minimum supported PowerShell version is now **7.4**.
+* Minimum supported PowerShell version is now **7.6** (PowerShell 7.4 and 7.5 reach end of support with .NET 8 and 9 on 2026-11-10; stay on PoShLog 2.x there).
 
 Continue to [Usage](usage.md), or start from a [recipe](recipes/README.md) for a scheduled script, GitHub Actions
 or Pester tests.

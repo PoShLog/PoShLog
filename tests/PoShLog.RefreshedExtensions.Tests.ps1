@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 # Child processes keep fake assemblies and extension imports out of the other tests' sessions.
 
 Describe 'Refreshed extension loader: <Module>' -ForEach @(

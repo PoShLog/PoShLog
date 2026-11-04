@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- ADR 0001: compatible with the PowerShell 7.4 runtime. -->
-    <TargetFramework>net8.0</TargetFramework>
+    <!-- ADR 0033: compatible with the PowerShell 7.6 runtime (.NET 10). -->
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>PoShLog.Sinks.Syslog.Rfc5424</AssemblyName>
     <RootNamespace>PoShLog.Sinks.Syslog.Rfc5424</RootNamespace>
     <Nullable>enable</Nullable>
@@ -14,7 +14,7 @@
     <!-- Only the package's formatters and framer are used; its sinks need PeriodicBatching 5, which cannot load next to
          the 2.x that PoShLog.Sinks.Seq 1.0.0 ships. It is therefore not shipped (ADR 0014). -->
     <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="5.0.0" ExcludeAssets="runtime" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.6" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.9" ExcludeAssets="runtime" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
