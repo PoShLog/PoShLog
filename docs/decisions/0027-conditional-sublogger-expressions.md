@@ -2,6 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-11-03
+- **Amends:** [0011](0011-core-does-not-load-assemblies-extensions-ship.md) (Core now also loads Serilog.Expressions, isolated in its own load context)
 
 ## Context
 

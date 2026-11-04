@@ -85,6 +85,20 @@ public class JsonConfigurationTests(PoShLogModuleFixture fixture) : PoShLogTestB
         Assert.DoesNotContain("parameter name", LastException!.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory]
+    [InlineData("{\"Serilog\":{\"WriteTo\":{\"0\":{\"Name\":\"File\"}}}}", "must be an array")]
+    [InlineData("{\"Serilog\":{\"Using\":\"Serilog\"}}", "must be an array")]
+    [InlineData("{\"Serilog\":{\"WriteTo\":[{\"Args\":{\"path\":\"x.log\"}}]}}", "string Name")]
+    public void JsonConfiguration_ExplainsMalformedSections(string json, string expected)
+    {
+        var path = Prepare();
+        File.WriteAllText(Path.Combine(directory, "malformed.json"), json);
+        Invoke($"New-Logger -ConfigurationPath '{path}/malformed.json'", allowErrors: true);
+        var error = LastException?.InnerException ?? LastException;
+        Assert.IsType<ArgumentException>(error);
+        Assert.Contains(expected, error!.Message, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void JsonConfiguration_BindsFilterAndEnrichment_AndMinimumOverrides()
     {

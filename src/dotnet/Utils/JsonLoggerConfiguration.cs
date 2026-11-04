@@ -32,7 +32,7 @@ namespace PoShLog.Core.Utils
                 typeof(FileLoggerConfigurationExtensions).Assembly
             }).Where(a => !a.IsDynamic && AssemblyLoadContext.GetLoadContext(a) == AssemblyLoadContext.Default).Distinct().ToArray();
             if (section.TryGetProperty("Using", out var usingSection))
-                foreach (var name in usingSection.EnumerateArray())
+                foreach (var name in ArrayItems(usingSection, "Using"))
                     if (!assemblies.Any(a => a.GetName().Name == name.GetString()))
                         throw new ArgumentException("A Using assembly is not loaded. Import its extension module first.");
 
@@ -71,7 +71,7 @@ namespace PoShLog.Core.Utils
         private static void Configure(JsonElement section, string key, object target, MethodInfo[] methods, SessionState sessionState)
         {
             if (!section.TryGetProperty(key, out var calls)) return;
-            foreach (var call in calls.EnumerateArray())
+            foreach (var call in ArrayItems(calls, key))
             {
                 string name;
                 var arguments = new Dictionary<string, JsonElement>(StringComparer.OrdinalIgnoreCase);
@@ -79,7 +79,9 @@ namespace PoShLog.Core.Utils
                 else
                 {
                     ValidateKeys(call, "Name", "Args");
-                    name = call.GetProperty("Name").GetString();
+                    if (!call.TryGetProperty("Name", out var nameValue) || nameValue.ValueKind != JsonValueKind.String)
+                        throw new ArgumentException($"Each JSON {key} entry needs a string Name.");
+                    name = nameValue.GetString();
                     if (call.TryGetProperty("Args", out var args))
                         foreach (var argument in args.EnumerateObject()) arguments.Add(argument.Name, argument.Value);
                 }
@@ -165,6 +167,10 @@ namespace PoShLog.Core.Utils
                 JsonValueKind.False => false,
                 _ => null
             };
+
+        private static JsonElement.ArrayEnumerator ArrayItems(JsonElement value, string key)
+            => value.ValueKind == JsonValueKind.Array ? value.EnumerateArray()
+                : throw new ArgumentException($"The JSON {key} section must be an array.");
 
         private static void ValidateKeys(JsonElement value, params string[] allowed)
         {

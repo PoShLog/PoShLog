@@ -10,7 +10,7 @@ using PoShLog.Core.Utils;
 namespace PoShLog.Core.Cmdlets.Sinks
 {
 	/// <summary>
-		/// Write log events to a FileSystem path resolved against the current PowerShell location.
+	/// Write log events to a FileSystem path resolved against the current PowerShell location.
 	/// </summary>
 	[Cmdlet(VerbsCommon.Add, "SinkFile", DefaultParameterSetName = "Default")]
 	[OutputType(typeof(LoggerConfiguration))]

@@ -27,7 +27,7 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0021](0021-extension-catalog-in-core.md) | Core lists and installs its extensions from a catalogue built into the assembly | proposed |
 | [0022](0022-documentation-website.md) | A Starlight documentation website built from docs/, served from the PoShLog.github.io org site | proposed |
 | [0023](0023-safe-error-metadata-and-event-source-management.md) | Safe error invocation metadata and explicit Event Log source management | proposed |
-| [0026](0026-powershell-file-paths.md) | Resolve file sink paths through the PowerShell provider | Proposed |
-| [0027](0027-conditional-sublogger-expressions.md) | Filter sublogger routing with Serilog expressions | Proposed |
-| [0028](0028-json-logger-configuration.md) | Load a Serilog JSON configuration snapshot | Proposed |
-| [0029](0029-custom-console-token-themes.md) | Build custom Serilog console token themes | Proposed |
+| [0026](0026-powershell-file-paths.md) | Resolve file sink paths through the PowerShell provider | proposed |
+| [0027](0027-conditional-sublogger-expressions.md) | Filter sublogger routing with Serilog expressions | proposed |
+| [0028](0028-json-logger-configuration.md) | Load a Serilog JSON configuration snapshot | proposed |
+| [0029](0029-custom-console-token-themes.md) | Build custom Serilog console token themes | proposed |
