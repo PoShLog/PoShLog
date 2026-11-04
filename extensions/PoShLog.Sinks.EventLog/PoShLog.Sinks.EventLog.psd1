@@ -33,7 +33,7 @@ Copyright = '(c) 2019 Tomas Bouda. All rights reserved.'
 Description = 'PoShLog.Sinks.EventLog is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
 Writes log events to the Windows Event Log.
 
-For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
+For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview3/docs'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '7.4'
@@ -104,16 +104,16 @@ PrivateData = @{
         LicenseUri = 'https://github.com/PoShLog/PoShLog.Sinks.EventLog/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/extensions/PoShLog.Sinks.EventLog'
+        ProjectUri = 'https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview3/extensions/PoShLog.Sinks.EventLog'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/v3.0.0-preview2/docs/assets/icon.png'
+        IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/v3.0.0-preview3/docs/assets/icon.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview2/extensions/PoShLog.Sinks.EventLog/CHANGELOG.md'
+        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview3/extensions/PoShLog.Sinks.EventLog/CHANGELOG.md'
 
         # Prerelease string of this module
-        Prerelease = 'preview2'
+        Prerelease = 'preview3'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         # RequireLicenseAcceptance = $false

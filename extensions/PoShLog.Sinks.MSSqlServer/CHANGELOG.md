@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0-preview3 — 2026-11-03
+## 2.0.0-preview3 — 2026-11-04
 
 ### Features
 - First-party binary Add-SinkMSSqlServer for PowerShell 7.4+, PoShLog 3 and Serilog 4.4.

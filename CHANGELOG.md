@@ -2,16 +2,16 @@
 
 All notable changes to PoShLog, newest first. Older releases: see the GitHub releases and `releaseNotes/` in the v2 history.
 
-## Unreleased
+## 3.0.0-preview3 — 2026-11-04
 
 ### Features
-- Conditional sink routing with `Add-SinkLogger -Filter` Serilog expressions (#37).
-- Load a Serilog JSON snapshot with `New-Logger -ConfigurationPath` and compose it with the pipeline (#39).
-- Build custom ANSI and System token colors with `New-ConsoleTheme`; optionally color redirected Console output (#30).
-- PoShLog.Sinks.MSSqlServer 2.0.0-preview3: SQL Server batching, configurable columns and private dependencies that coexist with other modules (MSSqlServer#1, #2).
-- New `Get-PoShLogExtension` lists the first-party extensions with what they do, their commands and the installed version; `-Online` adds the latest Gallery version.
-- New `Install-PoShLogExtension` installs an extension with `Install-PSResource`, adding `-Prerelease` while PoShLog is a prerelease; supports `-WhatIf`, `-Scope` and non-interactive use.
-- A documentation website (`website/`, Starlight) built from `docs/`, with search, light and dark themes and the build version in the footer; it is not published yet.
+- Conditional sink routing with `Add-SinkLogger -Filter` Serilog expressions (#37, ADR 0027).
+- Load a Serilog JSON snapshot with `New-Logger -ConfigurationPath` and compose it with the pipeline (#39, ADR 0028).
+- Build custom ANSI and System token colors with `New-ConsoleTheme`; optionally color redirected Console output (#30, ADR 0029).
+- New extension PoShLog.Sinks.MSSqlServer 2.0.0-preview3: `Add-SinkMSSqlServer` for SQL Server and Azure SQL with batching, configurable columns and private dependencies that coexist with other modules (MSSqlServer#1, #2, ADR 0030).
+- New `Get-PoShLogExtension` lists the first-party extensions with what they do, their commands and the installed version; `-Online` adds the latest Gallery version (ADR 0021).
+- New `Install-PoShLogExtension` installs an extension with `Install-PSResource`, adding `-Prerelease` while PoShLog is a prerelease; supports `-WhatIf`, `-Scope` and non-interactive use (ADR 0021).
+- A documentation website (`website/`, Starlight) built from `docs/`, with search, light and dark themes and the build version in the footer; it is not published yet (ADR 0022).
 - Reference pages for `Add-SinkLogger`, `Get-CurrentLogFiles`, `Set-DefaultMessageFormatter`, `Enable-SelfLog` and `Disable-SelfLog`.
 - Guides for moving from `Write-Host` and transcripts or from PSFramework, and an FAQ with troubleshooting.
 
@@ -21,9 +21,10 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - Error invocation enrichment keeps command names, script paths and line numbers, but no longer logs argument values and source text (`BoundParameters`, `UnboundArguments`, `Line`, `PositionMessage`, `DisplayScriptPosition`), in text and structured output (ADR 0023).
 
 ### Bug fixes
-- Resolve `Add-SinkFile -Path` and `Start-Logger -FilePath` against the current PowerShell FileSystem location, including PSDrives (#41).
-- All seven `Write-*Log` commands emit error-only events with an empty message template, including `-PassThru`.
-- Accept constructed `ErrorRecord` instances without invocation metadata.
+- Resolve `Add-SinkFile -Path` and `Start-Logger -FilePath` against the current PowerShell FileSystem location, including PSDrives (#41, ADR 0026).
+- All seven `Write-*Log` commands emit error-only events with an empty message template, including `-PassThru` (ADR 0023).
+- Accept constructed `ErrorRecord` instances without invocation metadata (ADR 0023).
+- PoShLog.Sinks.Seq, PoShLog.Sinks.Http and PoShLog.Sinks.EventLog 2.0.0-preview3: Seq and Http configure every pipeline input, Http exports `Get-ApiKeyHttpClient`, EventLog binds `-ManageEventSource` as a boolean and supports `-WhatIf` (ADR 0023).
 
 ## 3.0.0-preview2 — 2026-11-03
 

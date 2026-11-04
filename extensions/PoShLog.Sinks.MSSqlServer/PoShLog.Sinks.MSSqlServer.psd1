@@ -19,10 +19,10 @@ Requires PowerShell 7.4+ and PoShLog 3.'
     PrivateData = @{ PSData = @{
         Prerelease = 'preview3'
         Tags = @('SQLServer', 'AzureSQL', 'Logging', 'Serilog', 'PSEdition_Core', 'Windows', 'Linux')
-        LicenseUri = 'https://github.com/PoShLog/PoShLog/blob/master/LICENSE'
-        ProjectUri = 'https://github.com/PoShLog/PoShLog/tree/master/extensions/PoShLog.Sinks.MSSqlServer'
-        IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/master/docs/assets/icon.png'
-        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/master/extensions/PoShLog.Sinks.MSSqlServer/CHANGELOG.md'
+        LicenseUri = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview3/LICENSE'
+        ProjectUri = 'https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview3/extensions/PoShLog.Sinks.MSSqlServer'
+        IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/v3.0.0-preview3/docs/assets/icon.png'
+        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview3/extensions/PoShLog.Sinks.MSSqlServer/CHANGELOG.md'
     } }
 }
 

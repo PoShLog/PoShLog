@@ -34,7 +34,7 @@ Description = 'PoShLog is powershell logging module.
 PoShLog allows you to log structured event data into console, file and much more places easily.
 It is wrapper of great C# logging library Serilog - https://serilog.net/.
 
-For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
+For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview3/docs'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '7.4'
@@ -112,19 +112,19 @@ PrivateData = @{
         Tags = 'Log','Logging','Serilog','File','filelog','logfile','error-log','console','event','serilog-sink','serilog-for-powershell','wrapper','sinks','PSEdition_Core','Windows','Linux','MacOS'
 
         # A URL to the license for this module.
-        LicenseUri = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview2/LICENSE'
+        LicenseUri = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview3/LICENSE'
 
         # A URL to the main website for this project.
         ProjectUri = 'https://github.com/PoShLog/PoShLog'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/v3.0.0-preview2/docs/assets/icon.png'
+        IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/v3.0.0-preview3/docs/assets/icon.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview2/CHANGELOG.md'
+        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview3/CHANGELOG.md'
 
         # Prerelease string of this module
-        Prerelease = 'preview2'
+        Prerelease = 'preview3'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         # RequireLicenseAcceptance = $false

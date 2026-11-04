@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+## 2.0.0-preview3 — 2026-11-04
+
+### Features
+- No new features.
+
+### Changes
+- Released with PoShLog 3.0.0-preview3 (shared preview label, ADR 0019); the manifest describes the module in one line.
 
 ### Bug fixes
 - Bind `ManageEventSource` as a boolean, preserving explicit `$true`/`$false` calls and the default `$false`.

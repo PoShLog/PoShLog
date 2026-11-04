@@ -4,7 +4,7 @@ param(
     [ValidateSet('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic', 'PoShLog.Sinks.MSSqlServer')]
     [string[]]$Module = @('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.OpenTelemetry'),
     [ValidatePattern('^[0-9A-Za-z]+$')]
-    [string]$Prerelease = 'preview2'
+    [string]$Prerelease = 'preview3'
 )
 $ErrorActionPreference = 'Stop'
 # 1.0.x mis-parses dotted names in a local file repository.
