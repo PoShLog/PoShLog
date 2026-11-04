@@ -16,7 +16,8 @@ Describe 'SQL Server delivery through the isolated worker' {
             Store = @('Id', 'Message', 'MessageTemplate', 'Level', 'TimeStamp', 'Exception', 'Properties', 'LogEvent')
             AdditionalColumns = @(@{ ColumnName = 'Number'; PropertyName = 'Number'; DataType = 'Int' })
         }
-        New-Logger | Add-SinkMSSqlServer -ConnectionString $env:POSHLOG_SQL_CONNECTION_STRING -TableName $table `
+        New-Logger | Set-MinimumLevel -Value Verbose |
+            Add-SinkMSSqlServer -ConnectionString $env:POSHLOG_SQL_CONNECTION_STRING -TableName $table `
             -AutoCreateSqlTable -BatchPostingLimit 2 -BatchPeriod ([timespan]::FromMilliseconds(100)) `
             -RestrictedToMinimumLevel Information -ColumnOptions $columns | Start-Logger
         Write-DebugLog 'This event must be filtered'
@@ -33,7 +34,8 @@ Describe 'SQL Server delivery through the isolated worker' {
                 while ($reader.Read()) {
                     $json = $reader.GetString(3) | ConvertFrom-Json
                     $json.Properties.Number | Should -Be 42
-                    $reader.GetString(4) | Should -Match '42'
+                    $properties = [xml]$reader.GetString(4)
+                    $properties.SelectSingleNode('/properties/property[@key="Number"]').InnerText | Should -Be '42'
                     if ($reader.GetString(0) -eq 'Error') { $reader.GetString(5) | Should -Match 'integration exception' }
                     [pscustomobject]@{ Level = $reader.GetString(0); Message = $reader.GetString(1); Number = $reader.GetInt32(2) }
                 }
