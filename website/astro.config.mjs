@@ -103,6 +103,7 @@ export default defineConfig({
 					collapsed: true,
 					items: [
 						{ label: 'FAQ and troubleshooting', link: '/guides/faq/' },
+						{ label: 'Assembly conflicts', link: '/guides/assembly-conflicts/' },
 						{ label: 'Changelog', link: '/changelog/' },
 						{ label: 'Extension module READMEs', collapsed: true, items: [{ autogenerate: { directory: 'extensions' } }] },
 						{ label: 'For developers', link: '/guides/for-developers/' },
