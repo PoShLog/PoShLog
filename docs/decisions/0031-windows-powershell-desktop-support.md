@@ -27,8 +27,9 @@ target frameworks do not prevent a Desktop build. An in-memory compile of Core a
 8 files, all language or BCL gaps. Available assets do not prove safe binding in a shared Windows PowerShell process,
 though:
 
-- .NET Framework has no `AssemblyLoadContext`. Today it isolates Serilog.Expressions for `Add-SinkLogger -Filter`
-  (`ExpressionFilter`, ADR 0027) and the MSSqlServer worker (ADR 0030). AppDomain isolation would add a remoting
+- .NET Framework has no `AssemblyLoadContext`. On PowerShell 7 it isolated Serilog.Expressions for
+  `Add-SinkLogger -Filter` (`ExpressionFilter`, ADR 0027; since ADR 0032 the engine is shaded into Core instead, which
+  is the spike A route below) and it isolates the MSSqlServer worker (ADR 0030). AppDomain isolation would add a remoting
   boundary and cannot share `LoggerConfiguration` objects directly.
 - Windows PowerShell 5.1 applies no binding redirects for module assemblies. Serilog and System.Text.Json pull in
   out-of-band packages on .NET Framework (System.Memory, System.Buffers, System.Runtime.CompilerServices.Unsafe,

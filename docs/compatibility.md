@@ -94,6 +94,9 @@ Uninstall-PSResource PoShLog -Version 3.0.0-preview2 -Prerelease
 
 One PowerShell session holds one PoShLog version. Start a new session to switch.
 
+For shared DLL errors and import-order advice on PowerShell 7.6+ and the upcoming Windows PowerShell 5.1 build,
+see [Assembly conflicts](guides/assembly-conflicts.md).
+
 ## How this was verified
 
 On 2026-11-03, each scenario ran in a new `mcr.microsoft.com/powershell:7.4-ubuntu-22.04` container (PowerShell 7.4.6),

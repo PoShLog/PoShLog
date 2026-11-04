@@ -35,8 +35,9 @@ installs one, as a prerelease while PoShLog 3 is in preview. See [Compatibility 
 
 ## Does PoShLog 3 work on Windows PowerShell 5.1?
 
-No. PoShLog 3 needs PowerShell 7.6 or newer, on Windows, Linux or macOS. Windows PowerShell 5.1 stays on the
-maintained 2.x line; see [v2 or v3?](../v2-or-v3.md).
+Not yet. PoShLog 3 needs PowerShell 7.6 or newer, on Windows, Linux or macOS. Windows PowerShell 5.1 stays on the
+maintained 2.x line for now; see [v2 or v3?](../v2-or-v3.md). A Windows PowerShell 5.1 build (.NET Framework 4.7.2+) is in progress and not released;
+[Assembly conflicts](assembly-conflicts.md) describes how it will handle shared DLLs.
 
 ## Can I use a Serilog sink that has no PoShLog module?
 
@@ -45,11 +46,9 @@ constraints are in the [migration guide](migration-v3.md).
 
 ## A sink module fails to import with an assembly error
 
-The first-party extensions reuse a .NET assembly that is already loaded in the session at the same or a newer
-version. When an older version is loaded, for example by another module imported earlier, the import fails with a
-message that names both versions. Start a new session and import the PoShLog extension before that module. Background:
-[ADR 0011](../decisions/0011-core-does-not-load-assemblies-extensions-ship.md) and
-[ADR 0012](../decisions/0012-otlp-sink-design.md).
+Another module may have loaded an older shared assembly first. Start a fresh session and import PoShLog before
+that module. See [Assembly conflicts](assembly-conflicts.md) for the differences between PowerShell 7.6+ and the
+upcoming Windows PowerShell build, how to inspect loaded DLLs, and what to include in a bug report.
 
 ## Where do I ask?
 
