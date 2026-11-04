@@ -26,4 +26,4 @@ body:
       label: Module concerned
       description: Name the core or extension module, if known.
     validations:
-      required: true
+      required: false
