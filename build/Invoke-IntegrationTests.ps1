@@ -17,6 +17,19 @@ foreach ($name in $Module) {
     if ($name -eq 'PoShLog.Sinks.EventLog' -and !$IsWindows) { throw 'EventLog requires Windows.' }
 }
 $selected = @('PoShLog') + @($Module | Where-Object { $_ -ne 'PoShLog' })
+if ($Source -eq 'Gallery' -and !$WaitForGallery) {
+    # Nightly Gallery runs test what is published. An extension whose current major line is not on the Gallery yet
+    # (MSSqlServer 2.x while only 1.0.0-preview1 is published) is skipped instead of testing the old line's API.
+    $Module = @(foreach ($name in $Module) {
+        if ($name -eq 'PoShLog') { $name; continue }
+        $major = ([version](Import-PowerShellDataFile "$root/extensions/$name/$name.psd1").ModuleVersion).Major
+        $published = Find-PSResource $name -Prerelease:$Prerelease -ErrorAction SilentlyContinue |
+            Sort-Object Version -Descending | Select-Object -First 1
+        if ($published -and $published.Version.Major -ge $major) { $name }
+        else { Write-Host "::notice title=Integration::Skipping ${name}: the Gallery has no $major.x release yet." }
+    })
+    $selected = @('PoShLog') + @($Module | Where-Object { $_ -ne 'PoShLog' })
+}
 $scratch = Join-Path ([IO.Path]::GetTempPath()) "poshlog-integration-$([guid]::NewGuid().ToString('N'))"
 $modules = Join-Path $scratch 'Modules'
 New-Item -ItemType Directory -Force $modules, $ResultsPath | Out-Null

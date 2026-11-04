@@ -60,6 +60,12 @@ public sealed class AddSinkMSSqlServerCommand : PSCmdlet
             // Connection strings must never appear as ErrorRecord targets or in wrapper diagnostics.
             ExceptionDispatchInfo.Capture(exception.InnerException).Throw();
         }
+        catch (TypeInitializationException exception) when (exception.InnerException != null)
+        {
+            // A missing or broken private worker surfaces its own message ("Missing private MSSqlServer dependency"),
+            // not "The type initializer for 'IsolatedSink' threw an exception".
+            ExceptionDispatchInfo.Capture(exception.InnerException).Throw();
+        }
         WriteObject(LoggerConfig);
     }
 }

@@ -10,6 +10,6 @@ PoShLog is extensible, just like Serilog. To add more cmdlets, install one of th
 * [**PoShLog.Sinks.Elastic**](../sinks/Add-SinkElasticsearch.md) - Publishes log messages to Elasticsearch or Elastic Cloud data streams.
 * [**PoShLog.Sinks.Elasticsearch**](https://github.com/mamidenn/PoShLog.Sinks.Elasticsearch) - Another author's Elasticsearch sink, for Windows PowerShell and PoShLog 2.x.
 * [**PoShLog.Sinks.Seq**](https://github.com/PoShLog/PoShLog.Sinks.Seq) - Publishes log messages to [Seq](https://datalust.co/seq).
-* [**PoShLog.Sinks.MSSqlServer**](https://github.com/PoShLog/PoShLog.Sinks.MSSqlServer) - Writes log messages into a MSSQL server database.
+* [**PoShLog.Sinks.MSSqlServer**](../sinks/Add-SinkMSSqlServer.md) - Writes batched events to SQL Server or Azure SQL with isolated SqlClient dependencies.
 
 > **Compatibility note:** extension modules must target the same runtime as the core module. Since PoShLog v3.0.0, the core module is a compiled .NET 8 binary module requiring PowerShell 7.4+. Older script-based extension modules built against the previous PoShLog script module should continue to work as long as they only call the public cmdlets documented here, but any extension shipping its own compiled binaries should be rebuilt/verified against .NET 8 and Serilog 4.x for full compatibility. Which published versions work with which PoShLog is on the [compatibility page](../compatibility.md).
