@@ -32,3 +32,4 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0028](0028-json-logger-configuration.md) | Load a Serilog JSON configuration snapshot | proposed |
 | [0029](0029-custom-console-token-themes.md) | Build custom Serilog console token themes | proposed |
 | [0030](0030-mssqlserver-private-dependencies.md) | MSSqlServer isolates private dependencies while sharing Serilog with Core | proposed |
+| [0031](0031-windows-powershell-desktop-support.md) | Support Windows PowerShell 5.1 with a bounded Desktop feature set | proposed |
