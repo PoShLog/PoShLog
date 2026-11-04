@@ -67,7 +67,17 @@ jobs:
           WAIT_FOR_GALLERY: ${{ github.event_name == 'workflow_run' }}
         run: |
           if ($PSVersionTable.PSVersion -lt [version]'7.4') { throw 'PowerShell 7.4+ required.' }
-          ./build/Invoke-IntegrationTests.ps1 -Source $env:SOURCE -Prerelease -WaitForGallery:($env:WAIT_FOR_GALLERY -eq 'true')
+          # Ephemeral test credential lives only in this process and the disposable container.
+          $env:MSSQL_SA_PASSWORD = 'Sql!' + [guid]::NewGuid().ToString('N') + 'a9'
+          $env:POSHLOG_SQL_CONNECTION_STRING = "Server=127.0.0.1,1433;Database=master;User ID=sa;Password=$env:MSSQL_SA_PASSWORD;Encrypt=true;TrustServerCertificate=true"
+          try {
+            docker compose -f tests/integration/compose.yml --profile mssql up -d --wait --wait-timeout 300 mssql
+            if ($LASTEXITCODE) { throw 'SQL Server startup failed.' }
+            ./build/Invoke-IntegrationTests.ps1 -Source $env:SOURCE -Prerelease -WaitForGallery:($env:WAIT_FOR_GALLERY -eq 'true')
+          } finally {
+            docker compose -f tests/integration/compose.yml --profile mssql stop mssql
+            Remove-Item Env:MSSQL_SA_PASSWORD, Env:POSHLOG_SQL_CONNECTION_STRING -ErrorAction SilentlyContinue
+          }
       - name: Collect backend diagnostics
         if: failure()
         run: |
@@ -83,7 +93,7 @@ jobs:
           path: TestResults/
       - name: Stop backends and remove test data
         if: always()
-        run: docker compose -f tests/integration/compose.yml down -v
+        run: docker compose -f tests/integration/compose.yml --profile mssql down -v
   eventlog:
     needs: modes
     runs-on: windows-latest

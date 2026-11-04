@@ -39,11 +39,12 @@ jobs:
           }
       - name: Build the unpublished sinks
         # Published mode loads them next to the published Seq 1.0.0 (docs/decisions/0012-otlp-sink-design.md).
-        if: matrix.mode == 'Published'
+        if: matrix.mode != 'InRepo'
         run: |
           ./build/Build-Extension.ps1 -Module PoShLog.Sinks.OpenTelemetry
           ./build/Build-Extension.ps1 -Module PoShLog.Sinks.Splunk.Hec
           ./build/Build-Extension.ps1 -Module PoShLog.Sinks.Syslog.Rfc5424
           ./build/Build-Extension.ps1 -Module PoShLog.Sinks.Elastic
+          ./build/Build-Extension.ps1 -Module PoShLog.Sinks.MSSqlServer
       - name: Verify compatibility
         run: ./tests/compat/Invoke-Compatibility.ps1 -Mode '${{ matrix.mode }}'

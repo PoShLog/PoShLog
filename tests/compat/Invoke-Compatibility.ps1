@@ -70,7 +70,7 @@ foreach ($name in $modules.Keys) {
 # The OpenTelemetry, Splunk HEC, Syslog and Elastic sinks are not published yet: always the in-repo builds. Each must load and deliver
 # next to the Seq extension in either import order, the refreshed one (InRepo) and the published 1.0.0 that ships its own
 # older assemblies (Published); see docs/decisions/0012-otlp-sink-design.md.
-$unpublished = @('PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic')
+$unpublished = @('PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic', 'PoShLog.Sinks.MSSqlServer')
 $seqCase = $cases | Where-Object Name -eq 'PoShLog.Sinks.Seq'
 $seqPaths = @()
 if ($Mode -eq 'InRepo') {
@@ -86,6 +86,13 @@ foreach ($name in $unpublished) {
             $cases += @{ Name = $name; Path = "$root/extensions/$name/$name.psd1"; Seq = $seqPath; SeqFirst = $first }
         }
     }
+}
+# MSSqlServer must coexist with an actual old DI assembly in every compatibility mode.
+dotnet build "$PSScriptRoot/fixtures/DependencyInjection22.csproj" -c Release --configfile "$root/build/nuget.config"
+if ($LASTEXITCODE) { throw 'Building the dependency-conflict fixture failed.' }
+foreach ($order in 'DependencyFirst', 'SinkFirst') {
+    & (Join-Path $PSHOME 'pwsh') -NoProfile -File "$PSScriptRoot/Test-MSSqlServerIsolation.ps1" -Order $order
+    if ($LASTEXITCODE) { throw "MSSqlServer isolation failed: $order" }
 }
 $failed = @()
 foreach ($case in $cases) {
