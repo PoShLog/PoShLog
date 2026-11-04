@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- PowerShell 7.4 runs on .NET 8 (ADR 0001); net10 would exclude that supported host. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>PoShLog.Sinks.MSSqlServer</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Cmdlets/*.cs" />
+    <PackageReference Include="Serilog" Version="4.4.0" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.6" ExcludeAssets="runtime" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

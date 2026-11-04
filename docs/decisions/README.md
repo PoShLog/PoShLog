@@ -27,3 +27,4 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0021](0021-extension-catalog-in-core.md) | Core lists and installs its extensions from a catalogue built into the assembly | proposed |
 | [0022](0022-documentation-website.md) | A Starlight documentation website built from docs/, served from the PoShLog.github.io org site | proposed |
 | [0023](0023-safe-error-metadata-and-event-source-management.md) | Safe error invocation metadata and explicit Event Log source management | proposed |
+| [0030](0030-mssqlserver-private-dependencies.md) | MSSqlServer isolates private dependencies while sharing Serilog with Core | Proposed |

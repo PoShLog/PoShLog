@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)]
-    [ValidateSet('PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic')]
+    [ValidateSet('PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic', 'PoShLog.Sinks.MSSqlServer')]
     [string]$Module,
     [string]$Configuration = 'Release'
 )
@@ -25,4 +25,19 @@ if ($Module -eq 'PoShLog.Sinks.EventLog') {
     Get-ChildItem "$staging/runtimes/win/lib/net8.0" -File -Filter '*.dll' |
         Copy-Item -Destination $lib -Force
 }
+if ($Module -eq 'PoShLog.Sinks.MSSqlServer') {
+    # Preserve deps.json and all RID assets: SqlClient's root DLL is a portable facade.
+    $private = Join-Path $lib 'private'
+    dotnet publish "$directory/Private/Worker.csproj" -c $Configuration -o $private --configfile "$PSScriptRoot/nuget.config"
+    if ($LASTEXITCODE) { throw 'Publishing the isolated MSSqlServer worker failed.' }
+    # Serilog is always supplied by Core, including inside the private context.
+    $sharedSerilog = Join-Path $private 'Serilog.dll'
+    if (Test-Path $sharedSerilog) { Remove-Item -LiteralPath $sharedSerilog }
+    if (!(Test-Path "$private/runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll")) {
+        throw 'Missing win-x64 SQL Server native SNI asset.'
+    }
+    # Linux SqlClient uses managed SNI; no native Linux SNI package is required.
+}
 Write-Output "Built $Module -> $lib"
+
+
