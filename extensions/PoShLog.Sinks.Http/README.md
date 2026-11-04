@@ -1,6 +1,6 @@
 # PoShLog.Sinks.Http
 
-An HTTP sink extension for PoShLog. Version 2.0.0 requires PowerShell 7.4+ and Core edition.
+An HTTP sink extension for PoShLog. Version 2.0.0 requires PowerShell 7.6+ and Core edition.
 Version 2.0.0 requires PoShLog 2.99.0 by GUID; PoShLog 2.x users stay on 1.0.x. Core supplies the shared Serilog assembly.
 
 Build from the repository root:

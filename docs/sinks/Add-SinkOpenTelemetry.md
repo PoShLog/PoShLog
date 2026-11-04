@@ -1,7 +1,7 @@
 ### Dependencies
 
 This cmdlet requires the extension module [PoShLog.Sinks.OpenTelemetry](../../extensions/PoShLog.Sinks.OpenTelemetry/README.md)
-(PowerShell 7.4+, PoShLog 3.0.0+).
+(PowerShell 7.6+, PoShLog 3.0.0+).
 
 ```ps1
 Install-Module PoShLog.Sinks.OpenTelemetry

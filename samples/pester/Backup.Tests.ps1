@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 # Pester 5 or newer. Two ways to test code that logs: mock the logging commands, or capture the real events.
 
 BeforeAll {

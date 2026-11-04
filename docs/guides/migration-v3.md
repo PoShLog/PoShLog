@@ -2,18 +2,18 @@
 
 ## Overview
 
-PoShLog v3.0 is a major rewrite — the module is now a **compiled C# binary module** targeting **.NET 8.0** and **PowerShell 7.4+**.
+PoShLog v3.0 is a major rewrite — the module is now a **compiled C# binary module** targeting **.NET 10** and **PowerShell 7.6+**.
 
 ### Key Changes
 
 | Area | v2.x | v3.0 |
 |---|---|---|
 | Module type | Script module (.psm1) | Binary module (.dll) |
-| PowerShell | 5.1+ (Desktop & Core) | **7.4+ only** |
+| PowerShell | 5.1+ (Desktop & Core) | **7.6+ only** |
 | Serilog | 2.10.0 | **4.4.0** |
 | Serilog.Sinks.Console | 3.1.1 | **6.1.1** |
 | Serilog.Sinks.File | 4.1.0 | **7.0.0** |
-| .NET Target | netstandard2.0 | **net8.0** |
+| .NET Target | netstandard2.0 | **net10.0** |
 
 ### What Stays the Same
 
@@ -27,7 +27,7 @@ PoShLog v3.0 is a major rewrite — the module is now a **compiled C# binary mod
 
 ### 1. PowerShell 5.1 is no longer supported
 
-PoShLog v3.0 requires PowerShell 7.4 or later. If you need PS 5.1 support, stay on v2.x.
+PoShLog v3.0 requires PowerShell 7.6 or later. If you need PS 5.1, 7.4 or 7.5 support, stay on v2.x. The 3.0.0 previews up to preview3 ran on 7.4+; later releases need 7.6 ([ADR 0033](../decisions/0033-net10-powershell-7-6.md)).
 
 ### 2. Extension modules remain compatible
 
@@ -40,7 +40,7 @@ Seq, EventLog, Http and Enrichers have refreshed 2.0.0 builds under `extensions/
 | Cmdlet | Reason |
 |---|---|
 | `Add-PackageTypes` | Never exported; binary module loads dependencies at import |
-| `Test-PsCore` | Never exported; the manifest requires PowerShell 7.4+ |
+| `Test-PsCore` | Never exported; the manifest requires PowerShell 7.6+ |
 
 ---
 
@@ -75,7 +75,7 @@ Constraints:
 - **Serilog 4, no newer than Core's.** The sink must target Serilog 4.x at or below the version PoShLog ships
   (4.4.0). Core loads Serilog, Serilog.Sinks.File and Serilog.Sinks.Console and nothing else
   ([ADR 0011](../decisions/0011-core-does-not-load-assemblies-extensions-ship.md)).
-- **A .NET 8 compatible build** (`net8.0`, an older `net*` or `netstandard2.x` folder of the package).
+- **A .NET 10 compatible build** (`net10.0`, an older `net*` such as `net8.0`, or a `netstandard2.x` folder of the package).
 - **You load every dependency yourself**, in dependency order, before the sink assembly. One process holds one version
   of an assembly: if another module already loaded an older copy, the first one loaded wins and the sink may fail.
 - **Not covered by PoShLog's tests.** Pin the package version you tested.
@@ -100,17 +100,17 @@ and it composes like any `Add-Sink*` cmdlet. [Creating a sink](creating-sink.md)
 If you maintain a PoShLog extension module and want to support v3.0:
 
 1. **Reference Serilog 4.x**, no newer than the version Core ships (4.4.0).
-2. **Target net8.0** (or netstandard2.0 if you need broader compat — Serilog 4.x supports both).
+2. **Target net10.0 or lower** (net8.0 and netstandard2.0 load too — Serilog 4.x supports both).
 3. **Choose the PoShLog minimum by GUID:**
    - A release that serves v2 and v3 keeps PoShLog `2.0.0` and the Serilog version v2 ships; the 1.0.x extensions
      work this way ([ADR 0003](../decisions/0003-keep-the-v2-extension-contract.md)).
-   - A release that needs v3 (Serilog 4, PowerShell 7.4) requires PoShLog 3. While v3 is a prerelease, declare
+   - A release that needs v3 (Serilog 4, PowerShell 7.6) requires PoShLog 3. While v3 is a prerelease, declare
      `2.99.0` so package managers can resolve the preview
      ([ADR 0017](../decisions/0017-extensions-require-poshlog-2-99-while-core-is-prerelease.md)):
      ```powershell
      RequiredModules = @(@{ ModuleName = 'PoShLog'; GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'; ModuleVersion = '2.99.0' })
      ```
-4. **Test with PowerShell 7.4+**
+4. **Test with PowerShell 7.6+**
 5. **Consider converting to a binary module** for better performance and type safety
 
 ### Common API changes in Serilog 4.x

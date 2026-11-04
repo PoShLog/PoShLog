@@ -1,7 +1,7 @@
 # Add-SinkMSSqlServer
 
 Writes batched events to SQL Server or Azure SQL. Requires the separately installed
-[PoShLog.Sinks.MSSqlServer](../../extensions/PoShLog.Sinks.MSSqlServer/README.md), PowerShell 7.4+ and PoShLog 3
+[PoShLog.Sinks.MSSqlServer](../../extensions/PoShLog.Sinks.MSSqlServer/README.md), PowerShell 7.6+ and PoShLog 3
 (Windows x64 or Linux x64).
 
 ```powershell
@@ -67,7 +67,7 @@ See the [upstream reference](https://github.com/serilog-mssql/serilog-sinks-mssq
 
 ConnectionString/cnn, TableName, SchemaName, AutoCreateSqlTable, BatchPostingLimit, BatchPeriod,
 RestrictedToMinimumLevel, Formatter and FormatProvider keep their names. The new module requires Core 3 and PowerShell
-7.4; keep the old preview on PoShLog 2.x. Use PSResourceGet with -Prerelease during the preview.
+7.6; keep the old preview on PoShLog 2.x. Use PSResourceGet with -Prerelease during the preview.
 
 Replace UseAzureManagedIdentity and AzureServiceTokenProviderResource with connection string authentication:
 `Server=example.database.windows.net;Database=Logs;Authentication=Active Directory Managed Identity;Encrypt=true`.

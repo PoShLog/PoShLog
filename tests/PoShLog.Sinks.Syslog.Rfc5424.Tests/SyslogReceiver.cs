@@ -181,7 +181,7 @@ public sealed class SyslogReceiver : IAsyncDisposable
 		request.CertificateExtensions.Add(names.Build());
 		using var certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddMinutes(-5), DateTimeOffset.UtcNow.AddHours(1));
 		// SslStream on Windows needs a key it can use outside the ephemeral container.
-		return new X509Certificate2(certificate.Export(X509ContentType.Pfx));
+		return X509CertificateLoader.LoadPkcs12(certificate.Export(X509ContentType.Pfx), null);
 	}
 
 	public async ValueTask DisposeAsync()

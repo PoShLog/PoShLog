@@ -1,7 +1,7 @@
 ### Dependencies
 
 This cmdlet requires the extension module [PoShLog.Sinks.Elastic](../../extensions/PoShLog.Sinks.Elastic/README.md)
-(PowerShell 7.4+, PoShLog 3.0.0+).
+(PowerShell 7.6+, PoShLog 3.0.0+).
 
 ```ps1
 Install-Module PoShLog.Sinks.Elastic
@@ -172,6 +172,6 @@ Serilog.Sinks.Elasticsearch. It writes to classic indices; this module writes to
 | `-AutoRegisterTemplateVersion` | none | The templates follow ECS 9. |
 | `-SkipServerCertificateCheck` | `-CertificateFingerprint` | Trust the cluster's CA instead of any certificate. |
 
-The third-party module runs only in Windows PowerShell 5.1, and this module only in PowerShell 7.4 and newer, so they
+The third-party module runs only in Windows PowerShell 5.1, and this module only in PowerShell 7.6 and newer, so they
 never load into the same session. Kibana searches that read the old index fields (`fields.*`, `level`) need the ECS
 names (`labels.*`, `log.level`).

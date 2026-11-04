@@ -28,7 +28,7 @@ Sends log events over OTLP (HTTP/protobuf or gRPC) to an OpenTelemetry Collector
 For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview2/docs'
 
 # Minimum version of the PowerShell engine required by this module
-PowerShellVersion = '7.4'
+PowerShellVersion = '7.6'
 
 # Modules that must be imported into the global environment prior to importing this module (ADR 0004)
 RequiredModules = @(@{ModuleName = 'PoShLog'; GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'; ModuleVersion = '2.99.0'; })

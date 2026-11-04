@@ -5,6 +5,8 @@
 - **Amends:** [0002](0002-sinks-and-enrichers-in-v3.md) (MSSqlServer returns as a first-party extension),
   [0003](0003-keep-the-v2-extension-contract.md) and [0011](0011-core-does-not-load-assemblies-extensions-ship.md)
   (private dependencies can be isolated while Serilog remains shared).
+- **Note (2026-11-04):** the extension and its worker now target net10.0 for PowerShell 7.6
+  ([0033](0033-net10-powershell-7-6.md)); the net8.0 and PowerShell 7.4 references below are historical.
 
 ## Context
 

@@ -8,8 +8,8 @@
     Description = 'PoShLog extension for SQL Server and Azure SQL.
 Writes batched events to SQL Server with isolated SqlClient dependencies and configurable columns.
 
-Requires PowerShell 7.4+ and PoShLog 3.'
-    PowerShellVersion = '7.4'
+Requires PowerShell 7.6+ and PoShLog 3.'
+    PowerShellVersion = '7.6'
     CompatiblePSEditions = @('Core')
     RequiredModules = @(@{ ModuleName = 'PoShLog'; GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'; ModuleVersion = '2.99.0' })
     FunctionsToExport = @()

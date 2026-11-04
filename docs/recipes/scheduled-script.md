@@ -12,14 +12,14 @@ The scheduler runs the job as another account (often `SYSTEM` or a service accou
 See [Compatibility and installation](../compatibility.md) for versions.
 
 ```powershell
-# In an elevated PowerShell 7.4+ session (sudo pwsh on Linux and macOS).
+# In an elevated PowerShell 7.6+ session (sudo pwsh on Linux and macOS).
 Install-PSResource PoShLog -Prerelease -Scope AllUsers
 ```
 
 ## The script
 
 ```powershell
-#Requires -Version 7.4
+#Requires -Version 7.6
 #Requires -Modules @{ ModuleName = 'PoShLog'; ModuleVersion = '3.0.0' }
 [CmdletBinding()]
 param(

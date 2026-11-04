@@ -2,7 +2,7 @@
 
 An Elasticsearch sink extension for PoShLog. It writes Elastic Common Schema (ECS) documents into data streams through
 the bulk API, using [Elastic.Serilog.Sinks](https://github.com/elastic/ecs-dotnet). Version 0.1.0 requires PowerShell
-7.4+ and PoShLog 3 (declared as 2.99.0 by GUID during the preview, ADR 0017). Core supplies the shared Serilog assembly; `lib/` ships the Elastic assemblies and the
+7.6+ and PoShLog 3 (declared as 2.99.0 by GUID during the preview, ADR 0017). Core supplies the shared Serilog assembly; `lib/` ships the Elastic assemblies and the
 cmdlet.
 
 Build from the repository root:

@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 # PoShLog.Sinks.OpenTelemetry end to end: the module as shipped (psd1, psm1, lib) against a loopback OTLP/HTTP receiver.
 
 BeforeAll {

@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 <#
 .SYNOPSIS
     Checks Install-PoShLogExtension end to end in a clean environment: a local repository with the staged packages, and a
@@ -8,7 +8,7 @@
     a container, for example:
 
         docker run --rm -v "${PWD}:/repo" -v "<stage>:/stage" -v "<PSResourceGet module folder>:/psrg" `
-            mcr.microsoft.com/powershell:7.4-ubuntu-22.04 `
+            mcr.microsoft.com/dotnet/sdk:10.0 `
             pwsh -File /repo/build/Test-ExtensionInstall.ps1 -StageRoot /stage -PSResourceGetPath /psrg
 
     The staged packages are published under the repository name 'PoShLog-Local', which exists only in the scratch home.

@@ -3,6 +3,8 @@
 - **Status:** accepted (Tomáš, 2026-11-03)
 - **Date:** 2026-11-03
 - **Amends:** [0003](0003-keep-the-v2-extension-contract.md) ("a final 2.2.0 … for security and critical fixes only")
+- **Note (2026-11-04):** v3 now requires PowerShell 7.6 ([0033](0033-net10-powershell-7-6.md), superseding 0001). v2 is
+  also the line for PowerShell 7.4 and 7.5 users.
 
 ## Context
 

@@ -35,7 +35,7 @@ installs one, as a prerelease while PoShLog 3 is in preview. See [Compatibility 
 
 ## Does PoShLog 3 work on Windows PowerShell 5.1?
 
-No. PoShLog 3 needs PowerShell 7.4 or newer, on Windows, Linux or macOS. Windows PowerShell 5.1 stays on the
+No. PoShLog 3 needs PowerShell 7.6 or newer, on Windows, Linux or macOS. Windows PowerShell 5.1 stays on the
 maintained 2.x line; see [v2 or v3?](../v2-or-v3.md).
 
 ## Can I use a Serilog sink that has no PoShLog module?

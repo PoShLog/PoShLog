@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 [CmdletBinding()]
 param(
     [ValidateSet('Gallery', 'InRepo')][string]$Source = 'Gallery',
@@ -66,7 +66,7 @@ try {
             Save-PSResource $name -Prerelease:$Prerelease -Path $modules -TrustRepository -SkipDependencyCheck
         }
     } else {
-        # Match CI's net8.0 build: the published module supports the .NET 8 host in PowerShell 7.4 (ADR 0001).
+        # Match the CI build: net10.0 for the .NET 10 host in PowerShell 7.6 (ADR 0033).
         dotnet publish "$root/src/dotnet/PoShLog.Core.csproj" --configuration Release --output "$root/src/lib"
         if ($LASTEXITCODE) { throw 'Core publish failed.' }
         foreach ($name in $selected) { & "$PSScriptRoot/Stage-Module.ps1" -Module $name -Destination $modules }

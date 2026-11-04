@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 
 BeforeAll {
     $root = (Resolve-Path "$PSScriptRoot/..").Path

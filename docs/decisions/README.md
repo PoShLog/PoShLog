@@ -4,7 +4,7 @@ One record per decision, numbered in order; a change of mind is a new record tha
 
 | # | Decision | Status |
 |---|----------|--------|
-| [0001](0001-binary-module-net8-powershell-7-4.md) | v3 is a binary module on net8.0 for PowerShell 7.4+ | accepted |
+| [0001](0001-binary-module-net8-powershell-7-4.md) | v3 is a binary module on net8.0 for PowerShell 7.4+ | superseded by 0033 |
 | [0002](0002-sinks-and-enrichers-in-v3.md) | Which sinks and enrichers v3 keeps | accepted |
 | [0003](0003-keep-the-v2-extension-contract.md) | v3 keeps the v2 extension contract | accepted, amended by 0009, 0010 |
 | [0004](0004-refreshed-extensions-require-poshlog-3.md) | Refreshed extensions require PoShLog 3 | accepted |
@@ -33,3 +33,4 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0029](0029-custom-console-token-themes.md) | Build custom Serilog console token themes | proposed |
 | [0030](0030-mssqlserver-private-dependencies.md) | MSSqlServer isolates private dependencies while sharing Serilog with Core | proposed |
 | [0032](0032-shade-serilog-expressions-into-core.md) | Shade Serilog.Expressions into Core | accepted |
+| [0033](0033-net10-powershell-7-6.md) | v3 targets net10.0 and PowerShell 7.6+ | accepted |

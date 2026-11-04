@@ -2,7 +2,7 @@
 
 A syslog sink extension for PoShLog: RFC 5424 or RFC 3164 messages over UDP, TCP or TLS, formatted by
 [Serilog.Sinks.SyslogMessages](https://github.com/IonxSolutions/serilog-sinks-syslog). Version 0.1.0 requires
-PowerShell 7.4+ and PoShLog 2.99.0 (by GUID). Core supplies the shared Serilog assembly; `lib/` ships the formatter
+PowerShell 7.6+ and PoShLog 2.99.0 (by GUID). Core supplies the shared Serilog assembly; `lib/` ships the formatter
 assembly and the cmdlet.
 
 Build from the repository root:

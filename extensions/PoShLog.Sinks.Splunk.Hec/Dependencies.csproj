@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- ADR 0001: compatible with the PowerShell 7.4 runtime. -->
-    <TargetFramework>net8.0</TargetFramework>
+    <!-- ADR 0033: compatible with the PowerShell 7.6 runtime (.NET 10). -->
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>PoShLog.Sinks.Splunk.Hec</AssemblyName>
     <RootNamespace>PoShLog.Sinks.Splunk.Hec</RootNamespace>
     <Nullable>enable</Nullable>
@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Serilog" Version="4.4.0" />
     <PackageReference Include="Serilog.Sinks.Splunk" Version="5.2.0" />
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.6" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.9" ExcludeAssets="runtime" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

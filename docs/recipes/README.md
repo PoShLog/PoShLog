@@ -9,7 +9,7 @@ output it produces, and a "Missing events?" section for when the log is not what
 | [GitHub Actions](github-actions.md) | Readable job log, a structured CLEF file as an artifact, annotations for warnings and errors, the exit code fails the step |
 | [Testing code that logs, with Pester](pester.md) | Mocking the logging commands, or capturing the real events and their properties |
 
-The samples need PowerShell 7.4+ and PoShLog 3.0.0-preview2 or newer. See [Compatibility and installation](../compatibility.md).
+The samples need PowerShell 7.6+ and PoShLog 3.0.0-preview2 or newer. See [Compatibility and installation](../compatibility.md).
 
 ## How the samples are checked
 

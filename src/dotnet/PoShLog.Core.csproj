@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- ADR 0001: PowerShell 7.4 hosts .NET 8; newer targets would exclude it. -->
-    <TargetFramework>net8.0</TargetFramework>
+    <!-- ADR 0033: PowerShell 7.6 hosts .NET 10, the lowest runtime v3 supports. -->
+    <TargetFramework>net10.0</TargetFramework>
     <Version>3.0.0</Version>
     <AssemblyName>PoShLog.Core</AssemblyName>
     <RootNamespace>PoShLog.Core</RootNamespace>
@@ -18,7 +18,7 @@
     <!-- Compile-time only reference to System.Management.Automation. The runtime assembly is
          supplied by the hosting PowerShell (7+) process, so we exclude runtime assets to avoid
          shipping/conflicting with the host's own copy. -->
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.6">
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.9">
       <ExcludeAssets>runtime</ExcludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

@@ -22,7 +22,8 @@ Get-ChildItem $staging -File -Filter '*.dll' |
 # EventLog is Windows-only. Ship its implementation, rather than the portable
 # platform-not-supported facade, even when the package is built on Linux.
 if ($Module -eq 'PoShLog.Sinks.EventLog') {
-    Get-ChildItem "$staging/runtimes/win/lib/net8.0" -File -Filter '*.dll' |
+    # Publish keeps only the package's runtime folder that matches the target framework, whatever its name.
+    Get-ChildItem "$staging/runtimes/win/lib/*/*.dll" -File |
         Copy-Item -Destination $lib -Force
 }
 if ($Module -eq 'PoShLog.Sinks.MSSqlServer') {

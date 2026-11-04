@@ -1,4 +1,4 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 <#
 .SYNOPSIS
     Runs the recipe samples (samples/) against the staged PoShLog package, each in a new pwsh process.

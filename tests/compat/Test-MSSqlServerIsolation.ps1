@@ -1,8 +1,8 @@
-#Requires -Version 7.4
+#Requires -Version 7.6
 [CmdletBinding()]
 param(
     [ValidateSet('DependencyFirst', 'SinkFirst')][string]$Order = 'DependencyFirst',
-    [string]$ConflictAssembly = "$PSScriptRoot/fixtures/bin/Release/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll"
+    [string]$ConflictAssembly = "$PSScriptRoot/fixtures/bin/Release/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll"
 )
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path "$PSScriptRoot/../..").Path

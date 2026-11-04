@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <!-- Matches the supported PowerShell 7.4 host and the extension under test. -->
-    <TargetFramework>net8.0</TargetFramework>
+    <!-- Matches the supported PowerShell 7.6 host and the extension under test. -->
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
