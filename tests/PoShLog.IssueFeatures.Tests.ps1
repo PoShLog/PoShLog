@@ -42,6 +42,10 @@ Get-Content './selected.log'
     }
 
     It 'loads JSON and configures a loaded extension enricher (#39)' {
+        # extensions/*/lib is build output (gitignored); CI checkouts do not have it.
+        if (!(Test-Path "$root/extensions/PoShLog.Enrichers/lib")) {
+            & "$root/build/Build-Extension.ps1" -Module PoShLog.Enrichers | Out-Null
+        }
         $extension = (Join-Path $root 'extensions/PoShLog.Enrichers/PoShLog.Enrichers.psd1').Replace("'", "''")
         $location = $TestDrive.Replace("'", "''")
         Set-Content (Join-Path $TestDrive 'logging.json') '{"Serilog":{"MinimumLevel":"Warning","Enrich":["WithMachineName","WithProcessId"],"WriteTo":[{"Name":"File","Args":{"path":"./configured.log","outputTemplate":"{MachineName} {ProcessId} {Message:lj}{NewLine}"}}]}}'
