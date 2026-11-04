@@ -1,6 +1,6 @@
 # Extension compatibility
 
-Run from the repository root, after publishing Core to src/lib and building all four extensions:
+Run from the repository root, after publishing Core to src/lib and building all nine extensions:
 
 ```powershell
 ./tests/compat/Invoke-Compatibility.ps1 -Mode InRepo
@@ -40,3 +40,17 @@ file name, ships durably and writes -YYYYMMDD.json and .bookmark there.
 No real credentials are used. Cloud endpoints are not contacted. Only processes and listeners
 created by the suite are closed. The driver imposes a per-module timeout; delivery assertions
 have a 30-second deadline. Generated files stay in the ignored .compat/ directory.
+
+MSSqlServer 2.0.0-preview3 is built from this repository in every mode. The legacy 1.0.0-preview1 is not a gate:
+its missing DLLs and old runtime loader are the defects being replaced. Each mode additionally builds the real NuGet
+DI Abstractions 2.2.0 fixture and runs Test-MSSqlServerIsolation.ps1 in fresh processes in both import orders.
+InRepo/Published also exercise the new sink next to their respective Seq versions. Actual SQL writes are integration tests.
+To run the conflict checks manually:
+
+```powershell
+dotnet build tests/compat/fixtures/DependencyInjection22.csproj -c Release --configfile build/nuget.config
+./tests/compat/Test-MSSqlServerIsolation.ps1 -Order DependencyFirst
+./tests/compat/Test-MSSqlServerIsolation.ps1 -Order SinkFirst
+```
+
+Set POSHLOG_SQL_CONNECTION_STRING in the parent process to additionally write and read a row in both orders.

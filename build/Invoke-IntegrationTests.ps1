@@ -10,7 +10,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot
 $allModules = @('PoShLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.Http',
-    'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic')
+    'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic', 'PoShLog.Sinks.MSSqlServer')
 if (!$Module) { $Module = $allModules }
 foreach ($name in $Module) {
     if ($name -notin ($allModules + 'PoShLog.Sinks.EventLog')) { throw "Unknown module: $name" }

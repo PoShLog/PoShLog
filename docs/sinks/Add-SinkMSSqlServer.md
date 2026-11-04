@@ -1,132 +1,86 @@
-### Dependencies
+# Add-SinkMSSqlServer
 
-This cmdlet requires the extension module [PoShLog.Sinks.MSSqlServer](https://github.com/PoShLog/PoShLog.Sinks.MSSqlServer) to be installed.
+Writes batched events to SQL Server or Azure SQL. Requires the separately installed
+[PoShLog.Sinks.MSSqlServer](../../extensions/PoShLog.Sinks.MSSqlServer/README.md), PowerShell 7.4+ and PoShLog 3
+(Windows x64 or Linux x64).
 
-```ps1
-Install-Module PoShLog.Sinks.MSSqlServer
-```
-
-# Add-SinkMSSqlServer `EXTENSION`
-
-Writes log events into a Microsoft SQL Server database.
-
-```ps1
-Add-SinkMSSqlServer
-    -LoggerConfig <LoggerConfiguration>
-    -ConnectionString <string>
-    -TableName <string>
-    [-RestrictedToMinimumLevel <LogEventLevel>]
-    [-AutoCreateSqlTable]
-    [-BatchPostingLimit <int>]
-    [-Period <timespan>]
-    [<CommonParameters>]
-```
-
-## Description
-
-Use this cmdlet to write log event messages into a Microsoft SQL Server database via [Serilog.Sinks.MSSqlServer](https://www.nuget.org/packages/Serilog.Sinks.MSSqlServer/).
-
-## Examples
-
-##### Example 1: Minimum setup needed to log into MSSQL Server
-
-```ps1
+```powershell
+Install-PSResource PoShLog.Sinks.MSSqlServer -Prerelease
 Import-Module PoShLog
 Import-Module PoShLog.Sinks.MSSqlServer
-
-New-Logger |
-    Add-SinkMSSqlServer -ConnectionString 'Server=.;Database=Logs;Trusted_Connection=True;' -TableName 'Logs' -AutoCreateSqlTable |
-    Start-Logger
-
-Write-InfoLog 'My message in MSSQL Server'
-
+New-Logger | Add-SinkMSSqlServer -ConnectionString $env:SQL_CONNECTION_STRING -AutoCreateSqlTable | Start-Logger
+Write-InfoLog 'Processed order {OrderId}' -PropertyValues 42
 Close-Logger
 ```
 
 ## Parameters
 
-##### `-LoggerConfig`
+| Parameter | Default | Meaning |
+|---|---|---|
+| LoggerConfig | pipeline, required | Core's Serilog.LoggerConfiguration; returned for chaining |
+| ConnectionString (alias cnn) | required | SqlClient connection string; supply from secure configuration |
+| TableName | LogEvents | Destination table |
+| SchemaName | dbo | Existing destination schema |
+| AutoCreateSqlTable | off | Create the table if missing; requires DDL permissions |
+| BatchPostingLimit | 50 | Positive maximum events per batch |
+| BatchPeriod | 00:00:05 | Positive TimeSpan between batches |
+| EagerlyEmitFirstEvent | true | Emit the first batch promptly; pass `$false` to disable |
+| RestrictedToMinimumLevel | Verbose | Minimum event level for this sink |
+| LevelSwitch | none | Shared LoggingLevelSwitch; overrides RestrictedToMinimumLevel |
+| ColumnOptions | upstream defaults | Hashtable of column settings, shown below |
+| Formatter | none | Shared Serilog ITextFormatter for the LogEvent column |
+| FormatProvider | upstream default | IFormatProvider for message formatting |
 
-Instance of LoggerConfiguration.
+The logger's minimum level also applies. Use Set-MinimumLevel to admit Debug/Verbose events.
+Close-Logger flushes queued events. Auto-create does not create databases or schemas or migrate existing tables.
+For production, provision the table separately and grant only required write permissions.
 
-|||
-|-|-|
-| Type: | LoggerConfiguration |
-| Position: | Named |
-| Default value: | None |
-| Accept pipeline input: | True (ByValue) |
-| Accept wildcard characters: | False |
+## Columns and JSON
 
-##### `-ConnectionString`
+Column options are data-only hashtables; scripts do not need SQL package types. Store replaces the standard columns.
+Upstream defaults are Id, Message, MessageTemplate, Level, TimeStamp, Exception and Properties.
+LogEvent is opt-in and contains full JSON; Properties is XML by default.
 
-Connection string (or connection string name from configuration) to the target database.
+```powershell
+$columns = @{
+    Store = @('Id', 'Message', 'Level', 'TimeStamp', 'Exception', 'LogEvent')
+    TimeStamp = @{ ConvertToUtc = $true }
+    LogEvent = @{ ExcludeStandardColumns = $false }
+    AdditionalColumns = @(
+        @{ ColumnName = 'OrderId'; PropertyName = 'OrderId'; DataType = 'Int'; AllowNull = $true }
+        @{ ColumnName = 'Customer'; PropertyName = 'Customer.Name'; DataType = 'NVarChar'; DataLength = 100 }
+    )
+}
+New-Logger | Add-SinkMSSqlServer -ConnectionString $env:SQL_CONNECTION_STRING `
+    -ColumnOptions $columns -BatchPostingLimit 100 -BatchPeriod ([timespan]::FromSeconds(2)) |
+    Start-Logger
+Write-InfoLog 'Processed order {OrderId}' -PropertyValues 42
+Close-Logger
+```
 
-|||
-|-|-|
-| Type: | string |
-| Position: | Named |
-| Default value: | None |
-| Accept pipeline input: | False |
-| Accept wildcard characters: | False |
+Standard column and SqlDbType names are case-insensitive. AdditionalColumns accepts one hashtable or an array.
+PropertyName supports upstream hierarchical resolution. Nested settings use upstream ColumnOptions / SqlColumn
+property names; unknown names fail during configuration. Types and lengths must match existing tables.
+See the [upstream reference](https://github.com/serilog-mssql/serilog-sinks-mssqlserver#columnoptions-object).
 
-##### `-TableName`
+## Migration from 1.0.0-preview1
 
-Name of the table to write log events to.
+ConnectionString/cnn, TableName, SchemaName, AutoCreateSqlTable, BatchPostingLimit, BatchPeriod,
+RestrictedToMinimumLevel, Formatter and FormatProvider keep their names. The new module requires Core 3 and PowerShell
+7.4; keep the old preview on PoShLog 2.x. Use PSResourceGet with -Prerelease during the preview.
 
-|||
-|-|-|
-| Type: | string |
-| Position: | Named |
-| Default value: | None |
-| Accept pipeline input: | False |
-| Accept wildcard characters: | False |
+Replace UseAzureManagedIdentity and AzureServiceTokenProviderResource with connection string authentication:
+`Server=example.database.windows.net;Database=Logs;Authentication=Active Directory Managed Identity;Encrypt=true`.
+For a user-assigned identity add `User ID=<client-id>`. The Azure authentication package is included; the old
+AzureServiceTokenProvider is not loaded. Actual Azure authentication needs an appropriately configured environment.
 
-##### `-RestrictedToMinimumLevel`
+The new module isolates SqlClient, Microsoft.Extensions and Azure assemblies from modules such as PnP.PowerShell.
+Serilog stays shared with Core. Both import orders are tested against DI Abstractions 2.2.0.0. Upgrade when the new
+module is released; the old Gallery preview is unchanged.
 
-The minimum level for events passed through the sink.
+## Troubleshooting
 
-|||
-|-|-|
-| Type: | LogEventLevel |
-| Position: | Named |
-| Default value: | Verbose |
-| Accept pipeline input: | False |
-| Accept wildcard characters: | False |
-
-##### `-AutoCreateSqlTable`
-
-If set, automatically creates the target table if it doesn't already exist.
-
-|||
-|-|-|
-| Type: | SwitchParameter |
-| Position: | Named |
-| Default value: | False |
-| Accept pipeline input: | False |
-| Accept wildcard characters: | False |
-
-##### `-BatchPostingLimit`
-
-The maximum number of events to include in a single batch.
-
-|||
-|-|-|
-| Type: | int |
-| Position: | Named |
-| Default value: | 50 |
-| Accept pipeline input: | False |
-| Accept wildcard characters: | False |
-
-##### `-Period`
-
-The time to wait between checking for event batches.
-
-|||
-|-|-|
-| Type: | timespan |
-| Position: | Named |
-| Default value: | 00:00:05 |
-| Accept pipeline input: | False |
-| Accept wildcard characters: | False |
-
-> This page documents the extension module's public surface at a high level; consult the [PoShLog.Sinks.MSSqlServer](https://github.com/PoShLog/PoShLog.Sinks.MSSqlServer) repository for the authoritative and most up-to-date parameter reference.
+Copy the whole module, including lib/private and runtimes. Individual DLL copies are insufficient.
+Windows x64 includes native SNI; Linux x64 uses managed SNI. Keep encryption enabled and use a trusted server certificate.
+TrustServerCertificate is only for the disposable local integration backend. Enable-SelfLog helps diagnose background
+errors; review output before sharing it and never include a connection string in a bug report.

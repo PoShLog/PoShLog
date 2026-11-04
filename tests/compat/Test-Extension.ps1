@@ -68,6 +68,11 @@ try {
             $config = $config | Add-SinkHttp @options
             $delivery = 'http'
         }
+        'PoShLog.Sinks.MSSqlServer' {
+            # Real delivery is covered by integration; this exercises construction in a fresh process.
+            $config = $config | Add-SinkMSSqlServer -ConnectionString 'Server=127.0.0.1,1;Database=master;Integrated Security=true;Connect Timeout=1' -RestrictedToMinimumLevel Fatal -ColumnOptions @{ Store = @('Id', 'Message', 'Level', 'LogEvent') }
+            $delivery = 'configuration'
+        }
         'PoShLog.Sinks.EventLog' {
             # Build the sink without creating an event source or requiring elevation.
             $config = $config | Add-SinkEventLog -Source 'Application' -LogName Application -ManageEventSource $false
@@ -126,7 +131,7 @@ try {
     }
     if ($config -isnot [Serilog.LoggerConfiguration]) { throw "$Name broke the configuration pipeline." }
     $config | Add-SinkFile -Path $file -Formatter (Get-JsonFormatter) | Start-Logger
-    if ($delivery -ne 'configuration') {
+    if ($delivery -ne 'configuration' -or $seqListener) {
         Write-InfoLog $marker
     }
     if ($delivery -in @('http', 'udp')) {

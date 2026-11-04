@@ -8,7 +8,7 @@ dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib --configfile
 ./tests/compat/Invoke-Compatibility.ps1 -Mode InRepo
 ```
 
-Run Build-Extension.ps1 for each of the eight module directories before the compatibility suite.
+Run Build-Extension.ps1 for each of the nine module directories before the compatibility suite.
 The build restores only from nuget.org, stages publish output, and copies runtime dependencies
 into lib/ while excluding Core's Serilog, File and Console assemblies. No binaries are committed.
 Stage-Module.ps1 assembles a publishable module under artifacts/ from these outputs.
@@ -48,3 +48,7 @@ because every release of that package has assembly version 0.0.0.0 (ADR 0014).
 PoShLog.Sinks.Elastic was written here too, on Elastic.Serilog.Sinks. Its psm1 compares file versions in the same way,
 because Elastic.Channels, Elastic.Ingest.* and Elastic.Transport have assembly version 0.0.0.0. The sink drops new
 events when its queue is full, where the package would block the script (ADR 0015).
+
+PoShLog.Sinks.MSSqlServer 2.0.0-preview3 refreshes the old SQL extension. Its thin cmdlet shares Core's Serilog and
+the host's DiagnosticSource, and loads SqlClient, Microsoft.Extensions and Azure packages in a private context
+(ADR 0030). Build-Extension preserves the worker's deps.json and runtime asset folders; never flatten lib/private.

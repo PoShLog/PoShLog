@@ -339,3 +339,4 @@ src/output/*
 # Generated extension dependencies
 extensions/*/lib/
 .compat/
+.local/

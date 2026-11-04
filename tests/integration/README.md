@@ -43,3 +43,10 @@ not Seq's storage/query behavior. The Linux job verifies the actual Seq server.
 The daily, manual and successful Release workflow runs use Gallery; PRs use InRepo. Release runs wait up to ten
 minutes for the checked-out manifest versions to appear in Gallery. A temporary branch push trigger runs both.
 GitHub jobs collect container logs/output and Pester results on failure, then remove containers and volumes.
+
+SQL Server is an opt-in `mssql` Compose profile using mcr.microsoft.com/mssql/server:2022-CU18-ubuntu-22.04.
+Set MSSQL_SA_PASSWORD to a freshly generated disposable credential in process memory, start the profile with
+`docker compose -f tests/integration/compose.yml --profile mssql up -d --wait mssql`, and set
+POSHLOG_SQL_CONNECTION_STRING for the test child. CI does this within the integration-test step; it does not persist
+or print the credential. The SQL test reads levels, messages, properties, JSON, an exception and an additional column.
+Use `--profile mssql down -v` to remove the test backend after the run.

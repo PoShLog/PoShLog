@@ -17,7 +17,7 @@ You can see all Serilog (the C# library PoShLog is built upon) sinks [here](http
 * [**Add-SinkElasticsearch**](Add-SinkElasticsearch.md) - Elasticsearch or Elastic Cloud data streams, as ECS documents (PoShLog.Sinks.Elastic)
 * [**Add-SinkEventLog**](Add-SinkEventLog.md)
 * [**Add-SinkExceptionless**](Add-SinkExceptionless.md)
-* [**Add-SinkMSSqlServer**](Add-SinkMSSqlServer.md)
+* [**Add-SinkMSSqlServer**](Add-SinkMSSqlServer.md) - SQL Server and Azure SQL with isolated dependencies (PoShLog.Sinks.MSSqlServer)
 * [**Add-SinkNotepad**](Add-SinkNotepad.md)
 * [**Add-SinkOpenTelemetry**](Add-SinkOpenTelemetry.md) - OTLP to Seq, Grafana, Aspire, Datadog, Splunk, Elastic or any OpenTelemetry Collector
 * [**Add-SinkSeq**](https://github.com/PoShLog/PoShLog.Sinks.Seq)

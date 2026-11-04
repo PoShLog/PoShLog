@@ -28,6 +28,7 @@ on:
           - PoShLog.Sinks.Splunk.Hec
           - PoShLog.Sinks.Syslog.Rfc5424
           - PoShLog.Sinks.Elastic
+          - PoShLog.Sinks.MSSqlServer
       version:
         description: Expected manifest version (e.g. 3.0.0 or 3.0.0-preview2)
         required: true
@@ -67,7 +68,7 @@ jobs:
           } else {
             $module = $env:INPUT_MODULE; $version = $env:INPUT_VERSION
           }
-          $allowed = @('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic')
+          $allowed = @('PoShLog', 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.EventLog', 'PoShLog.Enrichers', 'PoShLog.Sinks.Http', 'PoShLog.Sinks.OpenTelemetry', 'PoShLog.Sinks.Splunk.Hec', 'PoShLog.Sinks.Syslog.Rfc5424', 'PoShLog.Sinks.Elastic', 'PoShLog.Sinks.MSSqlServer')
           if ($module -cnotin $allowed) { throw "Unknown module: $module" }
           if ($version -cnotmatch '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+)?\z') { throw "Invalid version: $version" }
           $directory = if ($module -eq 'PoShLog') { 'src' } else { "extensions/$module" }

@@ -80,6 +80,7 @@ export default defineConfig({
 						{ label: 'OpenTelemetry (OTLP)', link: '/sinks/add-sinkopentelemetry/' },
 						{ label: 'Seq', link: '/extensions/poshlog-sinks-seq/' },
 						{ label: 'Elasticsearch', link: '/sinks/add-sinkelasticsearch/' },
+						{ label: 'SQL Server', link: '/sinks/add-sinkmssqlserver/' },
 						{ label: 'Splunk HEC', link: '/sinks/add-sinksplunk/' },
 						{ label: 'Syslog', link: '/sinks/add-sinksyslog/' },
 						{ label: 'Windows Event Log', link: '/sinks/add-sinkeventlog/' },
