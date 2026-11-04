@@ -2,6 +2,11 @@
 
 All notable changes to PoShLog, newest first. Older releases: see the GitHub releases and `releaseNotes/` in the v2 history.
 
+## 3.0.0-preview4 — Unreleased
+
+### Changes
+- `-Filter` no longer loads a separate Serilog.Expressions assembly, which avoids conflicts with other modules (ADR 0032).
+
 ## 3.0.0-preview3 — 2026-11-04
 
 ### Features

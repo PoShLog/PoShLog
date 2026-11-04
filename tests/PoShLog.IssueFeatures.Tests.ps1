@@ -13,6 +13,26 @@ BeforeAll {
 }
 
 Describe 'Issue features in fresh PowerShell processes' {
+    It 'hides the merged expression engine from public reflection and PowerShell lookup' {
+        $output = Invoke-IssueChild @'
+$child = New-Logger | Start-Logger -PassThru
+try {
+    New-Logger | Add-SinkLogger -Logger $child -Filter 'Send = true' | Start-Logger
+} finally { Close-Logger; $child.Dispose() }
+$core = (Get-Command Add-SinkLogger).ImplementingType.Assembly
+if (@($core.GetExportedTypes() | Where-Object { $_.FullName -like 'Serilog.*' }).Count) { throw 'Merged types are exported.' }
+foreach ($name in 'Serilog.Expressions.SerilogExpression', 'Serilog.LoggerSinkConfigurationExtensions') {
+    if (($core.GetType($name, $true)).IsVisible) { throw "Merged type is public: $name" }
+    if ($name -as [type]) { throw "PowerShell can see $name" }
+}
+if (@([AppDomain]::CurrentDomain.GetAssemblies() | Where-Object { $_.GetName().Name -eq 'Serilog.Expressions' }).Count) { throw 'Standalone Expressions loaded.' }
+if (Test-Path (Join-Path (Split-Path $core.Location) 'Serilog.Expressions.dll')) { throw 'Standalone Expressions shipped.' }
+if (@($core.GetReferencedAssemblies() | Where-Object Name -eq 'Serilog').Count -ne 1) { throw 'Shared Serilog reference missing.' }
+"PASS hidden types: GetExportedTypes=0; PowerShell lookup=0; standalone Expressions=0; shared Serilog=1; host=$($PSVersionTable.PSVersion)"
+'@
+        $output | Should -Contain "PASS hidden types: GetExportedTypes=0; PowerShell lookup=0; standalone Expressions=0; shared Serilog=1; host=$($PSVersionTable.PSVersion)"
+    }
+
     It 'resolves relative File paths against the PowerShell location (#41)' {
         $location = $TestDrive.Replace("'", "''")
         $output = Invoke-IssueChild @"

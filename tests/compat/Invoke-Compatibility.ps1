@@ -7,7 +7,9 @@ param(
     [string]$GalleryPath = (Join-Path $PSScriptRoot '../../.compat/gallery'),
     # InRepo only: an extracted PoShLog.Sinks.Seq 1.0.0 to load next to the unpublished sinks, for local checks
     # outside GitHub Actions (Published mode downloads it).
-    [string]$LegacySeqPath
+    [string]$LegacySeqPath,
+    # InRepo only: extracted pinned Gallery package for the Expressions collision regression.
+    [string]$LegacyExceptionlessPath
 )
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path "$PSScriptRoot/../..").Path
@@ -130,4 +132,13 @@ foreach ($case in $cases) {
     $process.Dispose()
 }
 if ($failed.Count) { throw "Compatibility failures: $($failed -join ', ')" }
+$exceptionlessPath = if ($Mode -eq 'Published') {
+    ($cases | Where-Object Name -eq 'PoShLog.Sinks.Exceptionless').Path
+} elseif ($Mode -eq 'InRepo') { $LegacyExceptionlessPath }
+if ($exceptionlessPath) {
+    foreach ($order in 'FilterFirst', 'ExtensionFirst') {
+        & (Join-Path $PSHOME 'pwsh') -NoProfile -File "$PSScriptRoot/Test-ExceptionlessFilter.ps1" -ModulePath $exceptionlessPath -Order $order
+        if ($LASTEXITCODE) { throw "Exceptionless filter compatibility failed: $order" }
+    }
+}
 Write-Output "PASS $Mode compatibility ($($cases.Count) cases)"

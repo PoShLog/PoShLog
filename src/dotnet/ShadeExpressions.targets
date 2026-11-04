@@ -1,0 +1,28 @@
+<Project>
+  <PropertyGroup>
+    <!-- Disable the package's automatic merge: only Expressions belongs in Core. -->
+    <ILRepackTargetsFile>$(MSBuildThisFileDirectory)RepackDisabled.targets</ILRepackTargetsFile>
+  </PropertyGroup>
+  <Target Name="ShadeExpressionEngine" AfterTargets="Build">
+    <ItemGroup>
+      <!-- Always use the original compiler output, including incremental builds. -->
+      <ExpressionMerge Include="$(IntermediateOutputPath)$(TargetFileName)" />
+      <ExpressionMerge Include="@(ReferencePath)" Condition="'%(Filename)' == 'Serilog.Expressions'" />
+      <MergeSearch Include="@(ReferencePath->'%(RootDir)%(Directory)')" />
+    </ItemGroup>
+    <ILRepack InputAssemblies="@(ExpressionMerge)" OutputFile="$(TargetPath)"
+              Internalize="true" Parallel="true" TargetKind="Dll" LibraryPath="@(MergeSearch)" />
+    <!-- Remove a stale assembly when upgrading an existing output directory. -->
+    <Delete Files="$(TargetDir)Serilog.Expressions.dll" />
+  </Target>
+  <Target Name="PublishShadedCore" AfterTargets="ComputeFilesToPublish">
+    <!-- The SDK otherwise publishes the unmerged intermediate compiler output. -->
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(RelativePath)' == '$(TargetFileName)'" />
+      <ResolvedFileToPublish Include="$(TargetPath)" RelativePath="$(TargetFileName)" CopyToPublishDirectory="Always" />
+    </ItemGroup>
+  </Target>
+  <Target Name="RemovePublishedExpressionAssembly" AfterTargets="Publish">
+    <Delete Files="$(PublishDir)Serilog.Expressions.dll" />
+  </Target>
+</Project>
