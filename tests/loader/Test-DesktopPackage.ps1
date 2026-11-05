@@ -63,18 +63,41 @@ if ($Case) {
                 Assert-True ($null -eq $resolve.Invoke($null, @($null, [ResolveEventArgs]::new($request)))) "Resolver answered an unowned identity: $request"
             }
         }
-        'ForeignCopy' {
+        { $_ -in 'MemoryCopy', 'SerilogCopy' } {
+            $name = if ($Case -eq 'MemoryCopy') { 'System.Memory' } else { 'Serilog' }
             $foreign = Join-Path $Results 'foreign'
             New-Item $foreign -ItemType Directory -Force | Out-Null
-            Copy-Item (Join-Path $folder 'Serilog.dll') $foreign
-            $null = [Reflection.Assembly]::LoadFrom((Join-Path $foreign 'Serilog.dll'))
-            $core = [Reflection.Assembly]::LoadFrom((Join-Path $folder 'PoShLog.Core.dll'))
+            $source = Join-Path $folder "$name.dll"
+            $copy = Join-Path $foreign "$name.dll"
+            Copy-Item $source $copy -Force
+            Assert-True ((Get-FileHash $source).Hash -eq (Get-FileHash $copy).Hash) 'Copy differs from the shipped assembly.'
+            $loaded = [Reflection.Assembly]::LoadFrom($copy)
+            Assert-True ($loaded.Location -eq $copy) 'Foreign copy was not loaded first.'
+            Import-Module $Manifest -ErrorAction Stop
+            foreach ($pipeline in $false, $true) {
+                $file = Join-Path $Results "$Case-$pipeline.log"
+                try {
+                    if ($pipeline) { New-Logger | Add-SinkFile -Path $file | Start-Logger }
+                    else { Start-Logger -FilePath $file }
+                    Write-InfoLog 'same identity marker'
+                } finally { Close-Logger }
+                Assert-True ((Get-Content $file -Raw) -match 'same identity marker') 'File logging failed with a same-identity copy.'
+            }
+        }
+        'DifferentIdentity' {
+            Import-Module $Manifest -ErrorAction Stop
+            $core = (Get-Command New-Logger).ImplementingType.Assembly
             $resolver = $core.GetType('PoShLog.Core.DesktopAssemblyResolver', $true)
-            $resolver.GetMethod('Register').Invoke($null, [object[]]@([string]$folder)) | Out-Null
             $resolve = $resolver.GetMethod('Resolve', [Reflection.BindingFlags]'NonPublic,Static')
-            $identity = [Reflection.AssemblyName]::GetAssemblyName((Join-Path $folder 'Serilog.dll'))
-            $identity.Version = [version]'0.0.0.0'
-            Assert-True ($null -eq $resolve.Invoke($null, @($null, [ResolveEventArgs]::new($identity.FullName)))) 'Resolver substituted a foreign copy.'
+            foreach ($part in 'Version', 'CultureName', 'Token') {
+                $identity = [Reflection.AssemblyName]::GetAssemblyName((Join-Path $folder 'Serilog.dll'))
+                switch ($part) {
+                    'Version' { $identity.Version = [version]'99.0.0.0' }
+                    'CultureName' { $identity.CultureName = 'fr' }
+                    'Token' { $identity.SetPublicKeyToken([byte[]]@(0, 0, 0, 0, 0, 0, 0, 0)) }
+                }
+                Assert-True ($null -eq $resolve.Invoke($null, @($null, [ResolveEventArgs]::new($identity.FullName)))) "Resolver accepted a different $part."
+            }
         }
         { $_ -in 'CoreFirst', 'ExtensionFirst' } {
             # Keep the fixture apart from its old Serilog. It must bind through Core's resolver.
@@ -112,10 +135,11 @@ $FixtureDirectory = Join-Path $Results 'fixture'
 New-Item $FixtureDirectory -ItemType Directory -Force | Out-Null
 Copy-Item "$PSScriptRoot/fixtures/LegacyExtension/bin/Release/net472/LegacyExtension.dll" $FixtureDirectory
 $Manifest = (Resolve-Path $Manifest).Path
+$V2Manifest = (Resolve-Path $V2Manifest).Path
 $count = 0
 foreach ($hostPath in @((Get-Command powershell.exe).Source, (Get-Command pwsh).Source)) {
     $cases = @('Import')
-    if ($hostPath -like '*WindowsPowerShell*') { $cases += 'Bootstrap', 'ForeignCopy', 'CoreFirst', 'ExtensionFirst', 'V2Guard', 'SerilogGuard' }
+    if ($hostPath -like '*WindowsPowerShell*') { $cases += 'Bootstrap', 'MemoryCopy', 'SerilogCopy', 'DifferentIdentity', 'CoreFirst', 'ExtensionFirst', 'V2Guard', 'SerilogGuard' }
     foreach ($testCase in $cases) {
         & $hostPath -NoProfile -NonInteractive -File $PSCommandPath -Manifest $Manifest -V2Manifest $V2Manifest -Case $testCase -FixtureDirectory $FixtureDirectory -Results $Results
         if ($LASTEXITCODE) { throw "Real package case $testCase failed in $hostPath." }

@@ -57,8 +57,12 @@ namespace PoShLog.Core
                     if (!assembly.IsDynamic && string.Equals(assembly.Location, path, StringComparison.OrdinalIgnoreCase))
                         return assembly;
                 var loaded = Assembly.LoadFrom(path);
-                // LoadFrom may unify to an assembly from another module. Never return that copy.
-                return string.Equals(loaded.Location, path, StringComparison.OrdinalIgnoreCase) ? loaded : null;
+                // LoadFrom may unify to a copy at another path. Accept only the shipped identity.
+                var identity = loaded.GetName();
+                return string.Equals(identity.Name, shipped.Name, StringComparison.OrdinalIgnoreCase)
+                    && identity.Version == shipped.Version
+                    && string.Equals(identity.CultureName ?? "", shipped.CultureName ?? "", StringComparison.OrdinalIgnoreCase)
+                    && SameToken(identity.GetPublicKeyToken(), shipped.GetPublicKeyToken()) ? loaded : null;
             }
         }
 
