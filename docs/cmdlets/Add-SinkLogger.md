@@ -1,6 +1,8 @@
 # Add-SinkLogger
 
 Writes log events to another logger, a sub-logger, where they are processed further.
+On Windows PowerShell 5.1 the unfiltered form is supported. `-Filter` fails with a clear unsupported-feature error
+and loads no expression engine (ADR 0031, phase 1).
 
 ```ps1
 Add-SinkLogger

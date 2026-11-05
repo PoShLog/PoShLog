@@ -23,6 +23,12 @@ try {
         & "$PSScriptRoot/Stage-Module.ps1" -Module $name -Destination $stage
         $manifest = Join-Path $stage "$name/$name.psd1"
         $data = Import-PowerShellDataFile $manifest
+        if ($name -eq 'PoShLog') {
+            if ($data.RootModule -ne 'PoShLog.psm1' -or $data.ContainsKey('RequiredAssemblies')) { throw 'Core needs a guarded script loader.' }
+            foreach ($target in 'net472', 'net10.0') {
+                if (!(Test-Path (Join-Path $stage "PoShLog/lib/$target/PoShLog.Core.dll"))) { throw "Missing packaged Core target $target." }
+            }
+        }
         if (!$data.PrivateData.PSData.Prerelease) {
             # Edit only staged metadata; do not change committed prerelease values.
             $content = [IO.File]::ReadAllText($manifest)
@@ -78,6 +84,12 @@ try {
 '@ | Set-Content -LiteralPath $child
     & (Join-Path $PSHOME 'pwsh') -NoProfile -File $child -Configuration $configuration
     if ($LASTEXITCODE) { throw "Clean-process install failed ($LASTEXITCODE)." }
+    if ($IsWindows) {
+        $savedCore = @(Get-ChildItem (Join-Path $scratch 'saved/PoShLog') -Recurse -Filter PoShLog.psd1)
+        if ($savedCore.Count -ne 1) { throw 'Expected one saved Core manifest.' }
+        & powershell.exe -NoProfile -NonInteractive -File "$PSScriptRoot/../tests/loader/Test-DesktopPackage.ps1" -Manifest $savedCore[0].FullName -Case Import
+        if ($LASTEXITCODE) { throw 'Saved package import failed on Windows PowerShell.' }
+    }
     Write-Output 'Package install test passed.'
 } finally {
     $env:PSModulePath = $originalModulePath

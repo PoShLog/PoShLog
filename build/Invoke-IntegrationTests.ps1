@@ -67,7 +67,7 @@ try {
         }
     } else {
         # Match the CI build: net10.0 for the .NET 10 host in PowerShell 7.6 (ADR 0033).
-        dotnet publish "$root/src/dotnet/PoShLog.Core.csproj" --configuration Release --output "$root/src/lib"
+        & "$root/build/Build-Core.ps1"
         if ($LASTEXITCODE) { throw 'Core publish failed.' }
         foreach ($name in $selected) { & "$PSScriptRoot/Stage-Module.ps1" -Module $name -Destination $modules }
     }

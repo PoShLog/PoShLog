@@ -1,6 +1,9 @@
 # Add-SinkPowerShell
 
 Writes log events to the PowerShell console host.
+Windows PowerShell 5.1 has host-specific transcript behaviour. Explicitly render information-stream records with
+`Write-ErrorLog 'message' 6>&1 | Out-Host` when a transcript must include them.
+See [compatibility](../compatibility.md) for the tested Desktop limits.
 
 ```ps1
 Add-SinkPowerShell

@@ -2,7 +2,9 @@
 
 These instructions will get you a copy of PoShLog up and running.
 
-> **Note:** As of v3.0.0, PoShLog is a **compiled C# binary module** targeting **.NET 10** and requires **PowerShell 7.6+**. Windows PowerShell 5.1 / Desktop edition is **no longer supported**.
+> Repository builds contain compiled Core modules for Windows PowerShell 5.1 on .NET Framework 4.7.2+ and
+> PowerShell 7.6+ on .NET 10. Desktop support is unreleased and has a bounded phase 1 feature set.
+> Published preview1 to preview3 require PowerShell 7.4+. See [compatibility](compatibility.md).
 
 ## Prerequisites
 
@@ -35,14 +37,16 @@ Without `-AllowPrerelease` you get the stable 2.2.0 instead. `Install-PSResource
 Extension modules, side-by-side installs with v2 and going back are covered on the
 [compatibility page](compatibility.md).
 
-On Windows PowerShell 5.1, use the [v2 line](v2-or-v3.md): `Install-Module PoShLog -MaximumVersion 2.99`.
+To try Desktop phase 1 from this repository, run `./build/Build-Core.ps1` using the .NET 10 SDK, then import
+`./src/PoShLog.psd1` in a clean `powershell.exe` process. Until a Desktop-capable package is published, Gallery users
+can keep v2 pinned as described in [v2 or v3](v2-or-v3.md).
 
 ## What changed in v3.0.0 (binary module rewrite)
 
 * The module is now implemented as compiled C# `PSCmdlet`/`Cmdlet` classes (`PoShLog.Core.dll`) instead of PowerShell script functions.
 * Cmdlet names, parameters, aliases, and pipeline behavior are unchanged — existing scripts using PoShLog continue to work without modification.
 * Built on [Serilog](https://serilog.net/) 4.4.0.
-* Minimum supported PowerShell version is now **7.6** (PowerShell 7.4 and 7.5 reach end of support with .NET 8 and 9 on 2026-11-10; stay on PoShLog 2.x there).
+* Core hosts require PowerShell 7.6+. Desktop hosts require Windows PowerShell 5.1 and .NET Framework 4.7.2+.
 
 Continue to [Usage](usage.md), or start from a [recipe](recipes/README.md) for a scheduled script, GitHub Actions
 or Pester tests.

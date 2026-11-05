@@ -1,19 +1,19 @@
-#Requires -Version 7.6
+#Requires -Version 5.1
 
 BeforeAll {
     $root = (Resolve-Path "$PSScriptRoot/..").Path
-    $manifest = (Join-Path $root 'src/PoShLog.psd1').Replace("'", "''")
+    $manifest = $(if ($env:POSHLOG_TEST_MANIFEST) { $env:POSHLOG_TEST_MANIFEST } else { Join-Path $root 'src/PoShLog.psd1' }).Replace("'", "''")
     function Invoke-IssueChild([string]$Body) {
         $child = Join-Path $TestDrive "child-$([guid]::NewGuid()).ps1"
         Set-Content -LiteralPath $child -Value "`$ErrorActionPreference = 'Stop'`nImport-Module '$manifest'`n$Body"
-        $output = & (Join-Path $PSHOME 'pwsh') -NoProfile -NonInteractive -File $child 2>&1
+        $output = & (Join-Path $PSHOME $(if ($PSEdition -eq 'Desktop') { 'powershell.exe' } else { 'pwsh' })) -NoProfile -NonInteractive -File $child 2>&1
         if ($LASTEXITCODE -ne 0) { throw ($output -join "`n") }
         $output | ForEach-Object { "$_" }
     }
 }
 
 Describe 'Issue features in fresh PowerShell processes' {
-    It 'hides the merged expression engine from public reflection and PowerShell lookup' {
+    It 'hides the merged expression engine from public reflection and PowerShell lookup' -Skip:($PSEdition -eq 'Desktop') -Tag 'DesktopUnsupported.Expressions' {
         $output = Invoke-IssueChild @'
 $child = New-Logger | Start-Logger -PassThru
 try {
@@ -45,7 +45,7 @@ Get-Content './relative.log'
         $output | Should -Contain 'relative path works'
     }
 
-    It 'routes properties to a conditional child logger (#37)' {
+    It 'routes properties to a conditional child logger (#37)' -Skip:($PSEdition -eq 'Desktop') -Tag 'DesktopUnsupported.Expressions' {
         $location = $TestDrive.Replace("'", "''")
         $output = Invoke-IssueChild @"
 Set-Location '$location'
@@ -61,7 +61,7 @@ Get-Content './selected.log'
         $output | Should -Not -Contain 'excluded false'
     }
 
-    It 'loads JSON and configures a loaded extension enricher (#39)' {
+    It 'loads JSON and configures a loaded extension enricher (#39)' -Skip:($PSEdition -eq 'Desktop') -Tag 'DesktopUnsupported.Extensions' {
         # extensions/*/lib is build output (gitignored); CI checkouts do not have it.
         if (!(Test-Path "$root/extensions/PoShLog.Enrichers/lib")) {
             & "$root/build/Build-Extension.ps1" -Module PoShLog.Enrichers | Out-Null
@@ -84,7 +84,7 @@ if (`$content -match 'excluded') { throw 'Minimum level was ignored.' }
         $output | Should -Contain 'JSON extension configuration works'
     }
 
-    It 'colors string and number arguments with ANSI token styles (#30)' {
+    It 'colors string and number arguments with ANSI token styles (#30)' -Skip:($PSEdition -eq 'Desktop') -Tag 'DesktopUnsupported.PSStyle' {
         $output = Invoke-IssueChild @'
 [Environment]::SetEnvironmentVariable('NO_COLOR', $null)
 $PSStyle.OutputRendering = 'Ansi'
@@ -97,7 +97,7 @@ Close-Logger
         ($output -join "`n") | Should -Match ([regex]::Escape("`e[36m3`e[0m"))
     }
 
-    It 'configures loaded Seq and Http sinks from JSON and delivers to loopback (#39)' {
+    It 'configures loaded Seq and Http sinks from JSON and delivers to loopback (#39)' -Skip:($PSEdition -eq 'Desktop') -Tag 'DesktopUnsupported.Extensions' {
         Import-Module "$root/src/PoShLog.psd1" -Force
         foreach ($extensionName in 'PoShLog.Sinks.Seq', 'PoShLog.Sinks.Http') {
             if (!(Test-Path "$root/extensions/$extensionName/lib")) {
@@ -128,7 +128,7 @@ Close-Logger
             Remove-Module PoShLog.Sinks.Seq, PoShLog.Sinks.Http -ErrorAction SilentlyContinue
         }
     }
-    It 'preserves legacy sink helper type lookup after compiling expressions (#37)' {
+    It 'preserves legacy sink helper type lookup after compiling expressions (#37)' -Skip:($PSEdition -eq 'Desktop') -Tag 'DesktopUnsupported.Expressions' {
         $output = Invoke-IssueChild @'
 $child = New-Logger | Start-Logger -PassThru
 try {

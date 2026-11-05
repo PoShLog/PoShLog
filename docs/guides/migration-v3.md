@@ -2,18 +2,19 @@
 
 ## Overview
 
-PoShLog v3.0 is a major rewrite — the module is now a **compiled C# binary module** targeting **.NET 10** and **PowerShell 7.6+**.
+PoShLog v3.0 uses compiled C# cmdlets. Repository builds target .NET Framework 4.7.2 for Windows PowerShell 5.1
+and .NET 10 for PowerShell 7.6+. Desktop support is unreleased and includes Core phase 1.
 
 ### Key Changes
 
 | Area | v2.x | v3.0 |
 |---|---|---|
-| Module type | Script module (.psm1) | Binary module (.dll) |
-| PowerShell | 5.1+ (Desktop & Core) | **7.6+ only** |
+| Module type | Script module (.psm1) | Script loader with per-edition binary cmdlets |
+| PowerShell | 5.1+ (Desktop & Core) | 7.6+ Core. Unreleased Windows PowerShell 5.1 support for PoShLog Core only (.NET Framework 4.7.2+) |
 | Serilog | 2.10.0 | **4.4.0** |
 | Serilog.Sinks.Console | 3.1.1 | **6.1.1** |
 | Serilog.Sinks.File | 4.1.0 | **7.0.0** |
-| .NET Target | netstandard2.0 | **net10.0** |
+| .NET Target | netstandard2.0 | net472 and net10.0 |
 
 ### What Stays the Same
 
@@ -25,9 +26,17 @@ PoShLog v3.0 is a major rewrite — the module is now a **compiled C# binary mod
 
 ## Breaking Changes
 
-### 1. PowerShell 5.1 is no longer supported
+### 1. Supported hosts and Desktop feature limits
 
-PoShLog v3.0 requires PowerShell 7.6 or later. If you need PS 5.1, 7.4 or 7.5 support, stay on v2.x. The 3.0.0 previews up to preview3 ran on 7.4+; later releases need 7.6 ([ADR 0033](../decisions/0033-net10-powershell-7-6.md)).
+PowerShell 7 hosts require 7.6+. Windows PowerShell 5.1 repository builds support Core logging, console/file/PowerShell
+sinks, formatters, enrichment, level switches, PSObject destructuring and non-expression JSON. Expression filters
+explicitly fail on Desktop. Refreshed extensions and MSSqlServer remain PowerShell 7.6+.
+The [compatibility page](../compatibility.md) documents the Desktop transcript limitation and extension editions.
+
+Desktop support is unreleased. To keep v2, pin `Install-Module PoShLog -RequiredVersion 2.3.0` and
+`Import-Module PoShLog -RequiredVersion 2.3.0`. A future stable v3 supporting Desktop becomes an `Update-Module`
+upgrade. Start a clean process to switch versions. The loader rejects an already loaded v2 or older Serilog.
+PowerShell 7.4 and 7.5 users stay on v2 or upgrade the host.
 
 ### 2. Extension modules remain compatible
 
@@ -40,7 +49,7 @@ Seq, EventLog, Http and Enrichers have refreshed 2.0.0 builds under `extensions/
 | Cmdlet | Reason |
 |---|---|
 | `Add-PackageTypes` | Never exported; binary module loads dependencies at import |
-| `Test-PsCore` | Never exported; the manifest requires PowerShell 7.6+ |
+| `Test-PsCore` | Never exported; the loader selects and validates the host |
 
 ---
 

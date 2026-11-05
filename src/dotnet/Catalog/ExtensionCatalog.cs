@@ -88,6 +88,7 @@ namespace PoShLog.Core.Catalog
 				Summary = GetSummary(manifest["Description"]?.ToString()),
 				Commands = commands,
 				Platforms = KnownPlatforms.Where(p => tags.Contains(p, StringComparer.OrdinalIgnoreCase)).ToArray(),
+				CompatiblePSEditions = ToStrings(manifest["CompatiblePSEditions"]),
 				ProjectUri = psData?["ProjectUri"]?.ToString(),
 			};
 		}

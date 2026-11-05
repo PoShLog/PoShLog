@@ -31,6 +31,16 @@ namespace PoShLog.Core.Destructuring
 		[ThreadStatic]
 		private static HashSet<object> _inProgress;
 
+#if NETFRAMEWORK
+		// Framework lacks the BCL reference comparer. Cycles must use object identity, including PSObject.
+		private sealed class ReferenceEqualityComparer : IEqualityComparer<object>
+		{
+			internal static readonly ReferenceEqualityComparer Instance = new ReferenceEqualityComparer();
+			public new bool Equals(object x, object y) => ReferenceEquals(x, y);
+			public int GetHashCode(object obj) => System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
+		}
+#endif
+
 		public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
 		{
 			var target = value is PSObject wrapper && wrapper.BaseObject is IDictionary ? wrapper.BaseObject : value;

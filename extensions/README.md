@@ -3,7 +3,7 @@
 Build Core before importing any extension:
 
 ```powershell
-dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib --configfile build/nuget.config
+./build/Build-Core.ps1
 ./build/Build-Extension.ps1 -Module PoShLog.Sinks.Seq
 ./tests/compat/Invoke-Compatibility.ps1 -Mode InRepo
 ```

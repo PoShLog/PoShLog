@@ -30,9 +30,9 @@ namespace PoShLog.Core.Cmdlets.Helpers
         {
             var name = value?.ToString();
             // Reject numeric enum values, including otherwise valid numeric values.
-            if (name == null || !Array.Exists(Enum.GetNames<T>(), n => string.Equals(n, name, StringComparison.OrdinalIgnoreCase)))
+            if (name == null || !Array.Exists(Enum.GetNames(typeof(T)), n => string.Equals(n, name, StringComparison.OrdinalIgnoreCase)))
                 throw new ArgumentException($"Invalid {typeof(T).Name} name.");
-            return Enum.Parse<T>(name, ignoreCase: true);
+            return (T)Enum.Parse(typeof(T), name, ignoreCase: true);
         }
 
         protected override void ProcessRecord()

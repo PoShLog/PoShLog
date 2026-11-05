@@ -6,7 +6,9 @@ using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+#if !NETFRAMEWORK
 using System.Runtime.Loader;
+#endif
 using System.Text.Json;
 using Serilog;
 using Serilog.Events;
@@ -25,12 +27,20 @@ namespace PoShLog.Core.Utils
                 !document.RootElement.TryGetProperty("Serilog", out var section) || section.ValueKind != JsonValueKind.Object)
                 throw new ArgumentException("The JSON configuration must contain a Serilog object.");
             ValidateKeys(section, "Using", "MinimumLevel", "Properties", "WriteTo", "Enrich", "Filter");
+#if NETFRAMEWORK
+            if (section.TryGetProperty("Filter", out var filters) && ArrayItems(filters, "Filter").Any())
+                throw new PlatformNotSupportedException("JSON filters are not supported on Windows PowerShell.");
+#endif
 
             // Include core methods even when their assemblies have not been used by a cmdlet yet.
             var assemblies = AppDomain.CurrentDomain.GetAssemblies().Concat(new[] {
                 typeof(ConsoleLoggerConfigurationExtensions).Assembly,
                 typeof(FileLoggerConfigurationExtensions).Assembly
-            }).Where(a => !a.IsDynamic && AssemblyLoadContext.GetLoadContext(a) == AssemblyLoadContext.Default).Distinct().ToArray();
+            }).Where(a => !a.IsDynamic
+#if !NETFRAMEWORK
+                && AssemblyLoadContext.GetLoadContext(a) == AssemblyLoadContext.Default
+#endif
+            ).Distinct().ToArray();
             if (section.TryGetProperty("Using", out var usingSection))
                 foreach (var name in ArrayItems(usingSection, "Using"))
                     if (!assemblies.Any(a => a.GetName().Name == name.GetString()))

@@ -22,6 +22,56 @@ defaults:
     shell: pwsh
 
 jobs:
+  windows-powershell-core:
+    name: Core (Windows PowerShell 5.1)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build both Core targets and stage the package
+        run: |
+          ./build/Build-Core.ps1
+          ./build/Stage-Module.ps1 -Module PoShLog
+          New-Item TestResults -ItemType Directory -Force | Out-Null
+          foreach ($target in 'net472', 'net10.0') {
+            dotnet list src/dotnet/PoShLog.Core.csproj package --framework $target --include-transitive --format json > "TestResults/packages-$target.json"
+            if ($LASTEXITCODE) { throw 'Dependency report failed.' }
+          }
+          Get-ChildItem artifacts/PoShLog -Recurse -File | ForEach-Object { $_.FullName } > TestResults/package-files.txt
+      - name: Install pinned Pester for the Desktop process
+        run: |
+          New-Item .compat/tools -ItemType Directory -Force | Out-Null
+          Save-PSResource Pester -Version 6.0.1 -Path .compat/tools -TrustRepository
+          $pester = (Resolve-Path .compat/tools/Pester/6.0.1/Pester.psd1).Path
+          "DESKTOP_PESTER=$pester" >> $env:GITHUB_ENV
+      - name: Run shared Core suite in real powershell.exe
+        run: |
+          powershell.exe -NoProfile -NonInteractive -File build/Invoke-DesktopTests.ps1 -Manifest artifacts/PoShLog/PoShLog.psd1 -PesterPath $env:DESKTOP_PESTER -Results TestResults | Tee-Object TestResults/desktop.log
+          if ($LASTEXITCODE) { throw 'Windows PowerShell Core suite failed.' }
+      - name: Checkout first-party v2 for real guard tests
+        uses: actions/checkout@v4
+        with:
+          ref: release/2.x
+          path: .compat/v2-source
+      - name: Build v2 and run loader and real-package checks
+        run: |
+          ./.compat/v2-source/build/Build-Module.ps1
+          ./tests/loader/Test-Loader.ps1 | Tee-Object TestResults/loader.log
+          ./tests/loader/Test-DesktopPackage.ps1 -Manifest artifacts/PoShLog/PoShLog.psd1 -V2Manifest .compat/v2-source/artifacts/PoShLog/PoShLog.psd1 -Results TestResults/package | Tee-Object TestResults/real-package.log
+      - name: Published v2-era extensions in both Desktop import orders
+        run: ./tests/compat/Invoke-Compatibility.ps1 -Mode Published -Desktop -CoreManifest artifacts/PoShLog/PoShLog.psd1 | Tee-Object TestResults/published-desktop.log
+      - name: Pinned Az, PnP and PSFramework in both import orders
+        run: ./tests/compat/Test-DesktopCoexistence.ps1 -CoreManifest artifacts/PoShLog/PoShLog.psd1 | Tee-Object TestResults/coexistence.log
+      - name: Upload Desktop results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-powershell-core
+          path: TestResults/
+
   build-and-test:
     name: Build & Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -68,7 +118,7 @@ jobs:
           path: TestResults/*.trx
 
       - name: Build PoShLog.Core module assembly
-        run: dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
+        run: ./build/Build-Core.ps1
 
       - name: Test clean-process package installation
         if: runner.os == 'Linux'
@@ -138,7 +188,7 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - name: Publish Core
-        run: dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
+        run: ./build/Build-Core.ps1
       - name: Install PowerShell 7.6
         shell: bash
         run: |
@@ -180,7 +230,7 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - name: Build and publish Core
-        run: dotnet publish src/dotnet/PoShLog.Core.csproj --configuration Release --output src/lib
+        run: ./build/Build-Core.ps1
       - name: Import and log a structured event
         run: |
           $ErrorActionPreference = 'Stop'

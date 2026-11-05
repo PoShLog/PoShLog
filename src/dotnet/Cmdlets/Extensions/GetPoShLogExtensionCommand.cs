@@ -15,7 +15,7 @@ namespace PoShLog.Core.Cmdlets.Extensions
 	[OutputType(typeof(ExtensionEntry))]
 	public class GetPoShLogExtensionCommand : PSCmdlet
 	{
-		private static readonly string[] DefaultProperties = { "Name", "Kind", "Version", "InstalledVersion", "Commands" };
+		private static readonly string[] DefaultProperties = { "Name", "Kind", "Version", "InstalledVersion", "CompatiblePSEditions", "Commands" };
 
 		[Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, HelpMessage = "Extension names; wildcards are allowed.")]
 		[ArgumentCompleter(typeof(ExtensionNameCompleter))]

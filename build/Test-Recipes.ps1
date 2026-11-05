@@ -4,7 +4,7 @@
     Runs the recipe samples (samples/) against the staged PoShLog package, each in a new pwsh process.
 .DESCRIPTION
     Stages PoShLog into artifacts/ unless -ModuleRoot names a folder that already holds a staged PoShLog/. Publish the
-    Core assembly to src/lib first (dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib).
+    Core assembly to src/lib first (./build/Build-Core.ps1).
 #>
 [CmdletBinding()]
 param(

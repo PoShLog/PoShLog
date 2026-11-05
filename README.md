@@ -27,8 +27,10 @@
 </p>
 
 > [!NOTE]
-> **PoShLog 3 is in preview.** It is a compiled module for PowerShell 7.6+ on Windows, Linux and macOS. Install it with
-> `-AllowPrerelease`. On Windows PowerShell 5.1, use the maintained [v2 line](docs/v2-or-v3.md).
+> **PoShLog 3 is in preview.** Repository builds support Windows PowerShell 5.1 on .NET Framework 4.7.2+ and
+> PowerShell 7.6+ on Windows, Linux and macOS. Desktop phase 1 includes Core logging and non-expression JSON.
+> Expression filters and refreshed extensions require PowerShell 7.6+. Desktop support is unreleased.
+> See [compatibility and installation](docs/compatibility.md) for the published versions and [v2 or v3](docs/v2-or-v3.md) for migration.
 
 ## Why PoShLog
 
@@ -113,7 +115,7 @@ sinks are listed on the [sinks page](docs/sinks/README.md).
 
 | | PoShLog 3 (preview) | PoShLog 2 |
 |---|---|---|
-| PowerShell | 7.6+ on Windows, Linux, macOS | Windows PowerShell 5.1 and PowerShell 7 |
+| PowerShell | 7.6+ on Windows, Linux, macOS. Unreleased Windows PowerShell 5.1 support for PoShLog Core only (.NET Framework 4.7.2+) | Windows PowerShell 5.1 and PowerShell 7 |
 | Module | compiled, Serilog 4 | script module, Serilog 2 |
 | Install | `Install-Module PoShLog -AllowPrerelease` | `Install-Module PoShLog -MaximumVersion 2.99` |
 | Status | new features | bug fixes and Serilog updates |
@@ -147,7 +149,7 @@ You need the [.NET 10 SDK](https://dotnet.microsoft.com/download) (or newer) and
 
 ```powershell
 dotnet build PoShLog.sln
-dotnet publish src/dotnet/PoShLog.Core.csproj -o src/lib
+./build/Build-Core.ps1
 dotnet test PoShLog.sln
 Invoke-Pester ./tests
 

@@ -56,8 +56,9 @@ is also kept as a property: `Count` stays the number 42, and a log server can fi
 ## Transcripts
 
 `Start-Transcript` records everything the host shows, including the output of external programs. PoShLog records the
-events you write. The two work together: the PowerShell sink's Warning, Error and Fatal events appear in a transcript,
-and [Capturing console output](capturing-output.md) shows how to log the output of external commands as events.
+events you write. On PowerShell 7.6, the PowerShell sink's Warning, Error and Fatal events appear in a transcript.
+On Windows PowerShell 5.1, see the [documented transcript limitation](../compatibility.md).
+[Capturing console output](capturing-output.md) shows how to log the output of external commands as events.
 
 ## Next
 

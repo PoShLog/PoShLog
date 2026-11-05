@@ -85,7 +85,7 @@ public class ExtensionCatalogTests : PoShLogTestBase
         Assert.Equal(ExtensionCatalog.Extensions.Select(e => e.Name), results.Select(r => r.Properties["Name"].Value));
         var view = results[0].Members["PSStandardMembers"] as PSMemberSet;
         var display = view!.Members["DefaultDisplayPropertySet"] as PSPropertySet;
-        Assert.Equal(new[] { "Name", "Kind", "Version", "InstalledVersion", "Commands" }, display!.ReferencedPropertyNames);
+        Assert.Equal(new[] { "Name", "Kind", "Version", "InstalledVersion", "CompatiblePSEditions", "Commands" }, display!.ReferencedPropertyNames);
     }
 
     [Fact]
