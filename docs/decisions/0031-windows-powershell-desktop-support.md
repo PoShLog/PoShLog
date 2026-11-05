@@ -157,8 +157,7 @@ preferably compile-time only. They do not replace runtime isolation or coexisten
   pass, and `Publish-PSResource` and `Save-PSResource` to a local repository pass on 7.6. The PowerShell Gallery and a
   real DLL `RootModule` were not tested. It is rejected for two reasons:
   - The guards must run before any Core assembly loads. A manifest would need `ScriptsToProcess` for that, which
-    splits the loader's job across two places. `PowerShellVersion` also has to stay `5.1`, so the manifest alone cannot
-    reject Core hosts older than 7.6.
+    splits the loader's job across two places.
   - An `if` makes the manifest unreadable as data. `Import-PowerShellDataFile` fails on it on both editions, and
     `release.yml`, `build/Test-PackageInstall.ps1` and the tests read `PoShLog.psd1` that way. `SafeGetValue` throws on
     it too, and `ExtensionCatalog.ReadManifest` reads the embedded `PoShLog.psd1` with it for `Get-PoShLogExtension`.
