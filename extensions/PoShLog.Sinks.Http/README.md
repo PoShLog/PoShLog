@@ -33,7 +33,7 @@ to 30 seconds. The modern connection pool lifetime is two minutes. Desktop uses 
 OS TLS, proxy and certificate validation defaults. Automatic redirects are disabled.
 
 `Close-Logger` attempts to flush pending batches and disposes transport afterwards. There is no total flush deadline;
-a failed shutdown delivery stops the drain. Restart loses memory buffers, persistent failures can discard events,
+a failed shutdown delivery stops the drain. A hung endpoint holds `Close-Logger` for about 60 seconds: the in-flight request and one shutdown attempt. Restart loses memory buffers, persistent failures can discard events,
 and a lost acknowledgement can duplicate a delivery. Enable Core's SelfLog for delivery diagnostics.
 
 ## Authentication and custom contracts
@@ -57,6 +57,8 @@ token and finite timeouts, return a response for the sink to dispose, and do not
   Its default per-event UTF-8 limit is 256 KiB; pass a different nullable byte limit to the constructor, or `$null` for unlimited.
   This restores the envelope and event limit; the event schema remains the current normal rendered schema.
 - Upstream durable APIs, gzip and other convenience clients/formatters are no longer available through a transitive assembly.
+- Redirects are no longer followed: a redirect response fails and is retried, then dropped, with the reason in SelfLog. Update the URI to the final address, or follow redirects in a custom client. Following them by default lost the batch on a 302 while reporting success, and sent `X-Api-Key` to the redirect target.
+- JSON configuration uses the native argument names (`requestUri`, `batchPostingLimit`, `queueLimit`, `period`, `restrictedToMinimumLevel`). Upstream names such as `logEventsInBatchLimit` and `textFormatter` now fail at load; `queueLimitBytes` is accepted only as null.
 - Published Http 1.0.1 is unsupported with v3 Core on Desktop: `Add-SinkHttp` fails parameter binding because it loads a second Serilog identity.
   Published EventLog 1.0.0 reports "not supported on this platform"; 1.0.1 passes configuration checks only (no Event Log write claim).
   Modern published compatibility pins are unchanged. See [compatibility](../../docs/compatibility.md) and [ADR 0034](../../docs/decisions/0034-native-non-durable-http-sink.md).

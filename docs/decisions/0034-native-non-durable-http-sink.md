@@ -2,7 +2,7 @@
 
 - **Status:** accepted
 - **Date:** 2026-11-05
-- **Supersedes:** the published Http Desktop compatibility claim in [0031](0031-windows-powershell-desktop-support.md), under "Assembly resolution on Desktop" (line 84).
+- **Supersedes:** the published Http Desktop compatibility claim in [0031](0031-windows-powershell-desktop-support.md), under "Assembly resolution on Desktop" (line 84). The same line's EventLog claim is narrowed: published EventLog 1.0.1 only, for configuration checks.
 - **Related:** [0011](0011-core-does-not-load-assemblies-extensions-ship.md), [0019](0019-extensions-ship-as-prereleases-during-the-core-3-preview.md), [0033](0033-net10-powershell-7-6.md).
 
 ## Context
@@ -21,9 +21,11 @@ Keep the 9.2.1 normal rendered event schema and array payload, verified by direc
 
 The default queue admits 100,000 waiting events; explicit null is unbounded. Batch size defaults to 1,000, period to two seconds, with eager first delivery. Serilog owns admission, exponential retry and its default ten-minute retry horizon. Every non-2xx response fails; automatic redirects are disabled. Requests have a 30-second deadline. The modern handler recycles pooled connections after two minutes; Desktop retains inbox handler proxy, OS TLS and certificate validation defaults.
 
-`Close-Logger` disposes the batching wrapper, attempts remaining delivery and then disposes transport. There is no aggregate shutdown deadline: a failed shutdown attempt stops draining, and multiple successful batches can take multiple request deadlines. The count limit bounds event references (approximately queue plus active batch), not bytes or arbitrary event graphs. Restart loses queued events and lost acknowledgements can cause duplicates.
+`Close-Logger` disposes the batching wrapper, attempts remaining delivery and then disposes transport. There is no aggregate shutdown deadline: a failed shutdown attempt stops draining, and multiple successful batches can take multiple request deadlines. A hung endpoint blocks `Close-Logger` for about 60 seconds, measured on both hosts: the in-flight request and one shutdown attempt. The count limit bounds event references (approximately queue plus active batch), not bytes or arbitrary event graphs. Restart loses queued events and lost acknowledgements can cause duplicates.
 
 Desktop Published compatibility pins EventLog 1.0.1 (configuration only, without creating a source or writing an entry) and excludes unsupported Http 1.0.1. EventLog 1.0.0 reports "not supported on this platform"; Http 1.0.1 reports an `Add-SinkHttp` parameter binding error. Modern pins are unchanged. Native HTTP delivery and both import orders are tested separately on each real host.
+
+Disabling redirects is deliberate and changes behaviour for existing endpoints. Measured with a default HttpClient on both hosts, a 302 turns the POST into a body-less GET and the final 200 reports success, so the batch is lost silently, and `X-Api-Key` is forwarded to the other origin. A 307 keeps the POST but forwards the key too. An endpoint that answers with a redirect now fails visibly through SelfLog and Serilog's retries. A custom `IHttpClient` can follow redirects if an endpoint needs it.
 
 ## Alternatives considered
 
@@ -37,6 +39,7 @@ Desktop Published compatibility pins EventLog 1.0.1 (configuration only, without
 
 - Windows PowerShell 5.1 can deliver HTTP without another Serilog identity or Microsoft.Extensions assemblies in the extension package.
 - Existing custom upstream clients/formatters must migrate namespaces, recompile against native contracts and replace IConfiguration with IDictionary. Direct use of upstream durable APIs and convenience types is no longer supplied transitively.
+- Endpoints that redirect must be addressed directly, or served through a custom client. JSON configuration uses the native method's argument names; upstream-only names fail with the binder's error, and `queueLimitBytes` accepts only null.
 - Omitted QueueLimit changes from unlimited to 100,000. Explicit null preserves unbounded behaviour. Published 1.0.1 users choose the legacy batch formatter to retain their envelope.
 - The sink owns transport/formatter maintenance, while retry and batching remain Serilog's responsibility. SelfLog reports failures; delivery is best effort, not durable or exactly once.
 - This decision does not change other extension ports, authorize publishing, or establish coexistence with arbitrary third-party modules.

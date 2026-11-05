@@ -74,16 +74,20 @@ they do not import PowerShell modules or add assemblies to the process.
 | Core File and Console | `File`, `Console` |
 | Core PowerShell sink | Add `Add-SinkPowerShell` in the pipeline; its callback needs the host |
 | PoShLog.Enrichers | Import first; e.g. `"Enrich": ["WithMachineName", "WithProcessId"]` |
-| Seq, Http, EventLog | Import first; upstream public Serilog methods and argument names, e.g. `Seq`, `Http`, `EventLog` |
+| Seq, EventLog | Import first; upstream public Serilog methods and argument names, e.g. `Seq`, `EventLog` |
+| Http | Import first; PoShLog's native `Http` method and its scalar arguments, see below |
 | OpenTelemetry and Elastic | Use the PoShLog cmdlets in the pipeline: their options/callback arguments are outside the supported scalar binding |
 | Splunk.Hec and Syslog.Rfc5424 | Use their PoShLog cmdlets in the pipeline; custom PoShLog transport configuration is not a public JSON configuration API |
 | Other extensions | Only public Serilog configuration methods in loaded assemblies; compatibility is not guaranteed |
 
-Arguments follow the installed upstream version. For example, Serilog.Sinks.Http 9.2.1
-requires `queueLimitBytes` even when its value is null:
+Arguments follow the installed upstream version, except for Http. PoShLog.Sinks.Http 2.0.0-preview4 has its own method:
+use `requestUri`, `batchPostingLimit`, `queueLimit`, `period` and `restrictedToMinimumLevel`.
+Upstream names such as `logEventsInBatchLimit` and `textFormatter` fail with the binder's "exactly one matching public
+method" error. `queueLimitBytes` is accepted only as null, so existing configurations that set it to null keep working;
+any other value fails, because the native sink has no byte limit.
 
 ```json
-{ "Serilog": { "WriteTo": [{ "Name": "Http", "Args": { "requestUri": "http://127.0.0.1:8080/", "queueLimitBytes": null } }] } }
+{ "Serilog": { "WriteTo": [{ "Name": "Http", "Args": { "requestUri": "http://127.0.0.1:8080/", "queueLimit": 100000 } }] } }
 ```
 
 Example with a loaded enricher:

@@ -32,7 +32,11 @@ PowerShell 7 hosts require 7.6+. Windows PowerShell 5.1 repository builds suppor
 sinks, formatters, enrichment, level switches, PSObject destructuring and non-expression JSON. Expression filters
 explicitly fail on Desktop. Native Http preview4 also supports Desktop; other refreshed extensions and MSSqlServer
 remain PowerShell 7.6+. Http custom clients and batch formatters must migrate to native contracts and dictionary
-configuration; see the [Http migration notes](../../extensions/PoShLog.Sinks.Http/README.md#migration).
+configuration, stop relying on followed redirects, and use the native JSON argument names; see the
+[Http migration notes](../../extensions/PoShLog.Sinks.Http/README.md#migration).
+Two published extensions fail on Desktop with v3: Http 1.0.1 reports an `Add-SinkHttp` parameter binding error, so use
+native Http preview4; EventLog 1.0.0 reports "not supported on this platform", and EventLog 1.0.1 passes configuration
+checks only, with no claim about writing to the Event Log.
 The [compatibility page](../compatibility.md) documents the Desktop transcript limitation and extension editions.
 
 Desktop support is unreleased. To keep v2, pin `Install-Module PoShLog -RequiredVersion 2.3.0` and
