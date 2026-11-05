@@ -19,6 +19,9 @@ namespace PoShLog.Core.Catalog
 
 		public string[] Platforms { get; set; }
 
+		/// <summary>PowerShell editions declared by this extension's manifest.</summary>
+		public string[] CompatiblePSEditions { get; set; }
+
 		public string ProjectUri { get; set; }
 
 		/// <summary>The newest version found by Get-Module -ListAvailable, or null when it is not installed.</summary>

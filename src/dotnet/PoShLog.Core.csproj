@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- ADR 0033: PowerShell 7.6 hosts .NET 10, the lowest runtime v3 supports. -->
-    <TargetFramework>net10.0</TargetFramework>
+    <!-- ADR 0031: Windows PowerShell 5.1 requires .NET Framework. ADR 0033 keeps Core on .NET 10. -->
+    <TargetFrameworks>net472;net10.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
     <Version>3.0.0</Version>
     <AssemblyName>PoShLog.Core</AssemblyName>
     <RootNamespace>PoShLog.Core</RootNamespace>
@@ -18,16 +19,23 @@
     <!-- Compile-time only reference to System.Management.Automation. The runtime assembly is
          supplied by the hosting PowerShell (7+) process, so we exclude runtime assets to avoid
          shipping/conflicting with the host's own copy. -->
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.9">
-      <ExcludeAssets>runtime</ExcludeAssets>
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.9" Condition="'$(TargetFramework)' == 'net10.0'">
+      <ExcludeAssets>runtime;contentFiles</ExcludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Serilog" Version="4.4.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <!-- ADR 0032: compile and merge privately; never copy a standalone runtime assembly. -->
-    <PackageReference Include="Serilog.Expressions" Version="5.0.0" ExcludeAssets="runtime" PrivateAssets="all" />
-    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44" PrivateAssets="all" />
+    <PackageReference Include="Serilog.Expressions" Version="5.0.0" ExcludeAssets="runtime" PrivateAssets="all" Condition="'$(TargetFramework)' == 'net10.0'" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44" PrivateAssets="all" Condition="'$(TargetFramework)' == 'net10.0'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Microsoft.PowerShell.5.1.ReferenceAssemblies" Version="1.0.0" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <!-- JsonDocument and Serilog's Activity identifiers are absent from the Framework BCL. -->
+    <PackageReference Include="System.Text.Json" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>

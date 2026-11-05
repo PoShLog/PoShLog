@@ -44,10 +44,13 @@ if ($PSEdition -eq 'Desktop') {
 
 $binaryPath = Join-Path $binaryFolder 'PoShLog.Core.dll'
 if ($PSEdition -eq 'Desktop') {
-    # TODO ADR 0031: register the compiled Desktop resolver here, after all guards
-    # and BEFORE Import-Module enumerates Core's cmdlet types. The future bootstrap
-    # must load Core and call its registration entry point without first resolving
-    # Core-owned dependencies. No resolver entry point exists in Core yet.
+    # LoadFrom and this BCL-only entry point do not enumerate cmdlet types or resolve Serilog.
+    try {
+        $bootstrap = [Reflection.Assembly]::LoadFrom($binaryPath)
+        $bootstrap.GetType('PoShLog.Core.DesktopAssemblyResolver', $true).GetMethod('Register').Invoke($null, [object[]]@([string]$binaryFolder)) | Out-Null
+    } catch {
+        throw
+    }
 }
 
 # A local nested import gives the script module ownership of the binary exports.

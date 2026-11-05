@@ -5,11 +5,14 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 ## Unreleased
 
 ### Features
-- No new features.
+- Add Windows PowerShell 5.1 Core support on .NET Framework 4.7.2+, alongside PowerShell 7.6+ on .NET 10 (ADR 0031, phase 1). Console, file and PowerShell sinks, formatters, enrichment, switches, PSObject destructuring and non-expression JSON configuration work on Desktop.
+- Show each extension's `CompatiblePSEditions` in `Get-PoShLogExtension`.
 
 ### Changes
 - `Add-SinkLogger -Filter` and JSON `ByIncludingOnly`/`ByExcluding` filters use an expression engine built into PoShLog. The module no longer ships a separate Serilog.Expressions.dll, so filters cannot conflict with other modules that load their own copy (ADR 0032).
-- **Breaking:** PoShLog 3 and its extensions now require PowerShell 7.6 or newer and are built for .NET 10 (ADR 0033). PowerShell 7.4 and 7.5 reach end of support with .NET 8 and 9 on 2026-11-10. On 7.4, 7.5 or Windows PowerShell 5.1, stay on PoShLog 2.x (`Install-Module PoShLog -MaximumVersion 2.99`) or move to PowerShell 7.6.
+- **Breaking:** Core uses an edition-selecting script loader with separate `lib/net472` and `lib/net10.0` builds. Desktop imports reject loaded PoShLog 2.x or older Serilog before loading v3 assemblies. The Desktop resolver unifies only Core-owned dependencies to the same or a newer shipped version (ADR 0031).
+- Expression filters explicitly fail on Windows PowerShell. Refreshed extensions and MSSqlServer still require PowerShell 7.6+. Desktop extension ports and expression support are separate work.
+- **Breaking:** Core hosts and refreshed extensions require PowerShell 7.6+ on .NET 10 (ADR 0033). PowerShell 7.4 and 7.5 users stay on v2. Windows PowerShell users who need v2 can pin it with `Install-Module PoShLog -RequiredVersion 2.3.0`.
 - The module now includes the Apache-2.0 licence and a notice for the incorporated Serilog.Expressions.
 
 ### Bug fixes

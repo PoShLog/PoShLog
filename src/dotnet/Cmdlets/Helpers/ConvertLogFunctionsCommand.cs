@@ -20,7 +20,19 @@ namespace PoShLog.Core.Cmdlets.Helpers
         [Parameter]
         public SwitchParameter Force { get; set; }
 
-        private sealed record Edit(int Offset, int Length, string Text);
+        private sealed class Edit
+        {
+            internal int Offset { get; }
+            internal int Length { get; }
+            internal string Text { get; }
+
+            internal Edit(int offset, int length, string text)
+            {
+                Offset = offset;
+                Length = length;
+                Text = text;
+            }
+        }
 
         protected override void ProcessRecord()
         {
@@ -106,10 +118,14 @@ namespace PoShLog.Core.Cmdlets.Helpers
                     {
                         using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write))
                         {
-                            stream.Write(output);
+                            stream.Write(output, 0, output.Length);
                             stream.Flush(true);
                         }
+#if NETFRAMEWORK
+                        File.Replace(temporary, path, null);
+#else
                         File.Move(temporary, path, true);
+#endif
                     }
                     finally
                     {

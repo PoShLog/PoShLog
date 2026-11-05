@@ -9,13 +9,13 @@
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = 'lib/PoShLog.Core.dll'
+RootModule = 'PoShLog.psm1'
 
 # Version number of this module.
 ModuleVersion = '3.0.0'
 
 # Supported PSEditions
-CompatiblePSEditions = 'Core'
+CompatiblePSEditions = 'Desktop', 'Core'
 
 # ID used to uniquely identify this module
 GUID = '6eabf344-4f00-4cc0-95d4-d3bef503e165'
@@ -37,7 +37,7 @@ It is wrapper of great C# logging library Serilog - https://serilog.net/.
 For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview3/docs'
 
 # Minimum version of the PowerShell engine required by this module
-PowerShellVersion = '7.6'
+PowerShellVersion = '5.1'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -56,9 +56,6 @@ PowerShellVersion = '7.6'
 
 # Modules that must be imported into the global environment prior to importing this module
 # RequiredModules = @()
-
-# Assemblies that must be loaded prior to importing this module
-RequiredAssemblies = @('lib/Serilog.dll', 'lib/Serilog.Sinks.File.dll', 'lib/Serilog.Sinks.Console.dll')
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
 # ScriptsToProcess = @()
