@@ -16,7 +16,12 @@ if ($Module -eq 'PoShLog.Sinks.Http') {
         if ($LASTEXITCODE) { throw "Publishing $Module $target failed ($LASTEXITCODE)." }
         $nativeLib = Join-Path $directory "lib/$target"
         New-Item -ItemType Directory -Force $nativeLib | Out-Null
-        Copy-Item "$nativeStage/PoShLog.Sinks.Http.dll" -Destination $nativeLib -Force
+        $binary = Join-Path $nativeStage 'PoShLog.Sinks.Http.dll'
+        $shippingBinary = Join-Path $nativeLib 'PoShLog.Sinks.Http.dll'
+        # Windows locks assemblies loaded by an earlier test in this process. Leave identical builds intact.
+        if (!(Test-Path $shippingBinary) -or (Get-FileHash $binary).Hash -ne (Get-FileHash $shippingBinary).Hash) {
+            Copy-Item $binary -Destination $shippingBinary -Force
+        }
     }
     Write-Output "Built $Module -> lib/net472 and lib/net10.0"
     return
