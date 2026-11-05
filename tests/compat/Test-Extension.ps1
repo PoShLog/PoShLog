@@ -4,23 +4,34 @@ param(
     [Parameter(Mandatory)][string]$ModulePath,
     # A Seq extension imported into the same session, to prove both load and deliver side by side.
     [string]$SeqPath,
-    [switch]$SeqFirst
+    [switch]$SeqFirst,
+    [switch]$ExtensionFirst,
+    [string]$CoreManifest
 )
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path "$PSScriptRoot/../..").Path
-Import-Module "$root/src/PoShLog.psd1" -Force
+if (!$CoreManifest) { $CoreManifest = "$root/src/PoShLog.psd1" }
+if ($PSEdition -eq 'Desktop') {
+    # RequiredModules in published extensions must discover the staged v3, including extension-first imports.
+    $env:PSModulePath = (Split-Path (Split-Path $CoreManifest)) + [IO.Path]::PathSeparator + (Join-Path $PSHOME 'Modules')
+}
+if ($ExtensionFirst -and $Name -ne 'PoShLog') { Import-Module (Resolve-Path $ModulePath) -Force }
+Import-Module $CoreManifest -Force
 $shared = @('Serilog', 'Serilog.Sinks.File', 'Serilog.Sinks.Console')
 foreach ($assembly in $shared) {
     $loaded = [AppDomain]::CurrentDomain.GetAssemblies() | Where-Object { $_.GetName().Name -eq $assembly }
-    if ($loaded -and [Runtime.Loader.AssemblyLoadContext]::GetLoadContext($loaded) -ne [Runtime.Loader.AssemblyLoadContext]::Default) { throw "$assembly is isolated from extensions." }
-    if (!$loaded -or $loaded.Location -ne (Join-Path $root "src/lib/$assembly.dll")) {
-        throw "Core did not preload $assembly from src/lib."
+    if ($PSEdition -ne 'Desktop' -and $loaded -and [Runtime.Loader.AssemblyLoadContext]::GetLoadContext($loaded) -ne [Runtime.Loader.AssemblyLoadContext]::Default) { throw "$assembly is isolated from extensions." }
+    $target = if ($PSEdition -eq 'Desktop') { 'net472' } else { 'net10.0' }
+    if (!$loaded -or $loaded.Location -ne (Join-Path (Split-Path $CoreManifest) "lib/$target/$assembly.dll")) {
+        throw "Core did not preload $assembly from lib/$target."
     }
 }
 if ($SeqPath -and $SeqFirst) { Import-Module (Resolve-Path $SeqPath) -Force }
-if ($Name -ne 'PoShLog') { Import-Module (Resolve-Path $ModulePath) -Force }
+if ($Name -ne 'PoShLog' -and !$ExtensionFirst) { Import-Module (Resolve-Path $ModulePath) -Force }
 if ($SeqPath -and !$SeqFirst) { Import-Module (Resolve-Path $SeqPath) -Force }
-Add-Type -Path "$PSScriptRoot/CompatHttpListener.cs"
+if ($PSEdition -eq 'Desktop') {
+    $null = [Reflection.Assembly]::LoadFrom("$PSScriptRoot/fixtures/bin/Release/net472/CompatHttpListener.dll")
+} else { Add-Type -Path "$PSScriptRoot/CompatHttpListener.cs" }
 $listener = $null
 $seqListener = $null
 $udp = $null
@@ -165,7 +176,7 @@ try {
         }
     }
     $alongside = if ($SeqPath) { ", with Seq " + (Import-PowerShellDataFile $SeqPath).ModuleVersion + $(if ($SeqFirst) { ' imported first' } else { ' imported after' }) } else { '' }
-    Write-Output "PASS $Name ($delivery$alongside)"
+    Write-Output "PASS $Name ($delivery$alongside; extensionFirst=$ExtensionFirst; host=$($PSVersionTable.PSVersion))"
 } finally {
     Close-Logger
     if ($listener) { $listener.Dispose() }

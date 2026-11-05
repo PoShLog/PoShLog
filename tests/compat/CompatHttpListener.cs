@@ -49,7 +49,7 @@ public sealed class CompatHttpListener : IDisposable
                     if (context.Request.RawUrl.Contains("/_bulk"))
                     {
                         // The Elasticsearch bulk API answers one item per action line (an action and a document per event).
-                        var count = body.Split('\n', StringSplitOptions.RemoveEmptyEntries).Length / 2;
+                        var count = body.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).Length / 2;
                         json = "{\"took\":1,\"errors\":false,\"items\":[" +
                             string.Join(",", Enumerable.Repeat("{\"create\":{\"status\":201,\"result\":\"created\"}}", count)) + "]}";
                     }

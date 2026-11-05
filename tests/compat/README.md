@@ -1,6 +1,6 @@
 # Extension compatibility
 
-Run from the repository root, after publishing Core to src/lib and building all nine extensions:
+Run from the repository root, after `./build/Build-Core.ps1` and building all nine extensions.
 
 ```powershell
 ./tests/compat/Invoke-Compatibility.ps1 -Mode InRepo
@@ -17,6 +17,14 @@ versions without resolving Gallery dependencies, then explicitly import freshly 
 The reusable compat.yml workflow runs all three modes on Windows and Linux. InRepo and Published
 (our own published extensions) block CI and the manual release workflow. ThirdParty (other
 authors' sinks) runs with continue-on-error: failures are annotated but gate nothing (ADR 0009).
+
+The blocking Windows PowerShell Core job additionally stages both target folders and calls
+`Invoke-Compatibility.ps1 -Mode Published -Desktop -CoreManifest artifacts/PoShLog/PoShLog.psd1` from PowerShell 7.
+Its children are real `powershell.exe` processes. Each published first-party extension runs Core-first and
+extension-first. The latter discovers staged Core through its normal `RequiredModules` entry.
+Refreshed extensions, MSSqlServer isolation and expression tests belong to the modern suite.
+`Test-DesktopCoexistence.ps1` checks Az.Accounts 2.19.0, PnP.PowerShell 1.12.0 and PSFramework 1.12.346 in both
+orders, with Core file delivery. Both Gallery-based checks run in CI only.
 
 | Published module (mode) | Version | Assertion |
 |---|---|---|
