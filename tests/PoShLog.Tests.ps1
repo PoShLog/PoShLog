@@ -1,7 +1,7 @@
 Describe "PoShLog-main" {
 	It "imports the module using manifest" {
 		{
-			Import-Module "$PSScriptRoot\..\src\PoShLog.psd1" -Force
+			Import-Module $(if ($env:POSHLOG_TEST_MANIFEST) { $env:POSHLOG_TEST_MANIFEST } else { "$PSScriptRoot\..\src\PoShLog.psd1" }) -Force
 		} | Should -Not -Throw
 	}
 }
@@ -108,7 +108,7 @@ Describe "PoShLog-extended" {
 
 Describe "PoShLog-e2e" {
 	BeforeAll {
-		Import-Module "$PSScriptRoot\..\src\PoShLog.psd1" -Force
+		Import-Module $(if ($env:POSHLOG_TEST_MANIFEST) { $env:POSHLOG_TEST_MANIFEST } else { "$PSScriptRoot\..\src\PoShLog.psd1" }) -Force
 	}
 
 	Context "Full pipeline scenario" {
@@ -242,7 +242,7 @@ Describe "PoShLog-e2e" {
 
 Describe "PoShLog-preview-cmdlets" {
 	BeforeAll {
-		Import-Module "$PSScriptRoot\..\src\PoShLog.psd1" -Force
+		Import-Module $(if ($env:POSHLOG_TEST_MANIFEST) { $env:POSHLOG_TEST_MANIFEST } else { "$PSScriptRoot\..\src\PoShLog.psd1" }) -Force
 	}
 
 	Context "Get-CurrentLogFiles" {

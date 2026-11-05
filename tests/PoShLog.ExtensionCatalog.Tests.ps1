@@ -1,8 +1,8 @@
-#Requires -Version 7.6
+#Requires -Version 5.1
 # Get-PoShLogExtension and Install-PoShLogExtension against the module as users import it (ADR 0021).
 
 BeforeAll {
-	Import-Module (Resolve-Path "$PSScriptRoot\..\src\PoShLog.psd1").Path -Force
+	Import-Module (Resolve-Path $(if ($env:POSHLOG_TEST_MANIFEST) { $env:POSHLOG_TEST_MANIFEST } else { "$PSScriptRoot\..\src\PoShLog.psd1" })).Path -Force
 	$script:manifests = Get-ChildItem "$PSScriptRoot\..\extensions\*\*.psd1" |
 		Where-Object { $_.BaseName -eq $_.Directory.Name } |
 		ForEach-Object { [pscustomobject]@{ Name = $_.BaseName; Data = Import-PowerShellDataFile $_.FullName } }
@@ -19,6 +19,7 @@ Describe 'Get-PoShLogExtension' {
 			$entry.Version | Should -Be "$($manifest.Data.ModuleVersion)-$($psData.Prerelease)"
 			$exports = @($manifest.Data.CmdletsToExport) + @($manifest.Data.FunctionsToExport) | Where-Object { $_ -and $_ -notmatch '\*' }
 			$entry.Commands | Should -Be $exports
+			$entry.CompatiblePSEditions | Should -Be $manifest.Data.CompatiblePSEditions
 		}
 	}
 
@@ -45,7 +46,7 @@ Describe 'Install-PoShLogExtension' {
 	AfterEach { Remove-Item function:global:Install-PSResource }
 
 	It 'installs a prerelease while PoShLog is a prerelease' {
-		$prerelease = (Import-PowerShellDataFile "$PSScriptRoot\..\src\PoShLog.psd1").PrivateData.PSData.Prerelease
+		$prerelease = (Import-PowerShellDataFile $(if ($env:POSHLOG_TEST_MANIFEST) { $env:POSHLOG_TEST_MANIFEST } else { "$PSScriptRoot\..\src\PoShLog.psd1" })).PrivateData.PSData.Prerelease
 
 		Install-PoShLogExtension PoShLog.Sinks.Seq -Confirm:$false
 

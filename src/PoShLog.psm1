@@ -53,6 +53,15 @@ if ($PSEdition -eq 'Desktop') {
     }
 }
 
+# Preserve the shared dependencies previously preloaded by RequiredAssemblies, after the guards and resolver.
+try {
+    foreach ($name in 'Serilog.dll', 'Serilog.Sinks.File.dll', 'Serilog.Sinks.Console.dll') {
+        $null = [Reflection.Assembly]::LoadFrom((Join-Path $binaryFolder $name))
+    }
+} catch {
+    throw
+}
+
 # A local nested import gives the script module ownership of the binary exports.
 $coreModule = Import-Module -Name $binaryPath -PassThru -Scope Local -ErrorAction Stop
 # Rebind aliases to this script module. A forwarded binary alias otherwise keeps

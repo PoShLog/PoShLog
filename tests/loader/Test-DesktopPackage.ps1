@@ -63,6 +63,19 @@ if ($Case) {
                 Assert-True ($null -eq $resolve.Invoke($null, @($null, [ResolveEventArgs]::new($request)))) "Resolver answered an unowned identity: $request"
             }
         }
+        'ForeignCopy' {
+            $foreign = Join-Path $Results 'foreign'
+            New-Item $foreign -ItemType Directory -Force | Out-Null
+            Copy-Item (Join-Path $folder 'Serilog.dll') $foreign
+            $null = [Reflection.Assembly]::LoadFrom((Join-Path $foreign 'Serilog.dll'))
+            $core = [Reflection.Assembly]::LoadFrom((Join-Path $folder 'PoShLog.Core.dll'))
+            $resolver = $core.GetType('PoShLog.Core.DesktopAssemblyResolver', $true)
+            $resolver.GetMethod('Register').Invoke($null, [object[]]@([string]$folder)) | Out-Null
+            $resolve = $resolver.GetMethod('Resolve', [Reflection.BindingFlags]'NonPublic,Static')
+            $identity = [Reflection.AssemblyName]::GetAssemblyName((Join-Path $folder 'Serilog.dll'))
+            $identity.Version = [version]'0.0.0.0'
+            Assert-True ($null -eq $resolve.Invoke($null, @($null, [ResolveEventArgs]::new($identity.FullName)))) 'Resolver substituted a foreign copy.'
+        }
         { $_ -in 'CoreFirst', 'ExtensionFirst' } {
             # Keep the fixture apart from its old Serilog. It must bind through Core's resolver.
             if ($Case -eq 'CoreFirst') { Import-Module $Manifest -ErrorAction Stop }
@@ -102,7 +115,7 @@ $Manifest = (Resolve-Path $Manifest).Path
 $count = 0
 foreach ($hostPath in @((Get-Command powershell.exe).Source, (Get-Command pwsh).Source)) {
     $cases = @('Import')
-    if ($hostPath -like '*WindowsPowerShell*') { $cases += 'Bootstrap', 'CoreFirst', 'ExtensionFirst', 'V2Guard', 'SerilogGuard' }
+    if ($hostPath -like '*WindowsPowerShell*') { $cases += 'Bootstrap', 'ForeignCopy', 'CoreFirst', 'ExtensionFirst', 'V2Guard', 'SerilogGuard' }
     foreach ($testCase in $cases) {
         & $hostPath -NoProfile -NonInteractive -File $PSCommandPath -Manifest $Manifest -V2Manifest $V2Manifest -Case $testCase -FixtureDirectory $FixtureDirectory -Results $Results
         if ($LASTEXITCODE) { throw "Real package case $testCase failed in $hostPath." }

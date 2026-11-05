@@ -72,9 +72,12 @@ if ($Case) {
                     $result = [Microsoft.CodeAnalysis.FileSystemExtensions]::Emit($compilation, "$folder/PoShLog.Core.dll")
                     Assert-True $result.Success "Fixture compilation failed: $($result.Diagnostics -join [Environment]::NewLine)"
                 }
+                $serilog = Get-Content "$PSScriptRoot/fixtures/Serilog.cs" -Raw
+                Add-Type -TypeDefinition $serilog.Replace('__VERSION__', '4.0.0.0') -OutputAssembly "$folder/Serilog.dll"
+                foreach ($sink in 'File', 'Console') {
+                    Add-Type -TypeDefinition "namespace LoaderFixtureDependencies { public class $sink {} }" -OutputAssembly "$folder/Serilog.Sinks.$sink.dll"
+                }
                 if ($PSEdition -eq 'Desktop') {
-                    $serilog = Get-Content "$PSScriptRoot/fixtures/Serilog.cs" -Raw
-                    Add-Type -TypeDefinition $serilog.Replace('__VERSION__', '4.0.0.0') -OutputAssembly "$folder/Serilog.dll"
                     $old = Join-Path $FixtureRoot 'old'
                     New-Item $old -ItemType Directory -Force | Out-Null
                     Add-Type -TypeDefinition $serilog.Replace('__VERSION__', '2.0.0.0') -OutputAssembly "$old/Serilog.dll"
