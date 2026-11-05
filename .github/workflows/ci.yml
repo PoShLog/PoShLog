@@ -43,6 +43,7 @@ jobs:
           Get-ChildItem artifacts/PoShLog -Recurse -File | ForEach-Object { $_.FullName } > TestResults/package-files.txt
       - name: Install pinned Pester for the Desktop process
         run: |
+          New-Item .compat/tools -ItemType Directory -Force | Out-Null
           Save-PSResource Pester -Version 6.0.1 -Path .compat/tools -TrustRepository
           $pester = (Resolve-Path .compat/tools/Pester/6.0.1/Pester.psd1).Path
           "DESKTOP_PESTER=$pester" >> $env:GITHUB_ENV
