@@ -4,13 +4,14 @@
 Describe 'Refreshed extension loader: <Module>' -ForEach @(
     @{ Module = 'PoShLog.Sinks.Seq'; Assembly = 'Serilog.Sinks.Seq' }
     @{ Module = 'PoShLog.Sinks.EventLog'; Assembly = 'Serilog.Sinks.EventLog' }
-    @{ Module = 'PoShLog.Sinks.Http'; Assembly = 'Serilog.Sinks.Http' }
+    @{ Module = 'PoShLog.Sinks.Http'; Assembly = 'PoShLog.Sinks.Http' }
     @{ Module = 'PoShLog.Enrichers'; Assembly = 'Serilog.Enrichers.Environment' }
 ) {
     BeforeAll {
         $root = (Resolve-Path "$PSScriptRoot/..").Path
         $directory = Join-Path $root "extensions/$Module"
-        if (!(Test-Path (Join-Path $directory "lib/$Assembly.dll"))) {
+        $assemblyDirectory = if ($Module -eq 'PoShLog.Sinks.Http') { "$directory/lib/net10.0" } else { "$directory/lib" }
+        if (!(Test-Path (Join-Path $assemblyDirectory "$Assembly.dll"))) {
             & (Join-Path $root 'build/Build-Extension.ps1') -Module $Module | Out-Null
         }
         # Escape paths embedded in child PowerShell scripts, including worktrees with apostrophes.
@@ -34,7 +35,7 @@ if (`$expected -eq '*') {
 if (@(Compare-Object `$expected `$actual).Count) { throw 'Unexpected exported commands.' }
 if ('$Module' -eq 'PoShLog.Sinks.Http') {
     `$client = Get-ApiKeyHttpClient -ApiKey 'synthetic-audit-placeholder' -ErrorAction Stop
-    if (`$client -isnot [Serilog.Sinks.Http.IHttpClient]) { throw 'Authentication helper returned an invalid client.' }
+    if (`$client -isnot [PoShLog.Sinks.Http.IHttpClient]) { throw 'Authentication helper returned an invalid client.' }
     `$client.Dispose()
 }
 Import-Module '$modulePath' -Force
@@ -48,7 +49,7 @@ if (@(Compare-Object `$expected `$actual).Count) { throw 'Unexpected exported co
     }
 
     It 'refuses an older dependency with the module and both versions in the error' {
-        $required = [Reflection.AssemblyName]::GetAssemblyName((Join-Path $directory "lib/$Assembly.dll")).Version
+        $required = [Reflection.AssemblyName]::GetAssemblyName((Join-Path $assemblyDirectory "$Assembly.dll")).Version
         $child = @"
 `$name = [Reflection.AssemblyName]::new('$Assembly')
 `$name.Version = [version]'1.0.0.0'

@@ -1,15 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <!-- ADR 0033: compatible with the PowerShell 7.6 runtime (.NET 10). -->
-    <TargetFramework>net10.0</TargetFramework>
-  <AssemblyName>PoShLog.Sinks.Http</AssemblyName>
+    <!-- Windows PowerShell 5.1 requires .NET Framework (ADR 0034). -->
+    <TargetFrameworks>net472;net10.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Version>2.0.0-preview4</Version>
+    <AssemblyName>PoShLog.Sinks.Http</AssemblyName>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Serilog" Version="4.4.0" />
-    <PackageReference Include="Serilog.Sinks.Http" Version="9.2.1" />
-  <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.9" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.9" ExcludeAssets="runtime;contentFiles" PrivateAssets="all" Condition="'$(TargetFramework)' == 'net10.0'" />
   </ItemGroup>
-
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Microsoft.PowerShell.5.1.ReferenceAssemblies" Version="1.0.0" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
 </Project>

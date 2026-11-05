@@ -1,0 +1,7 @@
+PoShLog.Sinks.Http incorporates modified NormalTextFormatter,
+NormalRenderedTextFormatter and ValueFormatter from Serilog.Sinks.Http 9.2.1.
+Copyright 2015-2026 Serilog Contributors.
+https://github.com/FantasticFiasco/serilog-sinks-http/tree/v9.2.1
+Licensed under Apache License 2.0; see Serilog.Sinks.Http.LICENSE.
+Modifications: native PoShLog namespace and dual-target compilation.
+No upstream NOTICE file is present at that tag.

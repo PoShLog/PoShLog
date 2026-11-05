@@ -1,4 +1,6 @@
 # Core's RequiredModules entry guarantees that shared Serilog assemblies load first.
+$target = if ($PSEdition -eq 'Desktop') { 'net472' } else { 'net10.0' }
+$lib = Join-Path $PSScriptRoot "lib/$target"
 # Dependencies may already be loaded by another module. A loaded copy of the same or a newer version is used
 # as it is; Add-Type of a second copy would fail (docs/decisions/0012).
 $loaded = @{}
@@ -6,7 +8,7 @@ foreach ($assembly in [AppDomain]::CurrentDomain.GetAssemblies()) {
     $loaded[$assembly.GetName().Name] = $assembly.GetName().Version
 }
 # A foreach statement, not ForEach-Object: a throw inside a pipeline in a module script does not stop the import.
-foreach ($file in Get-ChildItem "$PSScriptRoot/lib" -Filter '*.dll' -File) {
+foreach ($file in Get-ChildItem $lib -Filter '*.dll' -File) {
     $name = [Reflection.AssemblyName]::GetAssemblyName($file.FullName)
     $present = $loaded[$name.Name]
     if (!$present) {
@@ -16,7 +18,7 @@ foreach ($file in Get-ChildItem "$PSScriptRoot/lib" -Filter '*.dll' -File) {
     }
 }
 # Load cmdlet metadata only after checking dependencies, rather than through NestedModules (docs/decisions/0012).
-Import-Module (Join-Path $PSScriptRoot 'lib/PoShLog.Sinks.Http.dll') -ErrorAction Stop
+Import-Module (Join-Path $lib 'PoShLog.Sinks.Http.dll') -ErrorAction Stop
 Export-ModuleMember -Cmdlet Get-ApiKeyHttpClient
 Get-ChildItem "$PSScriptRoot/functions" -Recurse -Filter '*.ps1' -File |
     Where-Object { $_.Directory.Name -ne 'internal' } | ForEach-Object {

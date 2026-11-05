@@ -8,6 +8,19 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot
 $directory = Join-Path $root "extensions/$Module"
+if ($Module -eq 'PoShLog.Sinks.Http') {
+    # Only our binary ships. Serilog and its Framework dependencies belong to Core.
+    foreach ($target in 'net472', 'net10.0') {
+        $nativeStage = Join-Path $directory "obj/native-publish/$target"
+        dotnet publish "$directory/Dependencies.csproj" -f $target -c $Configuration -o $nativeStage --configfile "$PSScriptRoot/nuget.config"
+        if ($LASTEXITCODE) { throw "Publishing $Module $target failed ($LASTEXITCODE)." }
+        $nativeLib = Join-Path $directory "lib/$target"
+        New-Item -ItemType Directory -Force $nativeLib | Out-Null
+        Copy-Item "$nativeStage/PoShLog.Sinks.Http.dll" -Destination $nativeLib -Force
+    }
+    Write-Output "Built $Module -> lib/net472 and lib/net10.0"
+    return
+}
 # Stage first: shared Core assemblies must never enter the module's shipping lib.
 $staging = Join-Path $directory 'obj/publish'
 dotnet publish "$directory/Dependencies.csproj" -c $Configuration -o $staging --configfile "$PSScriptRoot/nuget.config"

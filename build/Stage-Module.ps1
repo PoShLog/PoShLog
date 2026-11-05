@@ -34,9 +34,17 @@ if ($Module -eq 'PoShLog') {
     Copy-Item "$source/PoShLog.psm1" $destination
     Copy-Item "$root/README.md", "$root/LICENSE", "$root/CHANGELOG.md" $destination
 } else {
-    Copy-Item "$source/lib" $destination -Recurse
+    if ($Module -eq 'PoShLog.Sinks.Http') {
+        # Copy the shipping allowlist, even when an earlier build left upstream DLLs in lib/.
+        foreach ($target in 'net472', 'net10.0') {
+            $folder = New-Item "$destination/lib/$target" -ItemType Directory -Force
+            Copy-Item "$source/lib/$target/PoShLog.Sinks.Http.dll" $folder.FullName
+        }
+    } else {
+        Copy-Item "$source/lib" $destination -Recurse
+    }
     # A module with only compiled cmdlets (PoShLog.Sinks.OpenTelemetry) has no functions/ directory.
-    $files = @("$source/$Module.psm1", "$source/functions", "$source/README.md", "$source/LICENSE", "$source/CHANGELOG.md") | Where-Object { Test-Path $_ }
+    $files = @("$source/$Module.psm1", "$source/functions", "$source/README.md", "$source/LICENSE", "$source/CHANGELOG.md", "$source/THIRD-PARTY-NOTICES.txt", "$source/Serilog.Sinks.Http.LICENSE") | Where-Object { Test-Path $_ }
     Copy-Item $files $destination -Recurse
 }
 Write-Output "Staged $Module -> $destination"

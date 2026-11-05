@@ -11,20 +11,20 @@ function Add-SinkHttp {
 	.PARAMETER BatchPostingLimit
 		The maximum number of events to post in a single batch. Default value is 1000.
 	.PARAMETER QueueLimit
-		The maximum number of events stored in the queue in memory, waiting to be posted over the network. Default value is infinitely.
+		The maximum number of events stored in the queue in memory, waiting to be posted over the network. Default value is 100000. Explicit $null leaves the queue unbounded.
 	.PARAMETER Period
 		The time to wait between checking for event batches. Default value is 2 seconds.
 	.PARAMETER Formatter
-		The formatter rendering individual log events into text, for example JSON. Default
+		The formatter rendering individual log events into text. Defaults to PoShLog.Sinks.Http.TextFormatters.NormalRenderedTextFormatter. TextFormatter is an alias.
 	.PARAMETER BatchFormatter
-		The formatter batching multiple log events into a payload that can be sent over the network. Default value is Serilog.Sinks.Http.BatchFormatters.DefaultBatchFormatter.
+		The formatter batching multiple log events into a payload that can be sent over the network. Default value is PoShLog.Sinks.Http.BatchFormatters.ArrayBatchFormatter.
 	.PARAMETER RestrictedToMinimumLevel
 		The minimum level for events passed through the sink. Default value is Verbose.
 	.PARAMETER HttpClient
-		A custom Serilog.Sinks.Http.IHttpClient implementation. Default value is System.Net.Http.HttpClient.
+		A custom PoShLog.Sinks.Http.IHttpClient implementation. The default is the native ApiKeyHttpClient without authentication.
 	.PARAMETER Configuration
-		Configuration passed to HttpClient. Parameter is either manually specified when configuring the sink in source code
-		or automatically passed in when configuring the sink using Serilog.Settings.Configuration.
+		Dictionary passed once to HttpClient.Configure. The http:apiKey entry sets X-Api-Key.
+
 	.INPUTS
 		Instance of LoggerConfiguration
 	.OUTPUTS
@@ -46,24 +46,25 @@ function Add-SinkHttp {
 		[int]$BatchPostingLimit = 1000,
 
 		[Parameter(Mandatory = $false)]
-		[Nullable[System.Int32]]$QueueLimit = $null,
+		[Nullable[System.Int32]]$QueueLimit = 100000,
 
 		[Parameter(Mandatory = $false)]
 		[Nullable[System.TimeSpan]]$Period = $null,
 
 		[Parameter(Mandatory = $false)]
+		[Alias('TextFormatter')]
 		[Serilog.Formatting.ITextFormatter]$Formatter = $null,
 
 		[Parameter(Mandatory = $false)]
-		[Serilog.Sinks.Http.IBatchFormatter]$BatchFormatter = $null,
+		[PoShLog.Sinks.Http.IBatchFormatter]$BatchFormatter = $null,
 
 		[Serilog.Events.LogEventLevel]$RestrictedToMinimumLevel = [Serilog.Events.LogEventLevel]::Verbose,
 
 		[Parameter(Mandatory = $false)]
-		[Serilog.Sinks.Http.IHttpClient]$HttpClient = $null,
+		[PoShLog.Sinks.Http.IHttpClient]$HttpClient = $null,
 
 		[Parameter(Mandatory = $false)]
-		[Microsoft.Extensions.Configuration.IConfiguration]$Configuration = $null
+		[System.Collections.IDictionary]$Configuration = $null
 	)
 
 	process {

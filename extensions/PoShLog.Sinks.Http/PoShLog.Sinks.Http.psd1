@@ -15,7 +15,7 @@ RootModule = 'PoShLog.Sinks.Http.psm1'
 ModuleVersion = '2.0.0'
 
 # Supported PSEditions
-CompatiblePSEditions = 'Core'
+CompatiblePSEditions = 'Desktop', 'Core'
 
 # ID used to uniquely identify this module
 GUID = '3dbab483-627b-46d9-9b73-17392f02f067'
@@ -33,10 +33,10 @@ Copyright = '(c) 2019 Tomas Bouda. All rights reserved.'
 Description = 'PoShLog.Sinks.Http is extension module for PoShLog core library - https://www.powershellgallery.com/packages/PoShLog.
 Sends log events to an HTTP endpoint with POST.
 
-For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview3/docs'
+For documentation check PoShLog docs - https://github.com/PoShLog/PoShLog/tree/v3.0.0-preview4/docs'
 
 # Minimum version of the PowerShell engine required by this module
-PowerShellVersion = '7.6'
+PowerShellVersion = '5.1'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -98,7 +98,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'http','post','Log','Logging','Serilog','File','filelog','logfile','error-log','console','event','serilog-sink','serilog-for-powershell','wrapper','sinks','PSEdition_Core','Windows','Linux','MacOS'
+        Tags = 'http','post','Log','Logging','Serilog','File','filelog','logfile','error-log','console','event','serilog-sink','serilog-for-powershell','wrapper','sinks','PSEdition_Core','PSEdition_Desktop','Windows','Linux','MacOS'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/PoShLog/PoShLog.Sinks.Http/blob/master/LICENSE'
@@ -110,10 +110,10 @@ PrivateData = @{
         IconUri = 'https://raw.githubusercontent.com/PoShLog/PoShLog/v3.0.0-preview3/docs/assets/icon.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview3/extensions/PoShLog.Sinks.Http/CHANGELOG.md'
+        ReleaseNotes = 'https://github.com/PoShLog/PoShLog/blob/v3.0.0-preview4/extensions/PoShLog.Sinks.Http/CHANGELOG.md'
 
         # Prerelease string of this module
-        Prerelease = 'preview3'
+        Prerelease = 'preview4'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         # RequireLicenseAcceptance = $false
