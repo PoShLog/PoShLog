@@ -52,9 +52,10 @@ Maintain one v3 source tree that builds **net472** and **net10.0** (`<TargetFram
   net10.0 default (Windows PowerShell runs only on .NET Framework) and is stated in the project files.
 
 **Packaging.** Each target lives in its own folder (`lib/Desktop`, `lib/Core` or per-TFM names). The manifest declares
-`CompatiblePSEditions = 'Desktop', 'Core'` and `PowerShellVersion = '5.1'`. A manifest cannot branch on `$PSEdition`,
-so its `RootModule` becomes a small script loader, `PoShLog.psm1`, compatible with 5.1, as in PoShLog 2.x and the
-EventLog 1.0.x edition loader. The loader:
+`CompatiblePSEditions = 'Desktop', 'Core'` and `PowerShellVersion = '5.1'`. Its `RootModule` becomes a small script
+loader, `PoShLog.psm1`, compatible with 5.1 (Tomáš, 2026-11-05; the manifest switch is rejected under Alternatives).
+PoShLog 2.x also has a script `RootModule`, but it loads one `lib` folder without an edition check. The precedent for
+selecting a build by `$PSEdition` is the `.psm1` of EventLog 1.0.1. The loader:
 
 - selects the build by `$PSEdition`;
 - checks the .NET Framework floor on Desktop;
@@ -151,7 +152,16 @@ preferably compile-time only. They do not replace runtime isolation or coexisten
 - **PowerShellStandard.Library as the one PowerShell reference:** a single package for both targets, but it fixes the
   API at the PowerShell Standard 5.1 surface for the net10.0 build too. Per-target reference assemblies keep each
   build honest about its host.
-- **A manifest-only edition switch:** a manifest cannot choose `RootModule` by `$PSEdition`, hence the script loader.
+- **A manifest edition switch** (`RootModule = if ($PSEdition -ne 'Desktop') { ... } else { ... }`): it works. With a
+  script-module fixture on 5.1.26100 and 7.6.9, `Import-Module`, `Test-ModuleManifest` and `Get-Module -ListAvailable`
+  pass, and `Publish-PSResource` and `Save-PSResource` to a local repository pass on 7.6. The PowerShell Gallery and a
+  real DLL `RootModule` were not tested. It is rejected for two reasons:
+  - The guards must run before any Core assembly loads. A manifest would need `ScriptsToProcess` for that, which
+    splits the loader's job across two places. `PowerShellVersion` also has to stay `5.1`, so the manifest alone cannot
+    reject Core hosts older than 7.6.
+  - An `if` makes the manifest unreadable as data. `Import-PowerShellDataFile` fails on it on both editions, and
+    `release.yml`, `build/Test-PackageInstall.ps1` and the tests read `PoShLog.psd1` that way. `SafeGetValue` throws on
+    it too, and `ExtensionCatalog.ReadManifest` reads the embedded `PoShLog.psd1` with it for `Get-PoShLogExtension`.
 - **Load Expressions and the SQL dependencies into the shared AppDomain:** gives up the existing coexistence
   protections.
 - **Global binding redirects or a permissive resolver:** changes behaviour for other modules in the same process.
