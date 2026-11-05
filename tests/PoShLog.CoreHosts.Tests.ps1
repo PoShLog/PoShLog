@@ -8,6 +8,26 @@ BeforeAll {
 Describe 'Core on supported PowerShell hosts' {
     AfterEach { Close-Logger }
 
+    It 'preserves exit <ExitCode> in a new -File process using #Requires' -TestCases @(
+        @{ ExitCode = 0 }
+        @{ ExitCode = 1 }
+        @{ ExitCode = 17 }
+    ) {
+        param($ExitCode)
+        $scriptPath = Join-Path $TestDrive "requires-exit-$ExitCode.ps1"
+        $requiredManifest = (Resolve-Path $manifest).Path.Replace("'", "''")
+        @"
+#Requires -Modules '$requiredManifest'
+Write-Output 'required module loaded'
+exit $ExitCode
+"@ | Set-Content $scriptPath -Encoding UTF8
+        $hostPath = if ($PSEdition -eq 'Desktop') { Join-Path $PSHOME 'powershell.exe' } else { Join-Path $PSHOME 'pwsh' }
+        $output = & $hostPath -NoProfile -NonInteractive -File $scriptPath
+        $actualExitCode = $LASTEXITCODE
+        $output | Should -Be 'required module loaded'
+        $actualExitCode | Should -Be $ExitCode
+    }
+
     It 'exports the manifest commands through the script module' {
         $data = Import-PowerShellDataFile $manifest
         @(Get-Command -Module PoShLog -Name *).Name | Sort-Object | Should -Be ($data.CmdletsToExport | Sort-Object)

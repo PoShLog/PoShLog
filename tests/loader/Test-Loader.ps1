@@ -115,16 +115,22 @@ if ($Case) {
                 $tokens = $null
                 $errors = $null
                 $ast = [System.Management.Automation.Language.Parser]::ParseFile($loader, [ref]$tokens, [ref]$errors)
-                $checks = $ast.FindAll({ param($node) $node -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $false)
-                Assert-True ($checks.Count -eq 2) 'Expected the two internal floor checks.'
-                foreach ($check in $checks) { . ([scriptblock]::Create($check.Extent.Text)) }
-                Assert-Rejected { Assert-PoShLogCoreHost ([version]'7.5.99') } 'requires PowerShell 7.6'
-                Assert-PoShLogCoreHost ([version]'7.6.0')
-                Assert-PoShLogCoreHost ([version]'7.7.0')
-                Assert-Rejected { Assert-PoShLogDesktopFramework 461807 } 'requires .NET Framework 4.7.2'
-                Assert-Rejected { Assert-PoShLogDesktopFramework 0 } 'requires .NET Framework 4.7.2'
-                Assert-PoShLogDesktopFramework 461808
-                Assert-PoShLogDesktopFramework 533320
+                $coreCheck = $ast.Find({ param($node)
+                    $node -is [System.Management.Automation.Language.IfStatementAst] -and $node.Extent.Text.StartsWith('if ($coreVersion -lt ')
+                }, $true)
+                $desktopCheck = $ast.Find({ param($node)
+                    $node -is [System.Management.Automation.Language.IfStatementAst] -and $node.Extent.Text.StartsWith('if ($frameworkRelease -lt ')
+                }, $true)
+                Assert-True ($null -ne $coreCheck -and $null -ne $desktopCheck) 'Expected the two inline floor checks.'
+                $checkCore = [scriptblock]::Create($coreCheck.Extent.Text)
+                $checkDesktop = [scriptblock]::Create($desktopCheck.Extent.Text)
+                $coreVersion = [version]'7.5.99'
+                Assert-Rejected { & $checkCore } 'requires PowerShell 7.6'
+                foreach ($coreVersion in [version]'7.6.0', [version]'7.7.0') { & $checkCore }
+                foreach ($frameworkRelease in 461807, 0) {
+                    Assert-Rejected { & $checkDesktop } 'requires .NET Framework 4.7.2'
+                }
+                foreach ($frameworkRelease in 461808, 533320) { & $checkDesktop }
             }
             'V2Guard' {
                 Import-Module (Join-Path $FixtureRoot 'v2/PoShLog/PoShLog.psd1')

@@ -1,20 +1,5 @@
-# Keep these checks independent of the machine so their boundaries can be tested.
-function Assert-PoShLogCoreHost {
-    param([version] $Version)
-
-    if ($Version -lt [version]'7.6') {
-        throw "PoShLog requires PowerShell 7.6 or later on Core. Current version: $Version."
-    }
-}
-
-function Assert-PoShLogDesktopFramework {
-    param([long] $Release)
-
-    if ($Release -lt 461808) {
-        throw "PoShLog requires .NET Framework 4.7.2 or later on Windows PowerShell (Release >= 461808). Current Release: $Release."
-    }
-}
-
+# Keep the checks inline. Calling a PowerShell function or script block during
+# a #Requires import clears the engine's pending script exit handling flag.
 if ($PSEdition -eq 'Desktop') {
     # Do not throw in a pipeline here. The failure must terminate module import.
     foreach ($module in (Get-Module -Name PoShLog -All)) {
@@ -34,9 +19,15 @@ if ($PSEdition -eq 'Desktop') {
     }
 
     $framework = Get-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full' -Name Release -ErrorAction SilentlyContinue
-    Assert-PoShLogDesktopFramework -Release $framework.Release
+    $frameworkRelease = $framework.Release
+    if ($frameworkRelease -lt 461808) {
+        throw "PoShLog requires .NET Framework 4.7.2 or later on Windows PowerShell (Release >= 461808). Current Release: $frameworkRelease."
+    }
 } elseif ($PSEdition -eq 'Core') {
-    Assert-PoShLogCoreHost -Version $PSVersionTable.PSVersion
+    $coreVersion = $PSVersionTable.PSVersion
+    if ($coreVersion -lt [version]'7.6') {
+        throw "PoShLog requires PowerShell 7.6 or later on Core. Current version: $coreVersion."
+    }
     $binaryFolder = Join-Path $PSScriptRoot 'lib/net10.0'
 } else {
     throw "PoShLog does not support PowerShell edition '$PSEdition'."

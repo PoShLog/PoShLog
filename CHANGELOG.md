@@ -17,7 +17,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 
 ### Bug fixes
 - Accept a preloaded copy of a Desktop dependency when its full assembly identity matches the shipped file, so file logging works across module paths.
-- Create the CI tools directory before saving Pester and resolve relative v2 manifest paths in real-package tests.
+- Preserve user script exit codes when PoShLog is imported through `#Requires -Modules`.
 
 ## 3.0.0-preview3 — 2026-11-04
 
