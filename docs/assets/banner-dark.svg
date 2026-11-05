@@ -33,7 +33,7 @@
   <text class="tag" x="384" y="204">Structured logging for PowerShell, built on Serilog</text>
   <g transform="translate(384 230)">
     <rect class="chipbg" width="230" height="40" rx="20"/>
-    <text class="chip" x="115" y="27" text-anchor="middle">PS 5.1 / 7.6+</text>
+    <text class="chip" x="115" y="27" text-anchor="middle">PS 7.6+</text>
     <rect class="chipbg" x="246" width="210" height="40" rx="20"/>
     <text class="chip" x="351" y="27" text-anchor="middle">cross-platform</text>
     <rect class="chipbg" x="472" width="150" height="40" rx="20"/>

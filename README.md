@@ -9,7 +9,7 @@
   <a href="https://github.com/PoShLog/PoShLog/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/PoShLog/PoShLog/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://www.powershellgallery.com/packages/PoShLog/"><img alt="PowerShell Gallery version" src="https://img.shields.io/powershellgallery/v/PoShLog?include_prereleases&label=PowerShell%20Gallery"></a>
   <a href="https://www.powershellgallery.com/packages/PoShLog/"><img alt="PowerShell Gallery downloads" src="https://img.shields.io/powershellgallery/dt/PoShLog?label=downloads"></a>
-  <a href="docs/v2-or-v3.md"><img alt="PowerShell 5.1 and 7.6+" src="https://img.shields.io/badge/PowerShell-5.1%20%7C%207.6%2B-5391FE"></a>
+  <a href="docs/v2-or-v3.md"><img alt="PowerShell 7.6+" src="https://img.shields.io/badge/PowerShell-7.6%2B-5391FE"></a>
   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/github/license/PoShLog/PoShLog"></a>
   <a href="https://discord.gg/FVdVxuw"><img alt="Discord" src="https://img.shields.io/discord/693754316305072199?color=orange&label=discord"></a>
 </p>
@@ -115,7 +115,7 @@ sinks are listed on the [sinks page](docs/sinks/README.md).
 
 | | PoShLog 3 (preview) | PoShLog 2 |
 |---|---|---|
-| PowerShell | 5.1 on Windows (.NET Framework 4.7.2+), 7.6+ on Windows, Linux, macOS | Windows PowerShell 5.1 and PowerShell 7 |
+| PowerShell | 7.6+ on Windows, Linux, macOS. Unreleased Windows PowerShell 5.1 support for PoShLog Core only (.NET Framework 4.7.2+) | Windows PowerShell 5.1 and PowerShell 7 |
 | Module | compiled, Serilog 4 | script module, Serilog 2 |
 | Install | `Install-Module PoShLog -AllowPrerelease` | `Install-Module PoShLog -MaximumVersion 2.99` |
 | Status | new features | bug fixes and Serilog updates |

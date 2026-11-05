@@ -10,7 +10,7 @@ and .NET 10 for PowerShell 7.6+. Desktop support is unreleased and includes Core
 | Area | v2.x | v3.0 |
 |---|---|---|
 | Module type | Script module (.psm1) | Script loader with per-edition binary cmdlets |
-| PowerShell | 5.1+ (Desktop & Core) | 5.1 Desktop (.NET Framework 4.7.2+), 7.6+ Core |
+| PowerShell | 5.1+ (Desktop & Core) | 7.6+ Core. Unreleased Windows PowerShell 5.1 support for PoShLog Core only (.NET Framework 4.7.2+) |
 | Serilog | 2.10.0 | **4.4.0** |
 | Serilog.Sinks.Console | 3.1.1 | **6.1.1** |
 | Serilog.Sinks.File | 4.1.0 | **7.0.0** |

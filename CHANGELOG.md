@@ -16,7 +16,8 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - The module now includes the Apache-2.0 licence and a notice for the incorporated Serilog.Expressions.
 
 ### Bug fixes
-- None.
+- Accept a preloaded copy of a Desktop dependency when its full assembly identity matches the shipped file, so file logging works across module paths.
+- Create the CI tools directory before saving Pester and resolve relative v2 manifest paths in real-package tests.
 
 ## 3.0.0-preview3 — 2026-11-04
 
@@ -78,6 +79,6 @@ Everything since PoShLog 2.x; 3.0.0-preview1 was published without its own secti
 - Preserve v2 extension compatibility and load shared Serilog dependencies at import.
 - Correct the migration guide and restore cmdlet indexes from the committed wiki.
 - Logging a `Select-Object` result or another PowerShell object with `{@Name}` no longer produces huge output or hangs (#46).
-- Error and Fatal events from the PowerShell sink are shown again and recorded by `Start-Transcript`, like in v2 (#45).
+- Error and Fatal events from the PowerShell sink are shown again and recorded by `Start-Transcript` on PowerShell 7.6, like in v2 (#45). Windows PowerShell 5.1 has a [documented transcript limitation](docs/compatibility.md).
 - `Start-Logger -Console` printed every event twice (#28).
 - PoShLog.Sinks.OpenTelemetry now refuses to import next to an older Protobuf or gRPC assembly; the error was ignored and the import went on.
