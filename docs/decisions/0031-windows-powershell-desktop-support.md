@@ -87,6 +87,9 @@ PowerShellStandard.Library. The package never ships System.Management.Automation
 - After the guards and the handler registration, the loader loads Serilog, Serilog.Sinks.File and
   Serilog.Sinks.Console from Core's folder on both hosts, then imports Core's binary module. This replaces the
   `RequiredAssemblies` preload that extensions rely on, without loading anything before the guards run.
+- The loader's top-level code calls no PowerShell function, `& { }` block or dot-sourced file. In a script with
+  `#Requires -Modules`, any of these during import makes the script's `exit` code return 0 on both hosts. The shared
+  suite checks this with fresh `-File` processes. Definitions, `ForEach-Object` blocks and cmdlets do not cause it.
 - Core owns the shared out-of-band System.* packages on Desktop. Desktop extension builds do not ship their own copies
   (in the spirit of ADR 0011).
 - **Loader guards.** The loader stops with a clear error, before it loads any Core assembly, when:
@@ -175,6 +178,9 @@ preferably compile-time only. They do not replace runtime isolation or coexisten
 
 ## Consequences
 
+- Extensions that dot-source their functions at import (published 1.0.x and the in-repo Enrichers, EventLog, Http and
+  Seq) still lose a `#Requires` script's `exit` code. Every v2 import does too, so a follow-up handles it; this
+  decision only keeps Core itself correct.
 - **Transcripts differ on Windows PowerShell 5.1.** The host's transcript records suppressed information events and
   leaves out the Error and Fatal events that the PowerShell sink displays, so ADR 0008's agreement between console and
   transcript holds only on PowerShell 7.6+. A v2 build shows the same on 5.1.26100, so this is no regression. Phase 1
