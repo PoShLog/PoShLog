@@ -86,7 +86,7 @@ jobs:
           if ($LASTEXITCODE) { throw 'Core build failed.' }
           dotnet test PoShLog.sln -c Release --no-build
           if ($LASTEXITCODE) { throw 'Core tests failed.' }
-          dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib --no-restore
+          ./build/Build-Core.ps1
           if ($LASTEXITCODE) { throw 'Core publish failed.' }
       - name: Test PowerShell module
         run: |

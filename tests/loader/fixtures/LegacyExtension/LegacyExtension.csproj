@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- First-party fixture for the v2 extension contract on Windows PowerShell (ADR 0031). -->
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>LegacyExtension</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+  </ItemGroup>
+</Project>
