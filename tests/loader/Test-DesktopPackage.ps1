@@ -72,7 +72,7 @@ if ($Case) {
             Copy-Item $source $copy -Force
             Assert-True ((Get-FileHash $source).Hash -eq (Get-FileHash $copy).Hash) 'Copy differs from the shipped assembly.'
             $loaded = [Reflection.Assembly]::LoadFrom($copy)
-            Assert-True ($loaded.Location -eq $copy) 'Foreign copy was not loaded first.'
+            Assert-True ($loaded.Location -eq $copy) "Foreign copy was not loaded first. Expected '$copy', loaded '$($loaded.Location)'."
             Import-Module $Manifest -ErrorAction Stop
             foreach ($pipeline in $false, $true) {
                 $file = Join-Path $Results "$Case-$pipeline.log"
@@ -104,7 +104,8 @@ if ($Case) {
             if ($Case -eq 'CoreFirst') { Import-Module $Manifest -ErrorAction Stop }
             $fixture = [Reflection.Assembly]::LoadFrom((Join-Path $FixtureDirectory 'LegacyExtension.dll'))
             if ($Case -eq 'ExtensionFirst') { Import-Module $Manifest -ErrorAction Stop }
-            $file = Join-Path $Results "$Case.log"
+            # The legacy sink appends, so each invocation needs a fresh delivery file.
+            $file = Join-Path $Results "$Case-$([guid]::NewGuid().ToString('N')).log"
             $logger = $fixture.GetType('LegacyExtension').GetMethod('CreateLogger').Invoke($null, [object[]]@([string]$file))
             try { Write-InfoLog 'legacy contract marker' -Logger $logger } finally { $logger.Dispose() }
             Assert-True ((Get-Content $file -Raw) -eq 'legacy contract marker') 'Legacy fixture did not deliver.'
@@ -128,6 +129,7 @@ if ($Case) {
 
 Assert-True (Test-Path $V2Manifest) 'Provide the built first-party v2 manifest for real guard tests.'
 New-Item $Results -ItemType Directory -Force | Out-Null
+$Results = (Resolve-Path $Results).Path
 $fixtureProject = Join-Path $PSScriptRoot 'fixtures/LegacyExtension/LegacyExtension.csproj'
 dotnet build $fixtureProject -c Release --configfile "$PSScriptRoot/../../build/nuget.config"
 if ($LASTEXITCODE) { throw 'Legacy fixture build failed.' }
@@ -141,6 +143,7 @@ foreach ($hostPath in @((Get-Command powershell.exe).Source, (Get-Command pwsh).
     $cases = @('Import')
     if ($hostPath -like '*WindowsPowerShell*') { $cases += 'Bootstrap', 'MemoryCopy', 'SerilogCopy', 'DifferentIdentity', 'CoreFirst', 'ExtensionFirst', 'V2Guard', 'SerilogGuard' }
     foreach ($testCase in $cases) {
+        Write-Output "RUN real package $testCase in $hostPath"
         & $hostPath -NoProfile -NonInteractive -File $PSCommandPath -Manifest $Manifest -V2Manifest $V2Manifest -Case $testCase -FixtureDirectory $FixtureDirectory -Results $Results
         if ($LASTEXITCODE) { throw "Real package case $testCase failed in $hostPath." }
         $count++
