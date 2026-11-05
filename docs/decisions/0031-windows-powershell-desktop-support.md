@@ -76,9 +76,11 @@ PowerShellStandard.Library. The package never ships System.Management.Automation
   It answers only for the assemblies Core owns and shares: Serilog, Serilog.Sinks.File, Serilog.Sinks.Console and the
   out-of-band System.* packages Core ships on Desktop (Tomáš, 2026-11-04).
   - For such a name it returns the copy already loaded from Core's Desktop folder, or loads that copy, and only when
-    that copy's version is greater than or equal to the requested version.
-  - Every other request and every lower version stays unresolved. The handler never substitutes another module's
-    assembly, so there is still no "first DLL wins".
+    that copy's version is greater than or equal to the requested version. If `LoadFrom` returns an assembly from
+    another path with exactly the identity of Core's copy (name, version, culture, public key token), the handler
+    returns it: the runtime has already unified them, and Core's exact references bind to it anyway.
+  - Every other request and every lower version stays unresolved. The handler never substitutes an assembly of any
+    other identity, so there is still no "first DLL wins".
   - This is what lets the published v2-era extensions (1.x Seq, Http, Enrichers, EventLog, Exceptionless and others)
     run with v3 Core on Desktop. On .NET Framework a strong-named reference to an older Serilog does not roll forward to
     the loaded Serilog 4 the way it does on .NET.
