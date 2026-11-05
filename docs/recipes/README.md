@@ -18,6 +18,6 @@ The samples need PowerShell 7.6+ and PoShLog 3.0.0-preview2 or newer. See [Compa
 Windows.
 
 ```powershell
-dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib
+./build/Build-Core.ps1
 ./build/Test-Recipes.ps1
 ```

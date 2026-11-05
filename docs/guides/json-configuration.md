@@ -3,6 +3,8 @@
 `New-Logger -ConfigurationPath ./logging.json` reads a supported Serilog configuration
 once, then returns a configuration that can continue through the usual pipeline.
 The JSON file path resolves against the current PowerShell FileSystem location.
+Windows PowerShell 5.1 supports the non-expression subset. Nonempty JSON `Filter` entries fail with a clear
+Windows PowerShell error. Extension methods require an extension build compatible with the current host.
 
 ```json
 {
@@ -53,7 +55,7 @@ Use the PowerShell pipeline for these configurations. This is not a drop-in repl
 for every `Serilog.Settings.Configuration` option; see the
 [upstream schema](https://github.com/serilog/serilog-settings-configuration) for comparison.
 
-`Serilog.Expressions` is included, so filters can use `ByIncludingOnly` and `ByExcluding`:
+On PowerShell 7.6+, the expression engine is incorporated into Core, so filters can use `ByIncludingOnly` and `ByExcluding`.
 
 ```json
 { "Serilog": { "Filter": [{ "Name": "ByIncludingOnly", "Args": { "expression": "Send = true" } }] } }
@@ -63,7 +65,7 @@ for every `Serilog.Settings.Configuration` option; see the
 
 Import extension modules **before** `New-Logger -ConfigurationPath`. The reader
 discovers public Serilog configuration extension methods in assemblies already loaded in the default context
-in the process; a binary PowerShell module has no application dependency context.
+on PowerShell 7. On Desktop it discovers loaded, nondynamic AppDomain assemblies.
 It does not install extensions. `Using` entries assert that assemblies are already loaded;
 they do not import PowerShell modules or add assemblies to the process.
 

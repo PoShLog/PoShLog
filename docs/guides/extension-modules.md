@@ -12,4 +12,7 @@ PoShLog is extensible, just like Serilog. To add more cmdlets, install one of th
 * [**PoShLog.Sinks.Seq**](https://github.com/PoShLog/PoShLog.Sinks.Seq) - Publishes log messages to [Seq](https://datalust.co/seq).
 * [**PoShLog.Sinks.MSSqlServer**](../sinks/Add-SinkMSSqlServer.md) - Writes batched events to SQL Server or Azure SQL with isolated SqlClient dependencies.
 
-> **Compatibility note:** extension modules must target the same runtime as the core module. Since PoShLog v3.0.0, the core module is a compiled .NET 10 binary module requiring PowerShell 7.6+. Older script-based extension modules built against the previous PoShLog script module should continue to work as long as they only call the public cmdlets documented here, but any extension shipping its own compiled binaries should be rebuilt/verified against .NET 8 and Serilog 4.x for full compatibility. Which published versions work with which PoShLog is on the [compatibility page](../compatibility.md).
+> Core repository builds target net472 for Windows PowerShell 5.1 and net10.0 for PowerShell 7.6+.
+> Refreshed extensions still target net10.0 and declare Core edition. A Desktop extension needs its own runtime tests
+> before adding Desktop to its manifest. The shared Serilog pipeline contract and version-bounded Desktop resolver
+> support v2-era references. Published compatibility is tested in CI. See [compatibility](../compatibility.md).

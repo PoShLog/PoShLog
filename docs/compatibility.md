@@ -10,7 +10,7 @@ pages link here instead of repeating it. Background: [v2 or v3?](v2-or-v3.md),
 | | PoShLog 3 | PoShLog 2 |
 |---|---|---|
 | Latest on the PowerShell Gallery | 3.0.0-preview2 (prerelease) | 2.2.0 |
-| PowerShell | 7.6+ on Windows, Linux, macOS (3.0.0-preview1 to preview3: 7.4+) | Windows PowerShell 5.1 and PowerShell 7 |
+| PowerShell | Repository builds support 5.1 on Windows (.NET Framework 4.7.2+) and 7.6+ on Windows, Linux, macOS. Published preview1 to preview3 require 7.4+. | Windows PowerShell 5.1 and PowerShell 7 |
 | Serilog | 4.4.0 | 2.x |
 | Install | `Install-PSResource PoShLog -Prerelease` or `Install-Module PoShLog -AllowPrerelease` | `Install-Module PoShLog -MaximumVersion 2.99` |
 
@@ -18,6 +18,19 @@ pages link here instead of repeating it. Background: [v2 or v3?](v2-or-v3.md),
 > While PoShLog 3 is a prerelease, `Install-Module PoShLog` without `-AllowPrerelease` installs **2.2.0**.
 
 ## Extensions
+
+Desktop support in repository builds is Core phase 1 and is unreleased. It includes console, file and PowerShell
+sinks, formatters, enrichment, switches, PSObject destructuring, disposal/flush and non-expression JSON.
+`Add-SinkLogger -Filter` and JSON `Filter` entries fail with a clear Windows PowerShell error. MSSqlServer and every
+refreshed extension in `extensions/` remain Core edition, PowerShell 7.6+. `Get-PoShLogExtension` exposes each
+manifest's `CompatiblePSEditions`. Published 1.x extension compatibility is checked separately in Desktop CI.
+
+The loader checks the host and rejects loaded v2 or older Serilog before loading v3 dependencies. Start a clean
+process when moving between versions. See [assembly conflicts](guides/assembly-conflicts.md).
+
+On Windows PowerShell 5.1 the transcript records suppressed information events, and can omit displayed Error/Fatal
+information records from binary cmdlets. For a transcript of those events, explicitly render stream 6 with
+`Write-ErrorLog 'message' 6>&1 | Out-Host` (similarly for `Write-FatalLog`). The shared suite verifies this host behaviour.
 
 | Module | With PoShLog 2 | With PoShLog 3 | Requires PoShLog |
 |---|---|---|---|
@@ -94,7 +107,7 @@ Uninstall-PSResource PoShLog -Version 3.0.0-preview2 -Prerelease
 
 One PowerShell session holds one PoShLog version. Start a new session to switch.
 
-For shared DLL errors and import-order advice on PowerShell 7.6+ and the upcoming Windows PowerShell 5.1 build,
+For shared DLL errors and import-order advice on PowerShell 7.6+ and Windows PowerShell 5.1 repository builds,
 see [Assembly conflicts](guides/assembly-conflicts.md).
 
 ## How this was verified

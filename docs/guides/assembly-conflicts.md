@@ -4,8 +4,8 @@ A PowerShell session is one process: modules share the DLLs loaded in it. Within
 can have only one loaded version, so the version loaded first matters. Private load contexts can isolate a module's
 dependencies, but assemblies used to pass logging objects between modules must stay shared.
 
-PoShLog v3 targets .NET 10 (`net10.0`) for PowerShell 7.6+ and .NET Framework 4.7.2 (`net472`) for the upcoming
-Windows PowerShell build.
+PoShLog v3 repository builds target .NET 10 (`net10.0`) for PowerShell 7.6+ and .NET Framework 4.7.2 (`net472`)
+for Windows PowerShell 5.1.
 
 ## PowerShell 7.6+
 
@@ -25,18 +25,20 @@ fresh session and import PoShLog first.
 ## Windows PowerShell 5.1
 
 > [!NOTE]
-> Coming with the Windows PowerShell build; this support is not released yet.
+> Core phase 1 is implemented in repository builds. This support is unreleased.
 
 .NET Framework has no private load context. Serilog 4 needs backport libraries that other modules can also load:
 
 - System.Diagnostics.DiagnosticSource and System.Threading.Channels;
 - through them, System.Memory, System.Buffers, System.Runtime.CompilerServices.Unsafe, System.Numerics.Vectors
   and System.Threading.Tasks.Extensions.
+- JSON configuration also ships pinned System.Text.Json, System.Text.Encodings.Web, System.IO.Pipelines and
+  Microsoft.Bcl.AsyncInterfaces. The latter is loaded through ordinary Framework binding, outside the System.* resolver whitelist.
 
 The VS Code PowerShell extension, Az, Microsoft.Graph and PnP can bring their own versions of these libraries.
 PoShLog's Desktop build handles the shared dependencies as follows:
 
-- Core ships the newest versions; extensions never ship their own copies of those shared libraries.
+- Core owns pinned versions of its shared libraries. Desktop extension ports must use those shared copies.
 - A resolver handles only Core-owned shared assemblies. It serves Core's copy for a request for the same or an
   older version, never a newer one. Loading PoShLog first can therefore help other modules too.
 - An import guard stops with a clear message if PoShLog 2.x or a Serilog older than Core's is already loaded. If

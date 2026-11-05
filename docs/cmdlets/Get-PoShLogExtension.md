@@ -15,13 +15,14 @@ Get-PoShLogExtension
 PoShLog knows its own extensions: the build embeds the manifests from `extensions/` into the module, so the list
 matches the PoShLog version you have and needs no network ([ADR 0021](../decisions/0021-extension-catalog-in-core.md)).
 Each entry has the module name, whether it is a sink or an enricher, the version that belongs to this PoShLog build,
-a one-line summary, the commands it adds, the supported platforms, the project URL and the installed version (the
+a one-line summary, the commands it adds, the supported platforms and `CompatiblePSEditions`, the project URL and the installed version (the
 newest one `Get-Module -ListAvailable` finds, or empty).
 
 `-Online` also asks the repository for the latest published version with `Find-PSResource` from PSResourceGet. While
 PoShLog is a prerelease it looks for prereleases too.
 
 Only first-party extensions are listed. Other authors' modules are on the [sinks page](../sinks/README.md).
+Current in-repo extension manifests declare Core edition and require PowerShell 7.6+. Desktop ports are separate work.
 
 > Implemented as the compiled `GetPoShLogExtensionCommand` cmdlet class (`src/dotnet/Cmdlets/Extensions/GetPoShLogExtensionCommand.cs`).
 
@@ -30,7 +31,7 @@ Only first-party extensions are listed. Other authors' modules are on the [sinks
 ##### Example 1: What can I add to PoShLog?
 
 ```ps1
-Get-PoShLogExtension | Format-Table
+Get-PoShLogExtension | Format-Table Name, Kind, Version, InstalledVersion, Commands
 ```
 
 Example output:

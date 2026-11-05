@@ -26,7 +26,7 @@ the next Core preview (ADRs 0004, 0019). PoShLog 2.x users stay on the old previ
 Run from the repository root:
 
 ```powershell
-dotnet publish src/dotnet/PoShLog.Core.csproj -c Release -o src/lib --configfile build/nuget.config
+./build/Build-Core.ps1
 ./build/Build-Extension.ps1 -Module PoShLog.Sinks.MSSqlServer
 ./build/Stage-Module.ps1 -Module PoShLog.Sinks.MSSqlServer
 ```
