@@ -11,6 +11,8 @@ param(
     # InRepo only: extracted pinned Gallery package for the Expressions collision regression.
     [string]$LegacyExceptionlessPath,
     [switch]$Desktop,
+    # Explicit opt-in for local diagnosis of first-party published packages only.
+    [switch]$AllowLocalPublished,
     [string]$CoreManifest
 )
 $ErrorActionPreference = 'Stop'
@@ -25,7 +27,7 @@ $modules = [ordered]@{
     'PoShLog.Sinks.Http' = '1.0.1'
 }
 $fromGallery = $Mode -ne 'InRepo'
-if ($fromGallery -and $env:GITHUB_ACTIONS -ne 'true') {
+if ($fromGallery -and $env:GITHUB_ACTIONS -ne 'true' -and !($Mode -eq 'Published' -and $AllowLocalPublished)) {
     throw 'Published extensions may only be downloaded and executed in GitHub Actions.'
 }
 if ($Mode -eq 'Published') {
@@ -110,6 +112,11 @@ if (!$Desktop) {
 }
 $failed = @()
 foreach ($case in $cases) {
+    $order = if ($case.ExtensionFirst) { 'extension-first' } else { 'core-first' }
+    $label = "$($case.Name) ($order)"
+    if ($case.Seq) { $label += "; SeqFirst=$($case.SeqFirst)" }
+    Write-Output "RUN $label ($Mode)"
+    $caseFailed = $false
     # One process per module: legacy assemblies must not mask failures in another extension.
     $executable = if ($Desktop) { (Get-Command powershell.exe).Source } else { Join-Path $PSHOME 'pwsh' }
     $startInfo = [Diagnostics.ProcessStartInfo]::new($executable)
@@ -129,19 +136,20 @@ foreach ($case in $cases) {
     if (!$process.WaitForExit(45000)) {
         $process.Kill($true)
         $process.WaitForExit()
-        Write-Output "FAIL $($case.Name) (45-second process timeout)"
-        $failed += $case.Name
+        Write-Output "FAIL $label (45-second process timeout)"
+        $caseFailed = $true
     } elseif ($process.ExitCode) {
-        $failed += $case.Name
+        $caseFailed = $true
     }
     $output = $stdout.GetAwaiter().GetResult()
     $errors = $stderr.GetAwaiter().GetResult()
     Write-Output $output
     if ($errors) { Write-Output $errors }
-    if ($env:GITHUB_ACTIONS -eq 'true' -and $failed -contains $case.Name) {
+    if ($caseFailed) { $failed += $label }
+    if ($env:GITHUB_ACTIONS -eq 'true' -and $caseFailed) {
         # Annotations are readable through the public API; job logs need a signed-in user.
         $detail = (($output + "`n" + $errors) -split "`r?`n" | Where-Object { $_.Trim() } | Select-Object -Last 15) -join '%0A'
-        Write-Output "::error title=Compatibility $($case.Name) ($Mode)::$detail"
+        Write-Output "::error title=Compatibility $label ($Mode)::$detail"
     }
     $process.Dispose()
 }

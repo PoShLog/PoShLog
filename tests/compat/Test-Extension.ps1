@@ -9,8 +9,26 @@ param(
     [string]$CoreManifest
 )
 $ErrorActionPreference = 'Stop'
+function Write-AssemblyDiagnostics {
+    foreach ($assembly in [AppDomain]::CurrentDomain.GetAssemblies() | Where-Object { $_.GetName().Name -like 'Serilog*' -or $_.GetName().Name -eq 'System.Diagnostics.EventLog' }) {
+        Write-Output "ASSEMBLY $($assembly.FullName) | $($assembly.Location)"
+    }
+    foreach ($command in Get-Command New-Logger, Add-SinkHttp -ListImported -ErrorAction SilentlyContinue) {
+        foreach ($parameter in $command.Parameters.Values | Where-Object { $_.ParameterType.FullName -like 'Serilog.*' }) {
+            Write-Output "PARAMETER $($command.Name) -$($parameter.Name) | $($parameter.ParameterType.AssemblyQualifiedName) | $($parameter.ParameterType.Assembly.Location)"
+        }
+    }
+}
+trap {
+    $failure = $_
+    try { Write-AssemblyDiagnostics } catch { Write-Output "Assembly diagnostics failed: $_" }
+    throw $failure
+}
 $root = (Resolve-Path "$PSScriptRoot/../..").Path
 if (!$CoreManifest) { $CoreManifest = "$root/src/PoShLog.psd1" }
+$CoreManifest = (Resolve-Path $CoreManifest).Path
+$ModulePath = (Resolve-Path $ModulePath).Path
+if ($SeqPath) { $SeqPath = (Resolve-Path $SeqPath).Path }
 if ($PSEdition -eq 'Desktop') {
     # RequiredModules in published extensions must discover the staged v3, including extension-first imports.
     $env:PSModulePath = (Split-Path (Split-Path $CoreManifest)) + [IO.Path]::PathSeparator + (Join-Path $PSHOME 'Modules')
@@ -29,6 +47,7 @@ foreach ($assembly in $shared) {
 if ($SeqPath -and $SeqFirst) { Import-Module (Resolve-Path $SeqPath) -Force }
 if ($Name -ne 'PoShLog' -and !$ExtensionFirst) { Import-Module (Resolve-Path $ModulePath) -Force }
 if ($SeqPath -and !$SeqFirst) { Import-Module (Resolve-Path $SeqPath) -Force }
+Write-AssemblyDiagnostics
 if ($PSEdition -eq 'Desktop') {
     $null = [Reflection.Assembly]::LoadFrom("$PSScriptRoot/fixtures/bin/Release/net472/CompatHttpListener.dll")
 } else { Add-Type -Path "$PSScriptRoot/CompatHttpListener.cs" }
@@ -45,6 +64,7 @@ Set-Location $directory
 $file = Join-Path $directory 'event.json'
 try {
     $config = New-Logger
+    Write-Output "CONFIGURATION $($config.GetType().AssemblyQualifiedName) | $($config.GetType().Assembly.Location)"
     $delivery = 'file'
     switch ($Name) {
         'PoShLog' { }

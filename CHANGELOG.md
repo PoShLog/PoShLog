@@ -16,6 +16,7 @@ All notable changes to PoShLog, newest first. Older releases: see the GitHub rel
 - The module now includes the Apache-2.0 licence and a notice for the incorporated Serilog.Expressions.
 
 ### Bug fixes
+- Identify each published compatibility failure by import order and record loaded Serilog identities. Desktop coexistence checks also run after a published compatibility failure.
 - Accept a preloaded copy of a Desktop dependency when its full assembly identity matches the shipped file, so file logging works across module paths.
 - Preserve user script exit codes when PoShLog is imported through `#Requires -Modules`.
 
