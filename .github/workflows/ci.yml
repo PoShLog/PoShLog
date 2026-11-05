@@ -64,6 +64,7 @@ jobs:
       - name: Published v2-era extensions in both Desktop import orders
         run: ./tests/compat/Invoke-Compatibility.ps1 -Mode Published -Desktop -CoreManifest artifacts/PoShLog/PoShLog.psd1 | Tee-Object TestResults/published-desktop.log
       - name: Pinned Az, PnP and PSFramework in both import orders
+        if: ${{ !cancelled() }}
         run: ./tests/compat/Test-DesktopCoexistence.ps1 -CoreManifest artifacts/PoShLog/PoShLog.psd1 | Tee-Object TestResults/coexistence.log
       - name: Upload Desktop results
         if: always()
