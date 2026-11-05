@@ -82,6 +82,9 @@ PowerShellStandard.Library. The package never ships System.Management.Automation
   - This is what lets the published v2-era extensions (1.x Seq, Http, Enrichers, EventLog, Exceptionless and others)
     run with v3 Core on Desktop. On .NET Framework a strong-named reference to an older Serilog does not roll forward to
     the loaded Serilog 4 the way it does on .NET.
+- After the guards and the handler registration, the loader loads Serilog, Serilog.Sinks.File and
+  Serilog.Sinks.Console from Core's folder on both hosts, then imports Core's binary module. This replaces the
+  `RequiredAssemblies` preload that extensions rely on, without loading anything before the guards run.
 - Core owns the shared out-of-band System.* packages on Desktop. Desktop extension builds do not ship their own copies
   (in the spirit of ADR 0011).
 - **Loader guards.** The loader stops with a clear error, before it loads any Core assembly, when:
@@ -170,6 +173,10 @@ preferably compile-time only. They do not replace runtime isolation or coexisten
 
 ## Consequences
 
+- **Transcripts differ on Windows PowerShell 5.1.** The host's transcript records suppressed information events and
+  leaves out the Error and Fatal events that the PowerShell sink displays, so ADR 0008's agreement between console and
+  transcript holds only on PowerShell 7.6+. A v2 build shows the same on 5.1.26100, so this is no regression. Phase 1
+  documents it with the `6>&1 | Out-Host` workaround and the shared suite tests the behaviour on each host.
 - One source tree serves both editions, but the first Desktop release has explicit feature limits. Docs and release
   notes do not advertise full parity or promise coexistence with arbitrary third-party assembly versions.
 - ADR 0003's assumption that a newer Serilog satisfies older references holds on PowerShell 7 (.NET) only. On Desktop

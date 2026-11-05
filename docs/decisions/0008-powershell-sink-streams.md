@@ -57,3 +57,7 @@ Issue #28: `Start-Logger -Console` also added the PowerShell sink, so in a conso
   Changes.
 - The transcript behaviour is verified by a Pester test in a child `pwsh` on Windows; the Linux CI run is the first
   check on another platform.
+
+**Note (2026-11-05):** this decision and its probe cover PowerShell 7.6+. On Windows PowerShell 5.1 the same sink
+displays Error and Fatal events but the transcript omits them, and it records suppressed information events; see
+[ADR 0031](0031-windows-powershell-desktop-support.md), Consequences. The decision itself stands.
