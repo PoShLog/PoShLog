@@ -21,8 +21,9 @@ pages link here instead of repeating it. Background: [v2 or v3?](v2-or-v3.md),
 
 Desktop support in repository builds is Core phase 1 and is unreleased. It includes console, file and PowerShell
 sinks, formatters, enrichment, switches, PSObject destructuring, disposal/flush and non-expression JSON.
-`Add-SinkLogger -Filter` and JSON `Filter` entries fail with a clear Windows PowerShell error. MSSqlServer and every
-refreshed extension in `extensions/` remain Core edition, PowerShell 7.6+. `Get-PoShLogExtension` exposes each
+`Add-SinkLogger -Filter` and JSON `Filter` entries fail with a clear Windows PowerShell error. The native Http
+2.0.0-preview4 repository build also supports Desktop; other refreshed extensions and MSSqlServer remain
+Core edition, PowerShell 7.6+. `Get-PoShLogExtension` exposes each
 manifest's `CompatiblePSEditions`. Published 1.x extension compatibility is checked separately in Desktop CI.
 
 The loader checks the host and rejects loaded v2 or older Serilog before loading v3 dependencies. Start a clean
@@ -43,9 +44,9 @@ information records from binary cmdlets. For a transcript of those events, expli
 | PoShLog.Sinks.Syslog.Rfc5424 | — | 0.1.0-preview2 | 3 |
 | PoShLog.Sinks.Elastic | — | 0.1.0-preview2 | 3 |
 
-- The published 1.0.x extensions keep working on PoShLog 3. CI checks them against every Core build (the
+- On modern hosts, the published 1.0.x extensions keep working on PoShLog 3. CI checks them against every Core build (the
   `Published` compatibility mode, [ADR 0003](decisions/0003-keep-the-v2-extension-contract.md)).
-- Versions 2.0.0 and the new sinks need PowerShell 7.6 and PoShLog 3 (their preview2 and preview3 builds ran on 7.4+). On PoShLog 2, stay on 1.0.x. While PoShLog 3 is
+- Versions 2.0.0 and the new sinks need PoShLog 3 and PowerShell 7.6, except the native Http preview4 build also supports Windows PowerShell 5.1 (their preview2 and preview3 builds ran on 7.4+). On PoShLog 2, stay on 1.0.x. While PoShLog 3 is
   a prerelease they are prereleases too ([ADR 0019](decisions/0019-extensions-ship-as-prereleases-during-the-core-3-preview.md)),
   so `Install-Module <extension>` keeps installing the 1.0.x line.
 - "Requires PoShLog 3" is declared as `2.99.0` by GUID while PoShLog 3 is a prerelease, so that package managers can
@@ -55,6 +56,13 @@ information records from binary cmdlets. For a transcript of those events, expli
   ([ADR 0009](decisions/0009-first-party-sinks-third-party-check-non-blocking.md)). See the [sinks page](sinks/README.md).
 
 ## Installing the PoShLog 3 preview
+
+Desktop has two published-package exceptions with v3 Core ([ADR 0034](decisions/0034-native-non-durable-http-sink.md)):
+EventLog 1.0.0 reports "not supported on this platform"; EventLog 1.0.1 passes configuration only, without creating
+an Event Log source or writing an entry. Http 1.0.1 fails parameter binding on `Add-SinkHttp` because its bundled
+Serilog has a different `LoggerConfiguration` identity. Desktop Published checks pin EventLog 1.0.1 and exclude Http
+1.0.1; native Http delivery is tested separately in both import orders. Modern pins are unchanged. Native Http
+preview4 is not published yet; see its [build and migration instructions](../extensions/PoShLog.Sinks.Http/README.md).
 
 ```powershell
 # PoShLog itself: either package manager works.

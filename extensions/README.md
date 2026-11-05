@@ -15,7 +15,8 @@ Stage-Module.ps1 assembles a publishable module under artifacts/ from these outp
 
 Each imported extension requires PoShLog by GUID: the refreshed Seq, EventLog, Http and Enrichers 2.0.0 and the new
 OpenTelemetry, Splunk.Hec, Syslog.Rfc5424 and Elastic sinks require PoShLog 3 (ADR 0004), declared as 2.99.0 while Core 3 is a
-prerelease (ADR 0017). They share Serilog 4 with v3 Core and require PowerShell 7.6+. PoShLog 2.x users stay on the
+prerelease (ADR 0017). They share Serilog 4 with v3 Core and require PowerShell 7.6+, except native Http preview4
+also supports Windows PowerShell 5.1 on .NET Framework 4.7.2+. PoShLog 2.x users stay on the
 published 1.0.x versions. The full table is in docs/compatibility.md.
 
 ## Source provenance
@@ -31,8 +32,9 @@ Only committed git blobs were imported. The original working trees were not copi
 
 The old src/ directory is flattened into each module directory. Http retains its compiled
 Get-ApiKeyHttpClient command and the published binary module's GUID from Metadata/.
-Its Add-SinkHttp wrapper uses Serilog 4 batching to preserve QueueLimit as an event count;
-Http 9's own queue limit is in bytes. Its client also retains the earlier HttpContent overload.
+Its native non-durable sink uses Serilog 4 batching to preserve QueueLimit as an event count, replacing
+Serilog.Sinks.Http entirely (ADR 0034). It ships only its own DLL under lib/net472 and lib/net10.0; Core owns
+Serilog and shared Framework dependencies. Its client also retains the earlier HttpContent overload.
 Seq retains the Compact parameter through the new payload formatter API.
 
 PoShLog.Sinks.OpenTelemetry was written here, not imported. Its cmdlet is compiled from Dependencies.csproj, and its

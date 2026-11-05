@@ -14,7 +14,7 @@ $env:POSHLOG_TEST_MANIFEST = (Resolve-Path $Manifest).Path
 New-Item $Results -ItemType Directory -Force | Out-Null
 if ($PesterPath) { Import-Module $PesterPath -ErrorAction Stop } else { Import-Module Pester -MinimumVersion 5.5.0 -ErrorAction Stop }
 $config = New-PesterConfiguration
-$config.Run.Path = @('PoShLog.Tests.ps1', 'PoShLog.Ergonomics.Tests.ps1', 'PoShLog.ExtensionCatalog.Tests.ps1', 'PoShLog.IssueFeatures.Tests.ps1', 'PoShLog.CoreHosts.Tests.ps1') |
+$config.Run.Path = @('PoShLog.Tests.ps1', 'PoShLog.Ergonomics.Tests.ps1', 'PoShLog.ExtensionCatalog.Tests.ps1', 'PoShLog.IssueFeatures.Tests.ps1', 'PoShLog.CoreHosts.Tests.ps1', 'PoShLog.Sinks.Http.Tests.ps1') |
     ForEach-Object { Join-Path "$root/tests" $_ }
 $config.Run.PassThru = $true
 $config.Output.Verbosity = 'Detailed'

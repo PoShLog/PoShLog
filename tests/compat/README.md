@@ -12,7 +12,8 @@ file sink receives the unique event. Seq and Http must also deliver that event t
 on loopback. Enrichers must add environment and process properties. EventLog is Windows-only
 and builds its sink configuration without creating an event source or writing to the log.
 
-Published and ThirdParty modes are restricted to GitHub Actions. They download exact package
+Published and ThirdParty modes normally run in GitHub Actions. `-AllowLocalPublished` explicitly enables local
+diagnosis of first-party published packages only; third-party Gallery modules remain CI-only. They download exact package
 versions without resolving Gallery dependencies, then explicitly import freshly built Core first.
 The reusable compat.yml workflow runs all three modes on Windows and Linux. InRepo and Published
 (our own published extensions) block CI and the manual release workflow. ThirdParty (other
@@ -22,7 +23,13 @@ The blocking Windows PowerShell Core job additionally stages both target folders
 `Invoke-Compatibility.ps1 -Mode Published -Desktop -CoreManifest artifacts/PoShLog/PoShLog.psd1` from PowerShell 7.
 Its children are real `powershell.exe` processes. Each published first-party extension runs Core-first and
 extension-first. The latter discovers staged Core through its normal `RequiredModules` entry.
-Refreshed extensions, MSSqlServer isolation and expression tests belong to the modern suite.
+Desktop pins EventLog 1.0.1, with configuration-only assertions: it does not create a source or write an Event Log
+entry. Published EventLog 1.0.0 reports "not supported on this platform". Published Http 1.0.1 is excluded on Desktop:
+`Add-SinkHttp` fails parameter binding because the module loads its bundled Serilog 2 alongside Core's 4.4
+([ADR 0034](../../docs/decisions/0034-native-non-durable-http-sink.md)). Modern pins below are unchanged.
+Native in-repo Http runs delivery, recovery, saturation, flush, custom contracts, API key and legacy payload checks
+in both import orders on each host through `tests/PoShLog.Sinks.Http.Tests.ps1`.
+Other refreshed extensions, MSSqlServer isolation and expression tests belong to the modern suite.
 `Test-DesktopCoexistence.ps1` checks Az.Accounts 2.19.0, PnP.PowerShell 1.12.0 and PSFramework 1.12.346 in both
 orders, with Core file delivery. Both Gallery-based checks run in CI only.
 
@@ -30,8 +37,8 @@ orders, with Core file delivery. Both Gallery-based checks run in CI only.
 |---|---|---|
 | PoShLog.Enrichers (Published) | 1.0.0 | Enriched event in file |
 | PoShLog.Sinks.Seq (Published) | 1.0.0 | Event at loopback HTTP listener |
-| PoShLog.Sinks.EventLog (Published) | 1.0.0 | Import and sink configuration, Windows only |
-| PoShLog.Sinks.Http (Published) | 1.0.1 | Event at loopback HTTP listener |
+| PoShLog.Sinks.EventLog (Published) | Modern: 1.0.0; Desktop: 1.0.1 | Import and sink configuration only, Windows only |
+| PoShLog.Sinks.Http (Published) | 1.0.1, modern only | Event at loopback HTTP listener; unsupported on Desktop with v3 Core |
 | PoShLog.Sinks.OpenTelemetry (InRepo build, both modes) | 0.1.0 | Event at loopback OTLP/HTTP `/v1/logs`; also next to Seq (InRepo: refreshed Seq; Published: Seq 1.0.0), each imported first and after, both delivering |
 | PoShLog.Sinks.Splunk.Hec (InRepo build, both modes) | 0.1.0 | Event at loopback HEC `/services/collector/event`; also next to Seq, like OpenTelemetry |
 | PoShLog.Sinks.Syslog.Rfc5424 (InRepo build, both modes) | 0.1.0 | RFC 5424 datagram at loopback UDP listener; also next to Seq, like OpenTelemetry |

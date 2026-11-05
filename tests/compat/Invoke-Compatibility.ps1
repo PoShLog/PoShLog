@@ -26,6 +26,13 @@ $modules = [ordered]@{
     'PoShLog.Sinks.EventLog' = '1.0.0'
     'PoShLog.Sinks.Http' = '1.0.1'
 }
+if ($Desktop) {
+    $modules['PoShLog.Sinks.EventLog'] = '1.0.1'
+    # Published Http 1.0.1 binds its bundled Serilog 2, so Add-SinkHttp cannot accept Core's
+    # LoggerConfiguration on Desktop (ADR 0034). EventLog 1.0.1 passes configuration only;
+    # this suite neither creates an Event Log source nor writes an Event Log entry.
+    $modules.Remove('PoShLog.Sinks.Http')
+}
 $fromGallery = $Mode -ne 'InRepo'
 if ($fromGallery -and $env:GITHUB_ACTIONS -ne 'true' -and !($Mode -eq 'Published' -and $AllowLocalPublished)) {
     throw 'Published extensions may only be downloaded and executed in GitHub Actions.'
