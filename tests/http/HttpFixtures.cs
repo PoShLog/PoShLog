@@ -25,6 +25,7 @@ namespace PoShLog.Http.Tests
     {
         private readonly HttpListener _listener = new HttpListener();
         private readonly Task _worker;
+        private volatile bool _stopping;
         public readonly ConcurrentQueue<ReceivedRequest> Requests = new ConcurrentQueue<ReceivedRequest>();
         public readonly ConcurrentQueue<Exception> Errors = new ConcurrentQueue<Exception>();
         public string Url { get; }
@@ -50,7 +51,7 @@ namespace PoShLog.Http.Tests
             }
             _worker = Task.Run(async () =>
             {
-                while (_listener.IsListening)
+                while (!_stopping && _listener.IsListening)
                 {
                     try
                     {
@@ -73,7 +74,7 @@ namespace PoShLog.Http.Tests
                         if (RedirectLocation != null) context.Response.RedirectLocation = RedirectLocation;
                         context.Response.Close();
                     }
-                    catch (Exception) when (!_listener.IsListening) { break; }
+                    catch (Exception) when (_stopping || !_listener.IsListening) { break; }
                     catch (HttpListenerException) { /* Expected after a client timeout. */ }
                     catch (Exception e) { Errors.Enqueue(e); }
                 }
@@ -82,6 +83,8 @@ namespace PoShLog.Http.Tests
 
         public void Dispose()
         {
+            // Set first: on .NET Framework HttpListener frees its handle before IsListening turns false.
+            _stopping = true;
             _listener.Stop();
             _listener.Close();
             if (!_worker.Wait(TimeSpan.FromSeconds(5))) throw new TimeoutException("Loopback worker did not stop.");
