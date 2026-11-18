@@ -22,7 +22,6 @@ $config.TestResult.Enabled = $true
 $config.TestResult.OutputPath = Join-Path $Results 'desktop-pester.xml'
 $result = Invoke-Pester -Configuration $config
 $reasons = @{
-    'DesktopUnsupported.Expressions' = 'Expression filters are phase 2 on Desktop (ADR 0031).'
     'DesktopUnsupported.Extensions' = 'In-repo extensions target net10.0 and are outside Core phase 1.'
     'DesktopUnsupported.PSStyle' = 'PSStyle ANSI rendering is a PowerShell 7 host API.'
 }

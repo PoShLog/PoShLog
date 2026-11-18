@@ -36,7 +36,7 @@ installs one, as a prerelease while PoShLog 3 is in preview. See [Compatibility 
 ## Does PoShLog 3 work on Windows PowerShell 5.1?
 
 Repository builds support Core phase 1 on Windows PowerShell 5.1 with .NET Framework 4.7.2+. This is unreleased.
-Core logging and non-expression JSON are included. Expressions, MSSqlServer and refreshed extensions require
+Core logging, expression filters and JSON configuration are included. MSSqlServer and refreshed extensions require
 PowerShell 7.6+. See [compatibility](../compatibility.md) for limits, including transcript behaviour, and
 [assembly conflicts](assembly-conflicts.md) for the guarded loader and shared dependencies.
 

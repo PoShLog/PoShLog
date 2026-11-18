@@ -13,7 +13,7 @@ BeforeAll {
 }
 
 Describe 'Issue features in fresh PowerShell processes' {
-    It 'hides the merged expression engine from public reflection and PowerShell lookup' -Skip:($PSEdition -eq 'Desktop') -Tag 'DesktopUnsupported.Expressions' {
+    It 'hides the merged expression engine from public reflection and PowerShell lookup' {
         $output = Invoke-IssueChild @'
 $child = New-Logger | Start-Logger -PassThru
 try {
@@ -45,7 +45,7 @@ Get-Content './relative.log'
         $output | Should -Contain 'relative path works'
     }
 
-    It 'routes properties to a conditional child logger (#37)' -Skip:($PSEdition -eq 'Desktop') -Tag 'DesktopUnsupported.Expressions' {
+    It 'routes properties to a conditional child logger (#37)' {
         $location = $TestDrive.Replace("'", "''")
         $output = Invoke-IssueChild @"
 Set-Location '$location'
@@ -128,7 +128,7 @@ Close-Logger
             Remove-Module PoShLog.Sinks.Seq, PoShLog.Sinks.Http -ErrorAction SilentlyContinue
         }
     }
-    It 'preserves legacy sink helper type lookup after compiling expressions (#37)' -Skip:($PSEdition -eq 'Desktop') -Tag 'DesktopUnsupported.Expressions' {
+    It 'preserves legacy sink helper type lookup after compiling expressions (#37)' {
         $output = Invoke-IssueChild @'
 $child = New-Logger | Start-Logger -PassThru
 try {

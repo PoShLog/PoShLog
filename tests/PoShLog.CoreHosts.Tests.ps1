@@ -82,17 +82,29 @@ exit $ExitCode
         Get-Content "$file.bak" -Raw | Should -Match "Write-Warning 'message'"
     }
 
-    It 'rejects expression filters without loading their engine on Desktop' -Skip:($PSEdition -ne 'Desktop') -Tag 'DesktopOnly' {
-        $child = New-Logger | Start-Logger -PassThru
+    It 'routes events by expression filters without a standalone engine' {
+        $path = Join-Path $TestDrive 'filtered.log'
+        $child = New-Logger | Add-SinkFile -Path $path -OutputTemplate '{Message}{NewLine}' | Start-Logger -PassThru
         try {
-            { New-Logger | Add-SinkLogger -Logger $child -Filter 'Send = true' -ErrorAction Stop } |
-                Should -Throw '*not supported on Windows PowerShell*'
-            '{"Serilog":{"Filter":[{"Name":"ByIncludingOnly","Args":{"expression":"Send = true"}}]}}' |
-                Set-Content "$TestDrive/filter.json" -Encoding UTF8
-            { New-Logger -ConfigurationPath "$TestDrive/filter.json" -ErrorAction Stop } |
-                Should -Throw '*not supported on Windows PowerShell*'
-            @([AppDomain]::CurrentDomain.GetAssemblies() | Where-Object { $_.GetName().Name -eq 'Serilog.Expressions' }).Count | Should -Be 0
-            (Get-Command New-Logger).ImplementingType.Assembly.GetType('Serilog.Expressions.SerilogExpression') | Should -BeNullOrEmpty
+            New-Logger | Add-SinkLogger -Logger $child -Filter 'Send = true' | Start-Logger
+            Write-InfoLog 'dropped'
+            Write-InfoLog 'kept {Send}' -PropertyValues $true
+            Close-Logger
         } finally { $child.Dispose() }
+        $text = Get-Content $path -Raw
+        $text | Should -Match 'kept True'
+        $text | Should -Not -Match 'dropped'
+
+        '{"Serilog":{"Filter":[{"Name":"ByIncludingOnly","Args":{"expression":"Send = true"}}]}}' |
+            Set-Content "$TestDrive/filter.json" -Encoding UTF8
+        { New-Logger -ConfigurationPath "$TestDrive/filter.json" -ErrorAction Stop | Out-Null } | Should -Not -Throw
+
+        $bad = New-Logger | Start-Logger -PassThru
+        try {
+            { New-Logger | Add-SinkLogger -Logger $bad -Filter 'Send ===' -ErrorAction Stop } |
+                Should -Throw '*Invalid Serilog filter expression*'
+        } finally { $bad.Dispose() }
+        @([AppDomain]::CurrentDomain.GetAssemblies() | Where-Object { $_.GetName().Name -eq 'Serilog.Expressions' }).Count | Should -Be 0
+        (Get-Command New-Logger).ImplementingType.Assembly.GetType('Serilog.Expressions.SerilogExpression').IsVisible | Should -BeFalse
     }
 }

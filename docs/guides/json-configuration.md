@@ -3,8 +3,7 @@
 `New-Logger -ConfigurationPath ./logging.json` reads a supported Serilog configuration
 once, then returns a configuration that can continue through the usual pipeline.
 The JSON file path resolves against the current PowerShell FileSystem location.
-Windows PowerShell 5.1 supports the non-expression subset. Nonempty JSON `Filter` entries fail with a clear
-Windows PowerShell error. Extension methods require an extension build compatible with the current host.
+Windows PowerShell 5.1 supports the same JSON configuration, including expression `Filter` entries.
 
 ```json
 {

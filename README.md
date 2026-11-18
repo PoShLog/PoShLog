@@ -28,7 +28,7 @@
 
 > [!NOTE]
 > **PoShLog 3 is in preview.** Repository builds support Windows PowerShell 5.1 on .NET Framework 4.7.2+ and
-> PowerShell 7.6+ on Windows, Linux and macOS. Desktop phase 1 includes Core logging and non-expression JSON.
+> PowerShell 7.6+ on Windows, Linux and macOS. Desktop phase 1 includes Core logging, expression filters and JSON configuration.
 > The native Http extension also supports Desktop; expression filters and other refreshed extensions require
 > PowerShell 7.6+. Desktop support is unreleased.
 > See [compatibility and installation](docs/compatibility.md) for the published versions and [v2 or v3](docs/v2-or-v3.md) for migration.

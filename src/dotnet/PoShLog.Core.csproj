@@ -27,8 +27,8 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <!-- ADR 0032: compile and merge privately; never copy a standalone runtime assembly. -->
-    <PackageReference Include="Serilog.Expressions" Version="5.0.0" ExcludeAssets="runtime" PrivateAssets="all" Condition="'$(TargetFramework)' == 'net10.0'" />
-    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44" PrivateAssets="all" Condition="'$(TargetFramework)' == 'net10.0'" />
+    <PackageReference Include="Serilog.Expressions" Version="5.0.0" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">

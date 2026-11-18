@@ -27,10 +27,6 @@ namespace PoShLog.Core.Utils
                 !document.RootElement.TryGetProperty("Serilog", out var section) || section.ValueKind != JsonValueKind.Object)
                 throw new ArgumentException("The JSON configuration must contain a Serilog object.");
             ValidateKeys(section, "Using", "MinimumLevel", "Properties", "WriteTo", "Enrich", "Filter");
-#if NETFRAMEWORK
-            if (section.TryGetProperty("Filter", out var filters) && ArrayItems(filters, "Filter").Any())
-                throw new PlatformNotSupportedException("JSON filters are not supported on Windows PowerShell.");
-#endif
 
             // Include core methods even when their assemblies have not been used by a cmdlet yet.
             var assemblies = AppDomain.CurrentDomain.GetAssemblies().Concat(new[] {

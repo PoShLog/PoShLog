@@ -20,8 +20,8 @@ pages link here instead of repeating it. Background: [v2 or v3?](v2-or-v3.md),
 ## Extensions
 
 Desktop support in repository builds is Core phase 1 and is unreleased. It includes console, file and PowerShell
-sinks, formatters, enrichment, switches, PSObject destructuring, disposal/flush and non-expression JSON.
-`Add-SinkLogger -Filter` and JSON `Filter` entries fail with a clear Windows PowerShell error. The native Http
+sinks, formatters, enrichment, switches, PSObject destructuring, disposal/flush, expression filters and JSON configuration.
+The native Http
 2.0.0-preview4 repository build also supports Desktop; other refreshed extensions and MSSqlServer remain
 Core edition, PowerShell 7.6+. `Get-PoShLogExtension` exposes each
 manifest's `CompatiblePSEditions`. Published 1.x extension compatibility is checked separately in Desktop CI.

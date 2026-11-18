@@ -17,8 +17,8 @@ PoShLog has two maintained lines ([ADR 0010](decisions/0010-v2-maintenance-line.
 - **PowerShell 7.4 or 7.5:** use v2, pinned as shown below, or move to PowerShell 7.6. Both reach end of support with .NET 8
   and 9 on 2026-11-10, and v3 releases after 3.0.0-preview3 need 7.6 ([ADR 0033](decisions/0033-net10-powershell-7-6.md)).
 - **Windows PowerShell 5.1** supports Core phase 1 in repository builds. This support is unreleased. It includes
-  core sinks, formatters, enrichment, switches, PSObject destructuring and non-expression JSON.
-  Expressions and refreshed extensions require PowerShell 7.6+. See [compatibility](compatibility.md).
+  core sinks, formatters, enrichment, switches, PSObject destructuring, expression filters and JSON.
+  MSSqlServer and refreshed extensions require PowerShell 7.6+. See [compatibility](compatibility.md).
   Gallery users can keep v2 pinned until a Desktop-capable package ships.
 
   ```powershell

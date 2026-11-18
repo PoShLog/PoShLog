@@ -29,8 +29,8 @@ and .NET 10 for PowerShell 7.6+. Desktop support is unreleased and includes Core
 ### 1. Supported hosts and Desktop feature limits
 
 PowerShell 7 hosts require 7.6+. Windows PowerShell 5.1 repository builds support Core logging, console/file/PowerShell
-sinks, formatters, enrichment, level switches, PSObject destructuring and non-expression JSON. Expression filters
-explicitly fail on Desktop. Native Http preview4 also supports Desktop; other refreshed extensions and MSSqlServer
+sinks, formatters, enrichment, level switches, PSObject destructuring, expression filters and JSON.
+Native Http preview4 also supports Desktop; other refreshed extensions and MSSqlServer
 remain PowerShell 7.6+. Http custom clients and batch formatters must migrate to native contracts and dictionary
 configuration, stop relying on followed redirects, and use the native JSON argument names; see the
 [Http migration notes](../../extensions/PoShLog.Sinks.Http/README.md#migration).

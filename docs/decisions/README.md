@@ -36,3 +36,4 @@ One record per decision, numbered in order; a change of mind is a new record tha
 | [0032](0032-shade-serilog-expressions-into-core.md) | Shade Serilog.Expressions into Core | accepted |
 | [0033](0033-net10-powershell-7-6.md) | v3 targets net10.0 and PowerShell 7.6+ | accepted |
 | [0034](0034-native-non-durable-http-sink.md) | Own the non-durable HTTP sink on Desktop and Core | accepted |
+| [0035](0035-expression-filters-on-desktop.md) | Expression filters on Windows PowerShell 5.1 by shading Serilog.Expressions | accepted |

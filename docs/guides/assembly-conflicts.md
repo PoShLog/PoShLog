@@ -49,10 +49,7 @@ run the script in a fresh `powershell.exe` session. Scheduled tasks and plain sc
 they usually start a fresh process with fewer modules loaded. **Never add binding redirects to
 `powershell.exe.config`.**
 
-The first Desktop build does not include `Add-SinkLogger -Filter` or expression-based JSON filters: they fail with a
-clear "not supported on Windows PowerShell" error and load nothing extra into the session. The MSSqlServer sink stays
-PowerShell 7.6+ only. Both are planned for a later build ([ADR 0031](../decisions/0031-windows-powershell-desktop-support.md),
-phase 2).
+On Windows PowerShell 5.1 the expression engine is merged into `PoShLog.Core.dll` the same way, so `Add-SinkLogger -Filter` and JSON filters load nothing extra into the session ([ADR 0035](../decisions/0035-expression-filters-on-desktop.md)). The MSSqlServer sink stays PowerShell 7.6+ only and is planned for a later build ([ADR 0031](../decisions/0031-windows-powershell-desktop-support.md), phase 2).
 
 ## Troubleshooting
 
